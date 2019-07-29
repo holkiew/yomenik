@@ -1,0 +1,8 @@
+enum ROLES {
+    USER = "ROLE_USER",
+    PARTNER_USER = "ROLE_PARTNER_USER",
+    PARTNER_ADMIN = "ROLE_PARTNER_ADMIN",
+    ADMIN = "ROLE_ADMIN"
+}
+
+export default ROLES;

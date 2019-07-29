@@ -1,0 +1,13 @@
+#login {
+    background-color: #DDD;
+}
+
+#password {
+    background-color: #DDD;
+}
+
+.errorAlert {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 3s, opacity 3s linear;
+}

@@ -1,0 +1,14 @@
+.black-canvas {
+    background-color: black;
+    height: 100%;
+    min-height: 100vh;
+}
+
+html * {
+    font-family: Verdana, sans-serif;
+    color: whitesmoke;
+}
+
+.card-body *{
+    color: black!important;
+}
