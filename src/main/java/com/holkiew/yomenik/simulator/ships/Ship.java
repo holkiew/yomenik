@@ -15,9 +15,8 @@ public abstract class Ship {
         this.alive = healthPoints > 0;
     }
 
-    public Ship takeHit(int damage){
+    public void takeHit(int damage) {
         this.healthPoints -= damage;
         this.alive = this.healthPoints > 0;
-        return this;
     }
 }

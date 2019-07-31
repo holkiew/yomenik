@@ -6,7 +6,10 @@ import com.holkiew.yomenik.simulator.persistence.BattleHistoryRepository;
 import com.holkiew.yomenik.simulator.persistence.BattleRecap;
 import com.holkiew.yomenik.util.UtilMethods;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 
@@ -22,6 +25,10 @@ public class BattleService {
 
     private final BattleHistoryRepository repository;
 
+    public Flux<BattleHistory> getBattleHistory(Sort sort, Pageable pageable) {
+        return repository.findFirstByIsIssuedTrue(sort, pageable);
+    }
+
     public void newBattle(NewBattleRequest request){
         var army1 = Army.of(request.getArmy1());
         var army2 = Army.of(request.getArmy2());
@@ -29,7 +36,7 @@ public class BattleService {
     }
 
     public void resolveBattle(Army army1, Army army2){
-        long stageDelay = 10;
+        long stageDelay = 3;
         BattleStrategy battleStrategy = BattleStrategy.of(army1, army2);
         LocalDateTime time = LocalDateTime.now();
         var battleHistory = new BattleHistory(battleStrategy, time);
@@ -38,23 +45,23 @@ public class BattleService {
             time = time.plusSeconds(stageDelay);
             battleHistory.addNewEntry(battleStrategy, time);
         }
-        battleHistory.setEndDate(time);
+        battleHistory.setEndDate(time.plusSeconds(stageDelay));
         repository.save(battleHistory).doOnError(Throwable::printStackTrace).subscribe();
     }
 
-    public Mono<BattleHistory> getCurrentBattleHistory(){
+    public Mono<BattleHistory> getCurrentBattle() {
         return repository.findFirstByIsIssuedFalseOrderByStartDate()
                 .handle(updateIssuedBattles())
                 .retry(UnknownObjectException.class::isInstance)
                 .cast(BattleHistory.class)
-                .switchIfEmpty(repository.findFirstByIsIssuedTrueOrderByStartDateDesc())
+//                .switchIfEmpty(repository.findFirstByIsIssuedTrueOrderByStartDateDesc())
                 .map(filterOutFutureResults());
     }
 
     private BiConsumer<BattleHistory, SynchronousSink<Object>> updateIssuedBattles() {
         return (battleHistory, synchronousSink) -> {
             var currentTime = LocalDateTime.now();
-            var isIssued = battleHistory.getEndDate().isBefore(currentTime);
+            var isIssued = battleHistory.getEndDate().isBefore(currentTime.minusSeconds(5));
             battleHistory.setIsIssued(isIssued);
             if (isIssued) {
                 // TODO customowy ex

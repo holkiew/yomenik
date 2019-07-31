@@ -1,13 +1,13 @@
 package com.holkiew.yomenik.simulator;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.simulator.ships.Ship;
-import com.holkiew.yomenik.simulator.ships.ShipLevel1;
-import lombok.AllArgsConstructor;
+import com.holkiew.yomenik.simulator.ships.ShipName;
 import lombok.Data;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Random;
 
 @Data
 public class BattleStrategy {
@@ -27,27 +27,32 @@ public class BattleStrategy {
 
     public void resolveRound(){
         Random random = new Random();
-        var a2DestroyedShips = new ArrayList<Ship>();
+        ListMultimap<ShipName, Ship> a2DestroyedShips = ArrayListMultimap.create();
+        ListMultimap<ShipName, Ship> army2ShipsCopy = ArrayListMultimap.create();
+        army2ShipsCopy.putAll(army2.getShips());
 
-        resolveFiring(random, army1.getShipsLevel1(), army2.getShipsLevel1(), a2DestroyedShips);
-        List<Ship> preStageArmy2 = Stream.of(army2.getShipsLevel1(), a2DestroyedShips).flatMap(Collection::stream).collect(Collectors.toList());
-        resolveFiring(random, preStageArmy2, army1.getShipsLevel1(), army1.getDestroyedShipsLevel1());
+        resolveFiring(random, army1.getShips(), army2.getShips(), a2DestroyedShips);
+        resolveFiring(random, army2ShipsCopy, army1.getShips(), army1.getDestroyedShips());
 
-        army2.getDestroyedShipsLevel1().addAll(a2DestroyedShips);
-        this.battleStage = army1.getShipsLevel1().size() == 0 || army2.getShipsLevel1().size() == 0 ? BattleStage.END : battleStage.nextStage();
+        army2.getDestroyedShips().putAll(a2DestroyedShips);
+        this.battleStage = army1.getShips().size() == 0 || army2.getShips().size() == 0 ? BattleStage.END : battleStage.nextStage();
     }
 
     //marks and gets rid of taken down ships, A1 shoots at A2
-    private void resolveFiring(Random random, List<Ship> a1Ships, List<Ship> a2Ships, List<Ship> a2DestroyedShips) {
-        var iterator = a1Ships.iterator();
-        while(iterator.hasNext() && !a2Ships.isEmpty()){
-            var ship = iterator.next();
-            int shipToShoot = random.nextInt(a2Ships.size());
-            Ship hitShip = a2Ships.get(shipToShoot)
-                    .takeHit(ship.getDamage());
+    private void resolveFiring(Random random, ListMultimap<ShipName, Ship> a1Ships, ListMultimap<ShipName, Ship> a2Ships, ListMultimap<ShipName, Ship> a2DestroyedShips) {
+        var army2Ships = new ArrayList<>(a2Ships.entries());
+        var iterator = a1Ships.values().iterator();
+
+        while (iterator.hasNext() && !army2Ships.isEmpty()) {
+            var a1Ship = iterator.next();
+            int shipToShoot = random.nextInt(army2Ships.size());
+            var hitShipEntry = army2Ships.get(shipToShoot);
+            Ship hitShip = hitShipEntry.getValue();
+            hitShip.takeHit(a1Ship.getDamage());
             if(!hitShip.getAlive()){
-                a2DestroyedShips.add(hitShip);
-                a2Ships.remove(shipToShoot);
+                a2DestroyedShips.put(hitShipEntry.getKey(), hitShip);
+                army2Ships.remove(hitShipEntry);
+                a2Ships.remove(hitShipEntry.getKey(), hitShip);
             }
         }
     }

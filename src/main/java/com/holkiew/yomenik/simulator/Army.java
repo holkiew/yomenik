@@ -1,22 +1,25 @@
 package com.holkiew.yomenik.simulator;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.simulator.ships.Ship;
 import com.holkiew.yomenik.simulator.ships.ShipFactory;
 import com.holkiew.yomenik.simulator.ships.ShipName;
+import com.holkiew.yomenik.util.MultimapCollector;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Data
 public class Army {
-    private List<Ship> shipsLevel1;
-    private List<Ship> destroyedShipsLevel1 = new ArrayList<>();
+    private ListMultimap<ShipName, Ship> ships;
+    private ListMultimap<ShipName, Ship> destroyedShips = ArrayListMultimap.create();
 
-    public Army(List<Ship> shipsLevel1) {
-        this.shipsLevel1 = shipsLevel1;
+    public Army(ListMultimap<ShipName, Ship> ships) {
+        this.ships = ships;
     }
 
     public static Army of(Map<ShipName, Long> map) {
@@ -24,24 +27,26 @@ public class Army {
         return new Army(ships);
     }
 
-    private static List<Ship> getShipsFromMap(Map<ShipName, Long> map) {
-        return map.entrySet().stream()
-                .filter(entry->Objects.nonNull(entry.getValue()))
+    private static ListMultimap<ShipName, Ship> getShipsFromMap(Map<ShipName, Long> map) {
+        return (ListMultimap<ShipName, Ship>) map.entrySet().stream()
+                .filter(entry -> Objects.nonNull(entry.getValue()))
                 .map(entry -> Stream.generate(
                         () -> ShipFactory.getShip(entry.getKey()))
                         .parallel().limit(entry.getValue())
-                        .collect(Collectors.toList()))
-                .flatMap(Collection::stream)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(MultimapCollector.toMultimap(o -> entry.getKey()))
+                ).reduce((map1, map2) -> {
+                    map1.putAll(map2);
+                    return map1;
+                }).orElse(ArrayListMultimap.create());
     }
 
     @Override
     public String toString() {
         return String.format("Army{" +
-                "\n\t(%d)shipsLevel1=" + shipsLevel1 +
-                "\n\t(%d)destroyedShipsLevel1=" + destroyedShipsLevel1 +
-                '}', shipsLevel1.size(), destroyedShipsLevel1.size());
+                "\n\t(%d)ships=" + ships +
+                "\n\t(%d)destroyedShips=" + destroyedShips +
+                '}', ships.size(), destroyedShips.size());
     }
 }
