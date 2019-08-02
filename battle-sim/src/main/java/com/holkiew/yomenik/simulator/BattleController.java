@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/battle")
+@RequestMapping()
 @Log4j2
 public class BattleController {
 
@@ -35,6 +35,11 @@ public class BattleController {
     @GetMapping("/battleHistory")
     public Flux<BattleHistory> getBattleHistory(Pageable pageable) {
         return battleService.getBattleHistory(pageable);
+    }
+
+    @GetMapping("/dupa")
+    public String getBattleHistory() {
+        return "dupa";
     }
 }
 

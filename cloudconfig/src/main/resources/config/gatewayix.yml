@@ -13,9 +13,7 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: battle-sim
+        - id: battlesim
           uri: lb://battle-sim
           predicates:
-            - Path=/battlesim/**
-          filters:
-            - RewritePath=/battlesim/(?.*), /$\{path}
+            - Path=/**
