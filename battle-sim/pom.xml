@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.holkiew</groupId>
-        <artifactId>yomenik-cloud</artifactId>
+        <artifactId>yomenik</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>yomenik</artifactId>
+    <artifactId>battle-sim</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>yomenik</name>
+    <name>battle-sim</name>
     <description>battle simulator</description>
 
     <dependencies>

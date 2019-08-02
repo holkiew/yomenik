@@ -10,7 +10,7 @@
     <!--	</parent>-->
     <parent>
         <groupId>com.holkiew</groupId>
-        <artifactId>yomenik-cloud</artifactId>
+        <artifactId>yomenik</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 

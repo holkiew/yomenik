@@ -8,12 +8,12 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.holkiew</groupId>
-	<artifactId>yomenik-cloud</artifactId>
+	<artifactId>yomenik</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>yomenik</module>
+		<module>battle-sim</module>
 		<module>eurekson</module>
 		<module>cloudconfig</module>
 	</modules>
