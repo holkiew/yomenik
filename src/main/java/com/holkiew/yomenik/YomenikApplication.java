@@ -2,10 +2,10 @@ package com.holkiew.yomenik;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.reactive.config.EnableWebFlux;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class YomenikApplication {
 
 	public static void main(String[] args) {
