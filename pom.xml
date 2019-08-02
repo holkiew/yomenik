@@ -7,7 +7,8 @@
 		<version>2.1.6.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.holkiew</groupId>
+
+    <groupId>com.yomenik</groupId>
 	<artifactId>yomenik</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -15,6 +16,7 @@
 	<modules>
 		<module>battle-sim</module>
 		<module>eurekson</module>
+        <module>gatewayiks</module>
 		<module>cloudconfig</module>
 	</modules>
 

@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8061/eureka/
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: battle-sim
+          uri: lb://battle-sim
+          predicates:
+            - Path=/battlesim/**
+          filters:
+            - RewritePath=/battlesim/(?.*), /$\{path}
