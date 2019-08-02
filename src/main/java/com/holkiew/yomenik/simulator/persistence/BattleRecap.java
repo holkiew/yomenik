@@ -1,7 +1,7 @@
 package com.holkiew.yomenik.simulator.persistence;
 
-import com.holkiew.yomenik.simulator.BattleStrategy;
 import com.holkiew.yomenik.simulator.BattleStage;
+import com.holkiew.yomenik.simulator.BattleStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,8 @@ public class BattleRecap {
 
     public BattleRecap(BattleStrategy battleStrategy, LocalDateTime issueTime){
         this.battleStage = battleStrategy.getBattleStage();
-        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShipsLevel1().size(), battleStrategy.getArmy1().getDestroyedShipsLevel1().size());
-        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShipsLevel1().size(), battleStrategy.getArmy2().getDestroyedShipsLevel1().size());
+        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips().size(), battleStrategy.getArmy1().getDestroyedShips().size());
+        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips().size(), battleStrategy.getArmy2().getDestroyedShips().size());
         this.issueTime = issueTime;
         this.isIssued = false;
     }

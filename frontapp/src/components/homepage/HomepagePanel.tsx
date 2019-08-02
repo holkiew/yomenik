@@ -2,18 +2,13 @@ import * as React from 'react';
 import {RouteComponentProps} from 'react-router-dom'
 import * as env from "../../config.json";
 import {fromEvent, Observable} from 'rxjs';
-import {Button, Col, Container, Row, Label, Card, CardImg, CardTitle, CardText, CardDeck,
-    CardSubtitle, CardBody} from 'reactstrap';
+import {Button, Card, CardBody, CardText, CardTitle, Col, Container, Fade, Label, Row} from 'reactstrap';
 import Axios from "axios-observable";
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
 import {getRequestHeaderToken} from "security/TokenUtil";
 import ShipForm from "./ShipForm";
 import "./homepagepanel.css"
-
-interface HomepagePanelState {
-    battleText: string
-}
 
 interface BattleHistoryDTO {
     battleRecapMap: {
@@ -25,9 +20,10 @@ interface BattleHistoryDTO {
     isIssued: boolean
 }
 
-export default class HomepagePanel extends React.Component<RouteComponentProps, HomepagePanelState> {
+export default class HomepagePanel extends React.Component<RouteComponentProps, any> {
     public readonly state = {
         battleText: "",
+        currentBattleVisible: false
     };
 
     private shipForm1: React.RefObject<any> = React.createRef();
@@ -37,21 +33,11 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
         this.getCurrentBattleRequest()
             .subscribe(value => {
                 const dto: BattleHistoryDTO = JSON.parse(value.data);
-                let text:string = "";
-                    Object.keys(dto.battleRecapMap).forEach(dtoKey => {
-                        text += `STAGE ${dtoKey} RECAP\n`;
-                        const armyRecap = dto.battleRecapMap[dtoKey];
-                        Object.keys(armyRecap).filter(v => v === "army1Recap" || v === "army2Recap").forEach(armyRecapKey => {
-                            text +=`\tArmy: ${armyRecapKey}\n`;
-                            const armyShips = armyRecap[armyRecapKey];
-                            Object.keys(armyShips).forEach(shipType => {
-                                const count = armyShips[shipType];
-                                text +=`\t\t${shipType}: ${count}\n`;
-                            })
-                        })
-                    });
+                console.info(dto)
+                const text = this.battleHistoryToString(dto);
                 this.setState({
-                    battleText: text
+                    battleText: text,
+                    currentBattleVisible: text !== ""
                 })
             });
     }
@@ -73,14 +59,33 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                     <Button onClick={this.postNewBattle} style={{marginBottom: "1rem"}}>New battle</Button>
                 </Row>
                 <Row>
-                    <Card>
-                        <CardBody>
-                            <CardTitle>Current battle</CardTitle>
-                            <CardText style={{whiteSpace: "pre-wrap"}}>{this.state.battleText}</CardText>
-                        </CardBody>
-                    </Card>
+                    <Fade in={this.state.currentBattleVisible}>
+                        <Card>
+                            <CardBody>
+                                <CardTitle>Current battle</CardTitle>
+                                <CardText style={{whiteSpace: "pre-wrap"}}>{this.state.battleText}</CardText>
+                            </CardBody>
+                        </Card>
+                    </Fade>
                 </Row>
             </Container>);
+    }
+
+    private battleHistoryToString(dto: BattleHistoryDTO) {
+        let text: string = "";
+        Object.keys(dto.battleRecapMap).forEach(dtoKey => {
+            text += `STAGE ${dtoKey} RECAP\n`;
+            const armyRecap = dto.battleRecapMap[dtoKey];
+            Object.keys(armyRecap).filter(v => v === "army1Recap" || v === "army2Recap").forEach(armyRecapKey => {
+                text += `\tArmy: ${armyRecapKey}\n`;
+                const armyShips = armyRecap[armyRecapKey];
+                Object.keys(armyShips).forEach(shipType => {
+                    const count = armyShips[shipType];
+                    text += `\t\t${shipType}: ${count}\n`;
+                })
+            })
+        });
+        return text;
     }
 
     private postNewBattle = () => {
