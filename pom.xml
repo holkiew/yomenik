@@ -14,9 +14,10 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>battle-sim</module>
+		<module>battlesim-service</module>
+		<module>user-service</module>
 		<module>eurekson</module>
-        <module>gatewayiks</module>
+		<module>gatewayix</module>
 		<module>cloudconfig</module>
 	</modules>
 

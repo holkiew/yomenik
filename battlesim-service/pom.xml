@@ -8,9 +8,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>battle-sim</artifactId>
+    <artifactId>battlesim-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>battle-sim</name>
+    <name>battlesim-service</name>
     <description>battle simulator</description>
 
     <dependencies>

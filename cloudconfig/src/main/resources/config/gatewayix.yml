@@ -6,7 +6,19 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8061/eureka/
 
+app:
+  jwtSecret: JWTSuperSecretKeyJWTSuperSecretKeyJWTSuperSecretKeyJWTSuperSecretKey
+  jwtExpirationInMs: 604800000
+
 spring:
+  data:
+    mongodb:
+      database: test
+      host: localhost
+      port: 27017
+  logging:
+    level:
+      root: info
   cloud:
     gateway:
       discovery:
@@ -14,6 +26,14 @@ spring:
           enabled: true
       routes:
         - id: battlesim
-          uri: lb://battle-sim
+          uri: lb://battle-sim-service
           predicates:
-            - Path=/**
+            - Path=/battlesim/**
+          filters:
+            - RewritePath=/battlesim/(?<endpoint>.*), /$\{endpoint}
+        - id: auth
+          uri: lb://gatewayix
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<endpoint>.*), /$\{endpoint}

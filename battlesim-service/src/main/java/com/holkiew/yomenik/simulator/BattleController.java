@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.security.Principal;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping()
@@ -38,7 +40,8 @@ public class BattleController {
     }
 
     @GetMapping("/dupa")
-    public String getBattleHistory() {
+    public String getBattleHistory(Principal principal) {
+        System.out.println(principal.getName());
         return "dupa";
     }
 }

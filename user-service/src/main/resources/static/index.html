@@ -1,0 +1,38 @@
+<html>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<body>
+
+<!-- Save new event -->
+<form method="get" action="/save">
+    <input type="text" name="owner">
+    <input type="text" name="value">
+    <button type="submit">Save new event</button>
+</form>
+
+
+<!-- Receive saved event -->
+<div id="content"></div>
+
+<script>
+    let source = new EventSource("view");
+    source.addEventListener('message', function (e) {
+        console.log('New message is received');
+        const index = JSON.parse(e.data);
+        const content = `New event added: ${index.owner}, ${index.value}<br>`;
+        document.getElementById("content").innerHTML = content;
+    }, false);
+    source.addEventListener('open', function (e) {
+        console.log('The connection has been opened');
+    }, false);
+    source.addEventListener('error', function (e) {
+        if (e.readyState == EventSource.CLOSED) {
+            console.log('The connection has been closed');
+        }
+    }, false);
+    source.onmessage = function (event) {
+        console.log('Onmessage');
+        console.log(event.data);
+    };
+</script>
+</body>
+<html>
