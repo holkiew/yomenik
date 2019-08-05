@@ -56,8 +56,8 @@ public class SecurityConfig {
                 .pathMatchers("/auth/login").permitAll()
                 .pathMatchers("/swagger-ui.html").permitAll()
                 .anyExchange()
-                .authenticated()
-//                .permitAll()
+//                .authenticated()
+                .permitAll()
                 .and().build();
     }
 }

@@ -28,8 +28,6 @@ public class AuthenticationController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Mono<ResponseEntity<?>> login(@RequestBody AuthRequest request, ServerHttpRequest httpRequest) {
-        log.error(httpRequest.getPath());
-        log.error(httpRequest);
         return userRepository.findByUsername(request.getUsername()).map((userDetails) -> {
             if (passwordEncoder.encode(request.getPassword()).equals(userDetails.getPassword())) {
                 return ResponseEntity.ok(new AuthResponse(jwtUtils.generateToken(userDetails)));

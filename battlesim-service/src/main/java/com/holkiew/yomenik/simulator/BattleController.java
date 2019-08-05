@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -40,8 +41,9 @@ public class BattleController {
     }
 
     @GetMapping("/dupa")
-    public String getBattleHistory(Principal principal) {
+    public String getBattleHistory(Principal principal, ServerHttpRequest request) {
         System.out.println(principal.getName());
+        log.error(request.getHeaders());
         return "dupa";
     }
 }
