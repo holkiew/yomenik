@@ -20,13 +20,17 @@ public class BattleRecap {
 
     public BattleRecap(BattleStrategy battleStrategy, LocalDateTime issueTime) {
         this.battleStage = battleStrategy.getBattleStage();
-        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips().size(), battleStrategy.getArmy1().getDestroyedShips().size());
-        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips().size(), battleStrategy.getArmy2().getDestroyedShips().size());
+        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips(), battleStrategy.getArmy1().getDestroyedShips());
+        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips(), battleStrategy.getArmy2().getDestroyedShips());
         this.issueTime = issueTime;
         this.isIssued = false;
     }
 
+    public Boolean getIsIssued() {
+        return issueTime.isAfter(LocalDateTime.now());
+    }
+
     public Boolean getIsNotIssued() {
-        return !this.isIssued;
+        return !getIsIssued();
     }
 }

@@ -35,6 +35,11 @@ public class BattleController {
         return battleService.getCurrentBattle();
     }
 
+    @DeleteMapping("/currentBattle")
+    public Mono<BattleHistory> cancelCurrentBattle() {
+        return battleService.cancelCurrentBattle().subscribe();
+    }
+
     @GetMapping("/battleHistory")
     public Flux<BattleHistory> getBattleHistory(Pageable pageable) {
         return battleService.getBattleHistory(pageable);

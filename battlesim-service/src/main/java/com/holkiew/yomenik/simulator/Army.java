@@ -2,6 +2,7 @@ package com.holkiew.yomenik.simulator;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.holkiew.yomenik.simulator.persistence.ArmyRecap;
 import com.holkiew.yomenik.simulator.ships.Ship;
 import com.holkiew.yomenik.simulator.ships.ShipFactory;
 import com.holkiew.yomenik.simulator.ships.ShipName;
@@ -16,15 +17,27 @@ import java.util.stream.Stream;
 @Data
 public class Army {
     private ListMultimap<ShipName, Ship> ships;
-    private ListMultimap<ShipName, Ship> destroyedShips = ArrayListMultimap.create();
+    private ListMultimap<ShipName, Ship> destroyedShips;
 
-    public Army(ListMultimap<ShipName, Ship> ships) {
+    private Army(ListMultimap<ShipName, Ship> ships) {
         this.ships = ships;
+        this.destroyedShips = ArrayListMultimap.create();
+    }
+
+    private Army(ListMultimap<ShipName, Ship> ships, ListMultimap<ShipName, Ship> destroyedShips) {
+        this.ships = ships;
+        this.destroyedShips = destroyedShips;
     }
 
     public static Army of(Map<ShipName, Long> map) {
         var ships = getShipsFromMap(map);
         return new Army(ships);
+    }
+
+    public static Army of(ArmyRecap armyRecap) {
+        var ships = getShipsFromMap(armyRecap.getShips());
+        var destroyedShips = getShipsFromMap(armyRecap.getDestroyedShips());
+        return new Army(ships, destroyedShips);
     }
 
     private static ListMultimap<ShipName, Ship> getShipsFromMap(Map<ShipName, Long> map) {

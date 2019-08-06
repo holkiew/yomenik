@@ -4,7 +4,6 @@ import com.holkiew.yomenik.simulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.simulator.persistence.BattleHistory;
 import com.holkiew.yomenik.simulator.persistence.BattleHistoryRepository;
 import com.holkiew.yomenik.simulator.persistence.BattleRecap;
-import com.holkiew.yomenik.util.UtilMethods;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,14 @@ import reactor.core.publisher.SynchronousSink;
 
 import java.rmi.activation.UnknownObjectException;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.holkiew.yomenik.util.UtilMethods.toEnumMap;
 
 
 @Service
@@ -34,7 +39,43 @@ public class BattleService {
         resolveBattle(army1, army2);
     }
 
-    public void resolveBattle(Army army1, Army army2) {
+    public Mono<BattleHistory> getCurrentBattle() {
+        return repository.findFirstByIsIssuedFalseOrderByStartDate()
+                .handle(updateIssuedBattles())
+                .retry(UnknownObjectException.class::isInstance)
+                .cast(BattleHistory.class)
+//                .switchIfEmpty(repository.findFirstByIsIssuedTrueOrderByStartDateDesc())
+                .map(filterOutFutureResults());
+    }
+
+    public Mono<BattleHistory> cancelCurrentBattle() {
+        return repository.findFirstByIsIssuedFalseOrderByStartDate()
+                .handle((battleHistory, synchronousSink) -> {
+                    Optional<Map.Entry<BattleStage, BattleRecap>> notIssuedNextStage = battleHistory.getBattleRecapMap().entrySet()
+                            .stream()
+                            .filter(entry -> entry.getKey() != BattleStage.END && entry.getValue().getIsNotIssued())
+                            .reduce((e1, e2) -> e1.getKey().getValue() < e2.getKey().getValue() ? e1 : e2);
+                    if (notIssuedNextStage.isPresent()) {
+                        updateBattleHIstory(battleHistory, notIssuedNextStage);
+                        repository.save(battleHistory).subscribe();
+                    } else {
+                        synchronousSink.error(new NoSuchElementException("Can't cancel"));
+                    }
+                })
+                .switchIfEmpty(Mono.error(NoSuchElementException::new))
+                .cast(BattleHistory.class);
+    }
+
+    private void updateBattleHIstory(BattleHistory battleHistory, Optional<Map.Entry<BattleStage, BattleRecap>> notIssuedNextStage) {
+        var notIssuedNextStageEntry = notIssuedNextStage.get();
+        var unresolvedRecapMap = battleHistory.getBattleRecapMap().entrySet().stream()
+                .filter(entry -> entry.getKey().getValue() <= notIssuedNextStageEntry.getKey().getValue())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        battleHistory.setBattleRecapMap(unresolvedRecapMap);
+        resolveRetreatingBattle(battleHistory, notIssuedNextStageEntry.getValue());
+    }
+
+    private void resolveBattle(Army army1, Army army2) {
         long stageDelay = 3;
         BattleStrategy battleStrategy = BattleStrategy.of(army1, army2);
         LocalDateTime time = LocalDateTime.now();
@@ -48,13 +89,16 @@ public class BattleService {
         repository.save(battleHistory).doOnError(Throwable::printStackTrace).subscribe();
     }
 
-    public Mono<BattleHistory> getCurrentBattle() {
-        return repository.findFirstByIsIssuedFalseOrderByStartDate()
-                .handle(updateIssuedBattles())
-                .retry(UnknownObjectException.class::isInstance)
-                .cast(BattleHistory.class)
-//                .switchIfEmpty(repository.findFirstByIsIssuedTrueOrderByStartDateDesc())
-                .map(filterOutFutureResults());
+    private void resolveRetreatingBattle(BattleHistory battleHistory, BattleRecap battleRecap) {
+        long stageDelay = 3;
+        var retreatingArmy = Army.of(battleRecap.getArmy1Recap());
+        var army2 = Army.of(battleRecap.getArmy1Recap());
+
+        BattleStrategy battleStrategy = BattleStrategy.of(retreatingArmy, army2);
+        LocalDateTime time = LocalDateTime.now().plusSeconds(stageDelay);
+        battleStrategy.resolveRetreatRound();
+        battleHistory.addNewEntry(battleStrategy, time);
+        battleHistory.setEndDate(time.plusSeconds(stageDelay));
     }
 
     private BiConsumer<BattleHistory, SynchronousSink<Object>> updateIssuedBattles() {
@@ -83,7 +127,7 @@ public class BattleService {
                         .entrySet()
                         .stream()
                         .filter(entry -> entry.getValue().getIsIssued())
-                        .collect(UtilMethods.toEnumMap(BattleStage.class));
+                        .collect(toEnumMap(BattleStage.class));
                 battleHistory.setBattleRecapMap(filteredEnumMap);
             }
             return battleHistory;

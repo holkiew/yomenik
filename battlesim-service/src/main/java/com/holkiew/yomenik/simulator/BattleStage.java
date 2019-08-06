@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.stream.Stream;
 
 public enum BattleStage {
-    NEW(0), ROUND_1(1), ROUND_2(2), ROUND_3(3), END(-1);
+    NEW(0), ROUND_1(1), ROUND_2(2), ROUND_3(3), END(999);
 
     @Getter
     @JsonValue
