@@ -36,8 +36,10 @@ public class BattleController {
     }
 
     @DeleteMapping("/currentBattle")
-    public Mono<BattleHistory> cancelCurrentBattle() {
-        return battleService.cancelCurrentBattle().subscribe();
+    public Mono<ResponseEntity<Object>> cancelCurrentBattle() {
+        return battleService.cancelCurrentBattle()
+                .map(savedTweet -> ResponseEntity.ok().build())
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/battleHistory")

@@ -14,7 +14,6 @@ import reactor.core.publisher.SynchronousSink;
 import java.rmi.activation.UnknownObjectException;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -58,12 +57,11 @@ public class BattleService {
                     if (notIssuedNextStage.isPresent()) {
                         updateBattleHIstory(battleHistory, notIssuedNextStage);
                         repository.save(battleHistory).subscribe();
+                        synchronousSink.complete();
                     } else {
-                        synchronousSink.error(new NoSuchElementException("Can't cancel"));
+                        synchronousSink.next(Mono.empty());
                     }
-                })
-                .switchIfEmpty(Mono.error(NoSuchElementException::new))
-                .cast(BattleHistory.class);
+                }).cast(BattleHistory.class);
     }
 
     private void updateBattleHIstory(BattleHistory battleHistory, Optional<Map.Entry<BattleStage, BattleRecap>> notIssuedNextStage) {

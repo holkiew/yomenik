@@ -19,12 +19,12 @@ public class Army {
     private ListMultimap<ShipName, Ship> ships;
     private ListMultimap<ShipName, Ship> destroyedShips;
 
-    private Army(ListMultimap<ShipName, Ship> ships) {
+    protected Army(ListMultimap<ShipName, Ship> ships) {
         this.ships = ships;
         this.destroyedShips = ArrayListMultimap.create();
     }
 
-    private Army(ListMultimap<ShipName, Ship> ships, ListMultimap<ShipName, Ship> destroyedShips) {
+    protected Army(ListMultimap<ShipName, Ship> ships, ListMultimap<ShipName, Ship> destroyedShips) {
         this.ships = ships;
         this.destroyedShips = destroyedShips;
     }
