@@ -47,6 +47,8 @@ public class BattleStrategyTest {
         // When
         assertEquals(0, battleStrategy.getBattleStage().getValue());
         battleStrategy.resolveRound();
+
+        // Then
         int a1CurrentHPSum = getArmyCurrentHpSum(army1);
         int a2CurrentHPSum = getArmyCurrentHpSum(army2);
         assertEquals(a1HPSum - a2DmgSum, a1CurrentHPSum);
@@ -56,7 +58,7 @@ public class BattleStrategyTest {
             battleStrategy.resolveRound();
         }
 
-        // Then
+        // And
         assertEquals(BattleStage.END, battleStrategy.getBattleStage());
         assertEquals(0, army2.getShips().size());
         assertEquals(a2nShipsl1 + a2nShipsl3, army2.getDestroyedShips().size());

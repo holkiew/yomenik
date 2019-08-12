@@ -23,13 +23,15 @@ public class BattleHistory {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Boolean isIssued;
+    private Long stageDelay;
 
-    public BattleHistory(BattleStrategy battleStrategy, LocalDateTime startTime) {
+    public BattleHistory(BattleStrategy battleStrategy, LocalDateTime startTime, long stageDelay) {
         this.id = UUID.randomUUID().toString();
         this.startDate = startTime;
         this.battleRecapMap = new EnumMap<>(BattleStage.class);
         this.isIssued = false;
         this.addNewEntry(battleStrategy, startTime);
+        this.stageDelay = stageDelay;
     }
 
     public void addNewEntry(BattleStrategy battleStrategy, LocalDateTime stageTime) {

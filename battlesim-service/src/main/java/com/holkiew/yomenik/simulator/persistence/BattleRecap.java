@@ -23,11 +23,10 @@ public class BattleRecap {
         this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips(), battleStrategy.getArmy1().getDestroyedShips());
         this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips(), battleStrategy.getArmy2().getDestroyedShips());
         this.issueTime = issueTime;
-        this.isIssued = false;
     }
 
     public Boolean getIsIssued() {
-        return issueTime.isAfter(LocalDateTime.now());
+        return LocalDateTime.now().isAfter(issueTime);
     }
 
     public Boolean getIsNotIssued() {

@@ -45,7 +45,8 @@ public class Army {
                 .filter(entry -> Objects.nonNull(entry.getValue()))
                 .map(entry -> Stream.generate(
                         () -> ShipFactory.getShip(entry.getKey()))
-                        .parallel().limit(entry.getValue())
+                        .parallel()
+                        .limit(entry.getValue())
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(MultimapCollector.toMultimap(o -> entry.getKey()))

@@ -32,10 +32,10 @@ public class BattleService {
         return repository.findFirstByIsIssuedTrue(pageable);
     }
 
-    public void newBattle(NewBattleRequest request) {
+    public Mono<BattleHistory> newBattle(NewBattleRequest request) {
         var army1 = Army.of(request.getArmy1());
         var army2 = Army.of(request.getArmy2());
-        resolveBattle(army1, army2);
+        return resolveBattle(army1, army2, request.getStageDelay());
     }
 
     public Mono<BattleHistory> getCurrentBattle() {
@@ -49,23 +49,22 @@ public class BattleService {
 
     public Mono<BattleHistory> cancelCurrentBattle() {
         return repository.findFirstByIsIssuedFalseOrderByStartDate()
-                .handle((battleHistory, synchronousSink) -> {
-                    Optional<Map.Entry<BattleStage, BattleRecap>> notIssuedNextStage = battleHistory.getBattleRecapMap().entrySet()
-                            .stream()
-                            .filter(entry -> entry.getKey() != BattleStage.END && entry.getValue().getIsNotIssued())
-                            .reduce((e1, e2) -> e1.getKey().getValue() < e2.getKey().getValue() ? e1 : e2);
-                    if (notIssuedNextStage.isPresent()) {
-                        updateBattleHIstory(battleHistory, notIssuedNextStage);
-                        repository.save(battleHistory).subscribe();
-                        synchronousSink.complete();
-                    } else {
-                        synchronousSink.next(Mono.empty());
-                    }
-                }).cast(BattleHistory.class);
+                .filter(battleHistory -> getFirstNotIssuedStage(battleHistory).isPresent())
+                .map(battleHistory -> {
+                    updateBattleHistory(battleHistory, getFirstNotIssuedStage(battleHistory).get());
+                    return battleHistory;
+                }).flatMap(repository::save);
     }
 
-    private void updateBattleHIstory(BattleHistory battleHistory, Optional<Map.Entry<BattleStage, BattleRecap>> notIssuedNextStage) {
-        var notIssuedNextStageEntry = notIssuedNextStage.get();
+    private Optional<Map.Entry<BattleStage, BattleRecap>> getFirstNotIssuedStage(BattleHistory battleHistory) {
+        Optional<Map.Entry<BattleStage, BattleRecap>> reduce = battleHistory.getBattleRecapMap().entrySet()
+                .stream()
+                .filter(entry -> entry.getKey() != BattleStage.END && entry.getValue().getIsNotIssued())
+                .reduce((e1, e2) -> e1.getKey().getValue() < e2.getKey().getValue() ? e1 : e2);
+        return reduce;
+    }
+
+    private void updateBattleHistory(BattleHistory battleHistory, Map.Entry<BattleStage, BattleRecap> notIssuedNextStageEntry) {
         var unresolvedRecapMap = battleHistory.getBattleRecapMap().entrySet().stream()
                 .filter(entry -> entry.getKey().getValue() <= notIssuedNextStageEntry.getKey().getValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
@@ -73,30 +72,28 @@ public class BattleService {
         resolveRetreatingBattle(battleHistory, notIssuedNextStageEntry.getValue());
     }
 
-    private void resolveBattle(Army army1, Army army2) {
-        long stageDelay = 3;
-        BattleStrategy battleStrategy = BattleStrategy.of(army1, army2);
-        LocalDateTime time = LocalDateTime.now();
-        var battleHistory = new BattleHistory(battleStrategy, time);
+    protected Mono<BattleHistory> resolveBattle(Army army1, Army army2, long stageDelay) {
+        var battleStrategy = BattleStrategy.of(army1, army2);
+        var time = LocalDateTime.now();
+        var battleHistory = new BattleHistory(battleStrategy, time, stageDelay);
         while (!battleStrategy.isBattleEnded()) {
             battleStrategy.resolveRound();
             time = time.plusSeconds(stageDelay);
             battleHistory.addNewEntry(battleStrategy, time);
         }
         battleHistory.setEndDate(time.plusSeconds(stageDelay));
-        repository.save(battleHistory).doOnError(Throwable::printStackTrace).subscribe();
+        return repository.save(battleHistory);
     }
 
     private void resolveRetreatingBattle(BattleHistory battleHistory, BattleRecap battleRecap) {
-        long stageDelay = 3;
         var retreatingArmy = Army.of(battleRecap.getArmy1Recap());
         var army2 = Army.of(battleRecap.getArmy1Recap());
 
         BattleStrategy battleStrategy = BattleStrategy.of(retreatingArmy, army2);
-        LocalDateTime time = LocalDateTime.now().plusSeconds(stageDelay);
+        LocalDateTime time = LocalDateTime.now().plusSeconds(battleHistory.getStageDelay());
         battleStrategy.resolveRetreatRound();
         battleHistory.addNewEntry(battleStrategy, time);
-        battleHistory.setEndDate(time.plusSeconds(stageDelay));
+        battleHistory.setEndDate(time.plusSeconds(battleHistory.getStageDelay()));
     }
 
     private BiConsumer<BattleHistory, SynchronousSink<Object>> updateIssuedBattles() {
