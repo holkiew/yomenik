@@ -1,8 +1,8 @@
-package com.holkiew.yomenik.simulator.persistence;
+package com.holkiew.yomenik.simulator.entity;
 
 import com.google.common.collect.ListMultimap;
-import com.holkiew.yomenik.simulator.ships.Ship;
-import com.holkiew.yomenik.simulator.ships.ShipName;
+import com.holkiew.yomenik.simulator.ship.type.Ship;
+import com.holkiew.yomenik.simulator.ship.type.ShipName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -1,9 +1,12 @@
 package com.holkiew.yomenik.simulator;
 
 import com.holkiew.yomenik.simulator.dto.NewBattleRequest;
-import com.holkiew.yomenik.simulator.persistence.BattleHistory;
-import com.holkiew.yomenik.simulator.persistence.BattleHistoryRepository;
-import com.holkiew.yomenik.simulator.persistence.BattleRecap;
+import com.holkiew.yomenik.simulator.entity.BattleHistory;
+import com.holkiew.yomenik.simulator.entity.BattleRecap;
+import com.holkiew.yomenik.simulator.port.BattleHistoryRepository;
+import com.holkiew.yomenik.simulator.ship.battle.Army;
+import com.holkiew.yomenik.simulator.ship.battle.BattleStage;
+import com.holkiew.yomenik.simulator.ship.battle.BattleStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,7 @@ public class BattleService {
                 .handle(updateIssuedBattles())
                 .retry(UnknownObjectException.class::isInstance)
                 .cast(BattleHistory.class)
+                .flatMap(repository::save)
 //                .switchIfEmpty(repository.findFirstByIsIssuedTrueOrderByStartDateDesc())
                 .map(filterOutFutureResults());
     }
@@ -57,11 +61,10 @@ public class BattleService {
     }
 
     private Optional<Map.Entry<BattleStage, BattleRecap>> getFirstNotIssuedStage(BattleHistory battleHistory) {
-        Optional<Map.Entry<BattleStage, BattleRecap>> reduce = battleHistory.getBattleRecapMap().entrySet()
+        return battleHistory.getBattleRecapMap().entrySet()
                 .stream()
                 .filter(entry -> entry.getKey() != BattleStage.END && entry.getValue().getIsNotIssued())
                 .reduce((e1, e2) -> e1.getKey().getValue() < e2.getKey().getValue() ? e1 : e2);
-        return reduce;
     }
 
     private void updateBattleHistory(BattleHistory battleHistory, Map.Entry<BattleStage, BattleRecap> notIssuedNextStageEntry) {
@@ -103,13 +106,13 @@ public class BattleService {
             battleHistory.setIsIssued(isIssued);
             if (isIssued) {
                 // TODO customowy ex
+                // TODO przegrzmocic metode, nie mozna zagniezdzac publisherow
                 repository.save(battleHistory).subscribe();
                 synchronousSink.error(new UnknownObjectException("Object has been issued"));
             } else {
                 battleHistory.getBattleRecapMap().values().stream()
                         .filter(BattleRecap::getIsNotIssued)
                         .forEach(battleRecap -> battleRecap.setIsIssued(battleRecap.getIssueTime().isBefore(currentTime)));
-                repository.save(battleHistory).subscribe();
                 synchronousSink.next(battleHistory);
             }
         };

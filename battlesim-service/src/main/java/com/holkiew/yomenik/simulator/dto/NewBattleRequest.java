@@ -1,6 +1,6 @@
 package com.holkiew.yomenik.simulator.dto;
 
-import com.holkiew.yomenik.simulator.ships.ShipName;
+import com.holkiew.yomenik.simulator.ship.type.ShipName;
 import lombok.Data;
 
 import javax.validation.constraints.Min;

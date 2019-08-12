@@ -1,10 +1,10 @@
-package com.holkiew.yomenik.simulator;
+package com.holkiew.yomenik.simulator.ship.battle;
 
 import org.junit.Test;
 
 import java.util.HashMap;
 
-import static com.holkiew.yomenik.simulator.ships.ShipName.*;
+import static com.holkiew.yomenik.simulator.ship.type.ShipName.*;
 import static org.junit.Assert.assertEquals;
 
 public class ArmyTest {

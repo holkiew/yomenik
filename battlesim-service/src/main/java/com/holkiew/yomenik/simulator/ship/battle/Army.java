@@ -1,11 +1,11 @@
-package com.holkiew.yomenik.simulator;
+package com.holkiew.yomenik.simulator.ship.battle;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.holkiew.yomenik.simulator.persistence.ArmyRecap;
-import com.holkiew.yomenik.simulator.ships.Ship;
-import com.holkiew.yomenik.simulator.ships.ShipFactory;
-import com.holkiew.yomenik.simulator.ships.ShipName;
+import com.holkiew.yomenik.simulator.entity.ArmyRecap;
+import com.holkiew.yomenik.simulator.ship.type.Ship;
+import com.holkiew.yomenik.simulator.ship.type.ShipFactory;
+import com.holkiew.yomenik.simulator.ship.type.ShipName;
 import com.holkiew.yomenik.util.MultimapCollector;
 import lombok.Data;
 

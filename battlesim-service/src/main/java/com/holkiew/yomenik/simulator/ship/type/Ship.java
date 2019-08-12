@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.simulator.ships;
+package com.holkiew.yomenik.simulator.ship.type;
 
 
 import lombok.Data;

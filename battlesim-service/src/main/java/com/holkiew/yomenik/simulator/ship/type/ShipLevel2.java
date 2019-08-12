@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.simulator.ships;
+package com.holkiew.yomenik.simulator.ship.type;
 
 public class ShipLevel2 extends Ship {
 

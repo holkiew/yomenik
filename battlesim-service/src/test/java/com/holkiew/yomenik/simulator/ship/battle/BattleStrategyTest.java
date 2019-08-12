@@ -1,8 +1,8 @@
-package com.holkiew.yomenik.simulator;
+package com.holkiew.yomenik.simulator.ship.battle;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.holkiew.yomenik.simulator.ships.*;
+import com.holkiew.yomenik.simulator.ship.type.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;

@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.simulator;
+package com.holkiew.yomenik.simulator.ship.battle;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;

@@ -1,7 +1,7 @@
 package com.holkiew.yomenik.simulator;
 
 import com.holkiew.yomenik.simulator.dto.NewBattleRequest;
-import com.holkiew.yomenik.simulator.persistence.BattleHistory;
+import com.holkiew.yomenik.simulator.entity.BattleHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;

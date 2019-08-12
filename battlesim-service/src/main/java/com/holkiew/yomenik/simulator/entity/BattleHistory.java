@@ -1,7 +1,7 @@
-package com.holkiew.yomenik.simulator.persistence;
+package com.holkiew.yomenik.simulator.entity;
 
-import com.holkiew.yomenik.simulator.BattleStage;
-import com.holkiew.yomenik.simulator.BattleStrategy;
+import com.holkiew.yomenik.simulator.ship.battle.BattleStage;
+import com.holkiew.yomenik.simulator.ship.battle.BattleStrategy;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;

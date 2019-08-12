@@ -1,5 +1,6 @@
-package com.holkiew.yomenik.simulator.persistence;
+package com.holkiew.yomenik.simulator.port;
 
+import com.holkiew.yomenik.simulator.entity.BattleHistory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;

@@ -1,8 +1,11 @@
 package com.holkiew.yomenik.simulator
 
-import com.holkiew.yomenik.simulator.persistence.BattleHistory
-import com.holkiew.yomenik.simulator.persistence.BattleHistoryRepository
-import com.holkiew.yomenik.simulator.ships.ShipName
+import com.holkiew.yomenik.simulator.entity.BattleHistory
+import com.holkiew.yomenik.simulator.port.BattleHistoryRepository
+import com.holkiew.yomenik.simulator.ship.battle.Army
+import com.holkiew.yomenik.simulator.ship.battle.BattleStage
+import com.holkiew.yomenik.simulator.ship.battle.BattleStrategy
+import com.holkiew.yomenik.simulator.ship.type.ShipName
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import spock.lang.Specification
