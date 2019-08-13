@@ -6,7 +6,7 @@ import {Button, Card, CardBody, CardText, CardTitle, Col, Container, Fade, Label
 import Axios from "axios-observable";
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
-import {getRequestHeaderToken} from "security/TokenUtil";
+import {getRequestHeaderToken, removeToken} from "security/TokenUtil";
 import ShipForm from "./ShipForm";
 import "./homepagepanel.css"
 
@@ -39,7 +39,10 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                     battleText: text,
                     currentBattleVisible: text !== ""
                 })
-            });
+                }, error => {
+                    console.info(error)
+                }
+            );
     }
 
     public render() {
@@ -58,6 +61,12 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                 </Row>
                 <Row className="justify-content-md-center">
                     <Button onClick={this.postNewBattle} style={{marginBottom: "1rem"}}>New battle</Button>
+                </Row>
+                <Row className="justify-content-md-center">
+                    <Button onClick={this.logout} style={{marginBottom: "1rem"}}>Logout</Button>
+                </Row>
+                <Row className="justify-content-md-center">
+                    <Button onClick={this.dupa} style={{marginBottom: "1rem"}}>dupa</Button>
                 </Row>
                 <Row>
                     <Fade in={this.state.currentBattleVisible}>
@@ -92,16 +101,22 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
     private postNewBattle = () => {
         const data = {
             army1: this.shipForm1.current.getData(),
-            army2: this.shipForm2.current.getData()
+            army2: this.shipForm2.current.getData(),
+            stageDelay: 3
         };
         console.info(data)
-        Axios.post(`${env.backendServer.baseUrl}/api/battle/newBattle`,
+        Axios.post(`${env.backendServer.baseUrl}/battlesim/newBattle`,
             data).subscribe(value => console.info(value));
+    };
+
+    private dupa = () => {
+        Axios.get(`${env.backendServer.baseUrl}/battlesim/dupa`,)
+            .subscribe(value => console.info(value));
     };
 
     private getCurrentBattleRequest = () => {
         return new Observable<MessageEvent>(observer => {
-            const source = new EventSourcePolyfill(`${env.backendServer.baseUrl}/api/battle/currentBattle`,
+            const source = new EventSourcePolyfill(`${env.backendServer.baseUrl}/battlesim/currentBattle`,
                 {headers: {Authorization: getRequestHeaderToken()}});
             const message: Observable<MessageEvent> = fromEvent(source, 'message');
             const subscription = message.subscribe(observer);
@@ -111,6 +126,11 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
             };
         });
     };
+
+    private logout = () => {
+        removeToken();
+        this.props.history.push("/");
+    }
 }
 
 

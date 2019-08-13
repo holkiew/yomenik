@@ -11,7 +11,7 @@
     <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>user-service</name>
-    <description>User and auth service</description>
+    <description>User service</description>
 
     <dependencies>
         <!--CORE-->

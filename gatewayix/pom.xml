@@ -11,7 +11,7 @@
     <artifactId>gatewayix</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>gatewayix</name>
-    <description>Cloud gateway server</description>
+    <description>Cloud gateway and auth server</description>
 
     <dependencies>
         <dependency>
@@ -55,7 +55,6 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
-
 
         <!--DATABASE-->
         <dependency>

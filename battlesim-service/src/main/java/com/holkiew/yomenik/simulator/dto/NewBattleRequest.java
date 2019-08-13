@@ -13,6 +13,7 @@ public class NewBattleRequest {
     private Map<ShipName, Long> army1;
     @NotNull
     private Map<ShipName, Long> army2;
+    @NotNull
     @Min(1)
     private Long stageDelay;
 }

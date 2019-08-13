@@ -30,22 +30,26 @@ spring:
             - Path=/battlesim/**
           filters:
             - RewritePath=/battlesim/(?<endpoint>.*), /$\{endpoint}
+        #            - AddResponseHeader=Access-Control-Allow-Origin, *
         - id: gatewayix
           uri: lb://gatewayix
           predicates:
             - Path=/auth/{segment}
           filters:
             - SetPath=/{segment}
-    globalcors:
-      corsConfigurations:
-        '[/**]':
-          allowedOrigins: "*"
-          allowedMethods:
+      #            - AddResponseHeader=Access-Control-Allow-Origin, *
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
             - GET
             - PUT
             - POST
             - DELETE
             - OPTIONS
+            allowedHeaders: "*"
+
 #logging:
 #  level:
 #    root: TRACE

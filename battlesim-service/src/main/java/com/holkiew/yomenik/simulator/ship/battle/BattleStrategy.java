@@ -29,8 +29,8 @@ public class BattleStrategy {
     }
 
     public void resolveRound() {
-        ListMultimap<ShipName, Ship> a2DestroyedShips = ArrayListMultimap.create();
-        ListMultimap<ShipName, Ship> army2ShipsCopy = ArrayListMultimap.create();
+        var a2DestroyedShips = ArrayListMultimap.<ShipName, Ship>create();
+        var army2ShipsCopy = ArrayListMultimap.<ShipName, Ship>create();
         army2ShipsCopy.putAll(army2.getShips());
 
         resolveFiring(army1.getShips(), army2.getShips(), a2DestroyedShips);

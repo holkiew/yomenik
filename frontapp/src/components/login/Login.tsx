@@ -73,7 +73,7 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
     };
 
     private login = () => {
-        Axios.post(`${env.backendServer.baseUrl}/api/auth/login`, {
+        Axios.post(`${env.backendServer.baseUrl}/auth/login`, {
             username: this.state.loginInput,
             password: this.state.passwordInput
         })
@@ -87,6 +87,7 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
             })
             .catch(reason => {
                 removeToken();
+                console.info(reason)
                 this.setState({
                     loginState: LOGIN_STATE.LOGIN_FAILED,
                     errorReason: ""
