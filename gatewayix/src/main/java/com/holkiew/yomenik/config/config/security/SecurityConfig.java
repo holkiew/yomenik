@@ -38,26 +38,25 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain webFilterChain(ServerHttpSecurity http) {
-        return http
+        return http.csrf().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() ->
                         swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
                 .accessDeniedHandler((swe, e) -> Mono.fromRunnable(() ->
                         swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN)))
                 .and()
-                .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                .pathMatchers("/login").permitAll()
-                .pathMatchers("/auth/login").permitAll()
-                .pathMatchers("/swagger-ui.html").permitAll()
+                .pathMatchers("/auth/**", "/auth/*", "/login").permitAll()
+                .pathMatchers("/swagger-ui.html", "/*/swagger-ui.html").permitAll()
                 .anyExchange()
 //                .authenticated()
                 .permitAll()
-                .and().build();
+                .and()
+                .build();
     }
 }

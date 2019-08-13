@@ -13,7 +13,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,8 +46,7 @@ public class BattleController {
     }
 
     @GetMapping("/dupa")
-    public String getBattleHistory(Principal principal, ServerHttpRequest request) {
-        System.out.println(principal.getName());
+    public String getBattleHistory(ServerHttpRequest request) {
         log.error(request.getHeaders());
         return "dupa";
     }

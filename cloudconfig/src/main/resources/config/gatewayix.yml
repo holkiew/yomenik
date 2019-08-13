@@ -16,24 +16,36 @@ spring:
       database: test
       host: localhost
       port: 27017
-  logging:
-    level:
-      root: info
   cloud:
     gateway:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
+          lowerCaseServiceId: true
       routes:
-        - id: battlesim
+        - id: battle-sim-service
           uri: lb://battle-sim-service
           predicates:
             - Path=/battlesim/**
           filters:
             - RewritePath=/battlesim/(?<endpoint>.*), /$\{endpoint}
-        - id: auth
+        - id: gatewayix
           uri: lb://gatewayix
           predicates:
-            - Path=/auth/**
+            - Path=/auth/{segment}
           filters:
-            - RewritePath=/auth/(?<endpoint>.*), /$\{endpoint}
+            - SetPath=/{segment}
+    globalcors:
+      corsConfigurations:
+        '[/**]':
+          allowedOrigins: "*"
+          allowedMethods:
+            - GET
+            - PUT
+            - POST
+            - DELETE
+            - OPTIONS
+#logging:
+#  level:
+#    root: TRACE

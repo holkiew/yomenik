@@ -106,7 +106,7 @@ public class BattleService {
             battleHistory.setIsIssued(isIssued);
             if (isIssued) {
                 // TODO customowy ex
-                // TODO przegrzmocic metode, nie mozna zagniezdzac publisherow
+                // TODO przegrzmocic metode, nie powinno sie zagniezdzac publisherow
                 repository.save(battleHistory).subscribe();
                 synchronousSink.error(new UnknownObjectException("Object has been issued"));
             } else {

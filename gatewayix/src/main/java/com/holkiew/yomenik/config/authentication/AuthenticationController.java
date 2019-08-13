@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping
 @Log4j2
 public class AuthenticationController {
 
@@ -27,8 +26,14 @@ public class AuthenticationController {
     private final AuthenticationService userRepository;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Mono<ResponseEntity<?>> login(@RequestBody AuthRequest request, ServerHttpRequest httpRequest) {
+    public Mono<ResponseEntity<?>> login(@RequestBody AuthRequest request) {
         return userRepository.findByUsername(request.getUsername()).map((userDetails) -> {
+            System.out.println("LAPIOE");
+            System.out.println("LAPIOE");
+            System.out.println("LAPIOE");
+            System.out.println("LAPIOE");
+            System.out.println("LAPIOE");
+            System.out.println("LAPIOE");
             if (passwordEncoder.encode(request.getPassword()).equals(userDetails.getPassword())) {
                 return ResponseEntity.ok(new AuthResponse(jwtUtils.generateToken(userDetails)));
             } else {

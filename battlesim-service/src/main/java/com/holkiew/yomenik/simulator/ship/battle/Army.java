@@ -47,8 +47,7 @@ public class Army {
                         () -> ShipFactory.getShip(entry.getKey()))
                         .parallel()
                         .limit(entry.getValue())
-                        .filter(Optional::isPresent)
-                        .map(Optional::get)
+                        .filter(Optional::isPresent).map(Optional::get)
                         .collect(MultimapCollector.toMultimap(o -> entry.getKey()))
                 ).reduce((map1, map2) -> {
                     map1.putAll(map2);
