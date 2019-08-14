@@ -2,7 +2,7 @@ import * as React from 'react';
 import {RouteComponentProps} from 'react-router-dom'
 import * as env from "../../config.json";
 import {fromEvent, Observable} from 'rxjs';
-import {Button, Card, CardBody, CardText, CardTitle, Col, Container, Fade, Label, Row} from 'reactstrap';
+import {Button, Card, CardBody, CardHeader, CardText, CardTitle, Col, Container, Fade, Label, Row} from 'reactstrap';
 import Axios from "axios-observable";
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
@@ -73,6 +73,8 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                         <Card>
                             <CardBody>
                                 <CardTitle>Current battle</CardTitle>
+                                <CardHeader><Button onClick={this.cancelBattleRequest}
+                                                    style={{marginBottom: "1rem"}}>dupa</Button></CardHeader>
                                 <CardText style={{whiteSpace: "pre-wrap"}}>{this.state.battleText}</CardText>
                             </CardBody>
                         </Card>
@@ -105,18 +107,23 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
             stageDelay: 3
         };
         console.info(data)
-        Axios.post(`${env.backendServer.baseUrl}/battlesim/newBattle`,
+        Axios.post(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/newBattle`,
             data).subscribe(value => console.info(value));
     };
 
     private dupa = () => {
-        Axios.get(`${env.backendServer.baseUrl}/battlesim/dupa`,)
+        Axios.get(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/dupa`)
             .subscribe(value => console.info(value));
     };
 
-    private getCurrentBattleRequest = () => {
+    private cancelBattleRequest = () => {
+        Axios.delete(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/currentBattle`)
+            .subscribe(value => console.info(value));
+    };
+
+    private getCurrentBattleRequest = (): Observable<MessageEvent> => {
         return new Observable<MessageEvent>(observer => {
-            const source = new EventSourcePolyfill(`${env.backendServer.baseUrl}/battlesim/currentBattle`,
+            const source = new EventSourcePolyfill(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/currentBattle`,
                 {headers: {Authorization: getRequestHeaderToken()}});
             const message: Observable<MessageEvent> = fromEvent(source, 'message');
             const subscription = message.subscribe(observer);

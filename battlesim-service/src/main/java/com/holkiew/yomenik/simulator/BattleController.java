@@ -5,6 +5,7 @@ import com.holkiew.yomenik.simulator.entity.BattleHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -37,7 +38,7 @@ public class BattleController {
     public Mono<ResponseEntity<Object>> cancelCurrentBattle() {
         return battleService.cancelCurrentBattle()
                 .map(battleHistory -> ResponseEntity.ok().build())
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .defaultIfEmpty(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
     }
 
     @GetMapping("/battleHistory")

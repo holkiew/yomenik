@@ -73,14 +73,13 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
     };
 
     private login = () => {
-        Axios.post(`${env.backendServer.baseUrl}/auth/login`, {
+        Axios.post(`${env.backendServer.baseUrl}${env.backendServer.services.authentication}/login`, {
             username: this.state.loginInput,
             password: this.state.passwordInput
         })
             .toPromise()
             .then(res => {
                 setToken(res.data.token);
-                console.info("LOGIN PROMISE")
                 this.setState({
                     loginState: LOGIN_STATE.LOGIN_SUCCESSFUL
                 })
