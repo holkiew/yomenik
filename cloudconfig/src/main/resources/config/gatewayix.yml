@@ -3,6 +3,7 @@ server:
 
 eureka:
   client:
+    #    registerWithEureka: false
     serviceUrl:
       defaultZone: http://localhost:8061/eureka/
 

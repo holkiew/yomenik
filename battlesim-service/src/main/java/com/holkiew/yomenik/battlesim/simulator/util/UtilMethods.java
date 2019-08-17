@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.util;
+package com.holkiew.yomenik.battlesim.simulator.util;
 
 import java.util.EnumMap;
 import java.util.Map;

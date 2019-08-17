@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface BattleHistoryRepository extends ReactiveMongoRepository<BattleHistory, String> {
 
-    Mono<BattleHistory> findFirstByIsIssuedFalseOrderByStartDate();
+    Mono<BattleHistory> findFirstByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
 
     Flux<BattleHistory> findFirstByIsIssuedTrue(Pageable pageable);
 

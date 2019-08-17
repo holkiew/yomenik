@@ -44,6 +44,7 @@ public class JWTUtils implements Serializable {
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRoles());
+        claims.put("id", user.getId());
         return doGenerateToken(claims, user.getUsername());
     }
 
@@ -56,6 +57,7 @@ public class JWTUtils implements Serializable {
                 .setSubject(username)
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
+                //TODO: signwith
                 .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(secret.getBytes()))
                 .compact();
     }

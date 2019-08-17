@@ -1,7 +1,7 @@
-package com.holkiew.yomenik.user.service;
+package com.holkiew.yomenik.user.domian;
 
-import com.holkiew.yomenik.user.service.dto.NewUserRequest;
-import com.holkiew.yomenik.user.service.entity.User;
+import com.holkiew.yomenik.user.domian.dto.NewUserRequest;
+import com.holkiew.yomenik.user.domian.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -24,4 +24,10 @@ public class UserController {
     public Mono<User> saveNewUser(@RequestBody @Valid NewUserRequest request) {
         return userService.saveNewUser(request);
     }
+
+    @GetMapping("/dupa")
+    public Mono<String> getUserByUsernameOrId() {
+        return Mono.just("dupa");
+    }
+
 }

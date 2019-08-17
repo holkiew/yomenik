@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.gateway.authentication.entity;
+package com.holkiew.yomenik.gateway.authentication.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

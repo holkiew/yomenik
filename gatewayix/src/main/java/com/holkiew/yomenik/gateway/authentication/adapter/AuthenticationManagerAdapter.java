@@ -1,7 +1,7 @@
 package com.holkiew.yomenik.gateway.authentication.adapter;
 
-import com.holkiew.yomenik.gateway.authentication.entity.LocalPrincipal;
-import com.holkiew.yomenik.gateway.authentication.entity.Role;
+import com.holkiew.yomenik.gateway.authentication.model.LocalPrincipal;
+import com.holkiew.yomenik.gateway.authentication.model.Role;
 import com.holkiew.yomenik.gateway.authentication.util.JWTUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -34,11 +34,12 @@ public class AuthenticationManagerAdapter implements ReactiveAuthenticationManag
         }
         if (Objects.nonNull(username) && jwtUtil.validateToken(authToken)) {
             Claims claims = jwtUtil.getAllClaimsFromToken(authToken);
-            List<String> rolesMap = claims.get("role", List.class);
-            List<Role> roles = rolesMap.stream().map(Role::valueOf).collect(Collectors.toList());
+            List<String> rolesList = claims.get("role", List.class);
+            String id = claims.get("id", String.class);
+            List<Role> roles = rolesList.stream().map(Role::valueOf).collect(Collectors.toList());
 
             var auth = new UsernamePasswordAuthenticationToken(
-                    new LocalPrincipal(username, ""),
+                    new LocalPrincipal(username, id),
                     authToken,
                     roles.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList())
             );

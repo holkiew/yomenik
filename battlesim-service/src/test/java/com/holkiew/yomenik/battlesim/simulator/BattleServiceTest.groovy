@@ -20,7 +20,7 @@ class BattleServiceTest extends Specification {
     BattleService testedObj
 
     def setup() {
-        testedObj = new BattleService(this.repository)
+        testedObj = Spy(new BattleService(this.repository))
     }
 
     def "Should cancel unissued battle"() {
@@ -30,13 +30,14 @@ class BattleServiceTest extends Specification {
             def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
             def battleStrategy = BattleStrategy.of(army1, army2)
             battleStrategy.battleStage = BattleStage.NEW
-            def battleHistory = new BattleHistory(battleStrategy, LocalDateTime.now().minusSeconds(3), 3)
+            def battleHistory = new BattleHistory(battleStrategy, "id", LocalDateTime.now().minusSeconds(3), 3)
             battleStrategy.battleStage = BattleStage.ROUND_1
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(10))
             battleStrategy.battleStage = BattleStage.ROUND_2
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(11))
         and:
-            1 * repository.findFirstByIsIssuedFalseOrderByStartDate() >> Mono.just(battleHistory)
+            1 * testedObj.getPrincipalId(_) >> Optional.of("id")
+            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate("id") >> Mono.just(battleHistory)
             1 * repository.save(_ as BattleHistory) >> { BattleHistory bh -> Mono.just(bh) }
         when:
             def publisher = testedObj.cancelCurrentBattle()
@@ -57,13 +58,14 @@ class BattleServiceTest extends Specification {
             def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
             def battleStrategy = BattleStrategy.of(army1, army2)
             battleStrategy.battleStage = BattleStage.NEW
-            def battleHistory = new BattleHistory(battleStrategy, LocalDateTime.now().minusSeconds(3), 3)
+            def battleHistory = new BattleHistory(battleStrategy, "id", LocalDateTime.now().minusSeconds(3), 3)
             battleStrategy.battleStage = BattleStage.ROUND_1
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().minusSeconds(3))
             battleStrategy.battleStage = BattleStage.END
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(3))
         and:
-            1 * repository.findFirstByIsIssuedFalseOrderByStartDate() >> Mono.just(battleHistory)
+            1 * testedObj.getPrincipalId(_) >> Optional.of("id")
+            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate("id") >> Mono.just(battleHistory)
             0 * repository.save(_)
         when:
             def publisher = testedObj.cancelCurrentBattle()

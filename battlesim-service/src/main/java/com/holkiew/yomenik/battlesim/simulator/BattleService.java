@@ -2,13 +2,15 @@ package com.holkiew.yomenik.battlesim.simulator;
 
 import com.holkiew.yomenik.battlesim.simulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.simulator.entity.BattleHistory;
-import com.holkiew.yomenik.battlesim.simulator.entity.BattleRecap;
+import com.holkiew.yomenik.battlesim.simulator.model.BattleRecap;
 import com.holkiew.yomenik.battlesim.simulator.port.BattleHistoryRepository;
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.Army;
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.BattleStage;
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.BattleStrategy;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,11 +25,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.holkiew.yomenik.battlesim.util.UtilMethods.toEnumMap;
+import static com.holkiew.yomenik.battlesim.simulator.util.UtilMethods.toEnumMap;
 
 
 @Service
 @RequiredArgsConstructor
+@EnableDiscoveryClient
 public class BattleService {
 
     private final BattleHistoryRepository repository;
@@ -36,23 +39,24 @@ public class BattleService {
         return repository.findFirstByIsIssuedTrue(pageable);
     }
 
-    public Mono<BattleHistory> newBattle(NewBattleRequest request) {
+    public Mono<BattleHistory> newBattle(NewBattleRequest request, ServerHttpRequest serverRequest) {
         var army1 = Army.of(request.getArmy1());
         var army2 = Army.of(request.getArmy2());
-        return resolveBattle(army1, army2, request.getStageDelay());
+        return resolveBattle(army1, army2, request.getStageDelay(), getPrincipalId(serverRequest).orElseThrow());
     }
 
-    public Mono<BattleHistory> getCurrentBattle() {
-        return repository.findFirstByIsIssuedFalseOrderByStartDate()
+    public Mono<BattleHistory> getCurrentBattle(ServerHttpRequest serverRequest) {
+        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(getPrincipalId(serverRequest).orElseThrow())
                 .handle(updateIssuedBattles())
                 .retry(UnknownObjectException.class::isInstance)
                 .cast(BattleHistory.class)
                 .flatMap(repository::save)
                 .map(filterOutFutureResults());
+
     }
 
-    public Mono<BattleHistory> cancelCurrentBattle() {
-        return repository.findFirstByIsIssuedFalseOrderByStartDate()
+    public Mono<BattleHistory> cancelCurrentBattle(ServerHttpRequest serverRequest) {
+        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(getPrincipalId(serverRequest).orElseThrow())
                 .flatMap(battleHistory -> getFirstNotIssuedStage(battleHistory)
                         .map(entry -> Mono.just(Tuples.of(battleHistory, entry)))
                         .orElse(Mono.empty()))
@@ -76,10 +80,10 @@ public class BattleService {
         return battleHistory;
     }
 
-    protected Mono<BattleHistory> resolveBattle(Army army1, Army army2, long stageDelay) {
+    protected Mono<BattleHistory> resolveBattle(Army army1, Army army2, long stageDelay, String userId) {
         var battleStrategy = BattleStrategy.of(army1, army2);
         var time = LocalDateTime.now();
-        var battleHistory = new BattleHistory(battleStrategy, time, stageDelay);
+        var battleHistory = new BattleHistory(battleStrategy, userId, time, stageDelay);
         while (!battleStrategy.isBattleEnded()) {
             battleStrategy.resolveRound();
             time = time.plusSeconds(stageDelay);
@@ -103,7 +107,7 @@ public class BattleService {
     private BiConsumer<BattleHistory, SynchronousSink<Object>> updateIssuedBattles() {
         return (battleHistory, synchronousSink) -> {
             var currentTime = LocalDateTime.now();
-            var isIssued = battleHistory.getEndDate().isBefore(currentTime.minusSeconds(5));
+            var isIssued = battleHistory.getEndDate().isBefore(currentTime.minusSeconds(battleHistory.getStageDelay()));
             battleHistory.setIsIssued(isIssued);
             if (isIssued) {
                 // TODO customowy ex
@@ -111,6 +115,7 @@ public class BattleService {
                 repository.save(battleHistory).subscribe();
                 synchronousSink.error(new UnknownObjectException("Object has been issued"));
             } else {
+                // TODO to tez juz nie ma sensu, jest getter dynamicznie robiajacy obczajke
                 battleHistory.getBattleRecapMap().values().stream()
                         .filter(BattleRecap::getIsNotIssued)
                         .forEach(battleRecap -> battleRecap.setIsIssued(battleRecap.getIssueTime().isBefore(currentTime)));
@@ -131,6 +136,10 @@ public class BattleService {
             }
             return battleHistory;
         };
+    }
+
+    protected Optional<String> getPrincipalId(ServerHttpRequest request) {
+        return Optional.ofNullable(request.getHeaders().getFirst("PRINCIPAL-ID"));
     }
 
 }

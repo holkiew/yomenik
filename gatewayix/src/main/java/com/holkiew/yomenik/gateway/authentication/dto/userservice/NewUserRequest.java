@@ -1,6 +1,6 @@
 package com.holkiew.yomenik.gateway.authentication.dto.userservice;
 
-import com.holkiew.yomenik.gateway.authentication.entity.Role;
+import com.holkiew.yomenik.gateway.authentication.model.Role;
 import lombok.Data;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package com.holkiew.yomenik.user.service.entity;
+package com.holkiew.yomenik.user.domian.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.holkiew.yomenik.user.service.Role;
+import com.holkiew.yomenik.user.domian.model.Role;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -70,12 +70,12 @@ public class User implements UserDetails {
         return this.enabled;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList());
     }
 
-    @JsonIgnore
     @Override
     public String getPassword() {
         return password;

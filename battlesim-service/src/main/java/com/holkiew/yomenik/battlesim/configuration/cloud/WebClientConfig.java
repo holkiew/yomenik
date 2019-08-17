@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.gateway.config.cloud;
+package com.holkiew.yomenik.battlesim.configuration.cloud;
 
 import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.util;
+package com.holkiew.yomenik.battlesim.simulator.util;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;

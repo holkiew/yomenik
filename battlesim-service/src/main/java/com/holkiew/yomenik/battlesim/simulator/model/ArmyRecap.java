@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.simulator.entity;
+package com.holkiew.yomenik.battlesim.simulator.model;
 
 import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.simulator.ship.type.Ship;

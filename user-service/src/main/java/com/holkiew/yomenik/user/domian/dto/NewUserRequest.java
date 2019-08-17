@@ -1,6 +1,6 @@
-package com.holkiew.yomenik.user.service.dto;
+package com.holkiew.yomenik.user.domian.dto;
 
-import com.holkiew.yomenik.user.service.Role;
+import com.holkiew.yomenik.user.domian.model.Role;
 import lombok.Data;
 import lombok.NonNull;
 

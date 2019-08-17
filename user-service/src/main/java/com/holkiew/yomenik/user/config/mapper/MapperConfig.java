@@ -1,7 +1,7 @@
 package com.holkiew.yomenik.user.config.mapper;
 
-import com.holkiew.yomenik.user.service.dto.NewUserRequest;
-import com.holkiew.yomenik.user.service.entity.User;
+import com.holkiew.yomenik.user.domian.dto.NewUserRequest;
+import com.holkiew.yomenik.user.domian.entity.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

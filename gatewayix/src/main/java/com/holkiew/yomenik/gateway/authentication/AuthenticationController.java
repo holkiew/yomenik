@@ -3,7 +3,6 @@ package com.holkiew.yomenik.gateway.authentication;
 import com.holkiew.yomenik.gateway.authentication.dto.service.AuthRequest;
 import com.holkiew.yomenik.gateway.authentication.dto.service.AuthResponse;
 import com.holkiew.yomenik.gateway.authentication.dto.service.RegisterRequest;
-import com.holkiew.yomenik.gateway.authentication.util.JWTUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -22,15 +21,13 @@ import javax.validation.Valid;
 @Log4j2
 public class AuthenticationController {
 
-    private final JWTUtils jwtUtils;
-
     private final AuthenticationService authService;
 
     @PostMapping("/login")
     public Mono<ResponseEntity<?>> login(@RequestBody AuthRequest request) {
         return authService.login(request)
                 .doOnError(throwable -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
-                .map(user -> ResponseEntity.ok(new AuthResponse(jwtUtils.generateToken(user))));
+                .map(token -> ResponseEntity.ok(new AuthResponse(token)));
     }
 
     @PostMapping("/register")

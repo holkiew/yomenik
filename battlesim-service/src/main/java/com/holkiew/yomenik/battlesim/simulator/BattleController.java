@@ -23,20 +23,20 @@ public class BattleController {
     private final BattleService battleService;
 
     @PostMapping("/newBattle")
-    public Mono<ResponseEntity<Object>> newBattle(@RequestBody @Valid NewBattleRequest request) {
-        return battleService.newBattle(request)
+    public Mono<ResponseEntity<Object>> newBattle(@RequestBody @Valid NewBattleRequest request, ServerHttpRequest serverRequest) {
+        return battleService.newBattle(request, serverRequest)
                 .map(battleHistory -> ResponseEntity.ok().build())
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/currentBattle", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Mono<BattleHistory> getCurrentBattle() {
-        return battleService.getCurrentBattle();
+    public Mono<BattleHistory> getCurrentBattle(ServerHttpRequest serverRequest) {
+        return battleService.getCurrentBattle(serverRequest);
     }
 
     @DeleteMapping("/currentBattle")
-    public Mono<ResponseEntity<Object>> cancelCurrentBattle() {
-        return battleService.cancelCurrentBattle()
+    public Mono<ResponseEntity<Object>> cancelCurrentBattle(ServerHttpRequest serverRequest) {
+        return battleService.cancelCurrentBattle(serverRequest)
                 .map(battleHistory -> ResponseEntity.ok().build())
                 .defaultIfEmpty(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
     }
@@ -44,12 +44,6 @@ public class BattleController {
     @GetMapping("/battleHistory")
     public Flux<BattleHistory> getBattleHistory(Pageable pageable) {
         return battleService.getBattleHistory(pageable);
-    }
-
-    @GetMapping("/dupa")
-    public String getBattleHistory(ServerHttpRequest request) {
-        log.error(request.getHeaders());
-        return "dupa";
     }
 }
 

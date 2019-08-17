@@ -2,6 +2,7 @@ package com.holkiew.yomenik.gateway.authentication.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.holkiew.yomenik.gateway.authentication.model.Role;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

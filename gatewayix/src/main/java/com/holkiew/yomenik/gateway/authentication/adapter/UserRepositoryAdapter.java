@@ -2,35 +2,37 @@ package com.holkiew.yomenik.gateway.authentication.adapter;
 
 import com.holkiew.yomenik.gateway.authentication.dto.userservice.NewUserRequest;
 import com.holkiew.yomenik.gateway.authentication.entity.User;
+import com.holkiew.yomenik.gateway.authentication.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Component
+@Repository
 @RequiredArgsConstructor
-public class UserRepositoryAdapter {
+public class UserRepositoryAdapter implements UserRepository {
     private final WebClient webclient;
     private final ModelMapper modelMapper;
 
-    //    @Override
     public Mono<User> findByUsername(String username) {
-        return webclient.get().uri("user-service/user", username)
+        return webclient.get().uri(uriBuilder ->
+                uriBuilder.host("user-service")
+                        .path("user")
+                        .queryParam("username", username).build())
                 .retrieve().bodyToMono(User.class);
     }
 
-    //    @Override
     public Mono<Boolean> existsByUsername(String username) {
-        return webclient.get().uri("user-service/user", username)
-                .retrieve().bodyToMono(User.class)
-                .map(user -> true);
+        return findByUsername(username).map(user -> true);
     }
 
     public Mono<User> save(User user) {
         NewUserRequest body = modelMapper.map(user, NewUserRequest.class);
-        return webclient.post().uri("user-service/user")
+        return webclient.post().uri(uriBuilder ->
+                uriBuilder.host("user-service")
+                        .path("user").build())
                 .body(BodyInserters.fromObject(body))
                 .retrieve().bodyToMono(User.class);
     }

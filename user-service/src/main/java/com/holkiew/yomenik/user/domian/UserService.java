@@ -1,8 +1,8 @@
-package com.holkiew.yomenik.user.service;
+package com.holkiew.yomenik.user.domian;
 
-import com.holkiew.yomenik.user.service.dto.NewUserRequest;
-import com.holkiew.yomenik.user.service.entity.User;
-import com.holkiew.yomenik.user.service.port.UserRepository;
+import com.holkiew.yomenik.user.domian.dto.NewUserRequest;
+import com.holkiew.yomenik.user.domian.entity.User;
+import com.holkiew.yomenik.user.domian.port.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

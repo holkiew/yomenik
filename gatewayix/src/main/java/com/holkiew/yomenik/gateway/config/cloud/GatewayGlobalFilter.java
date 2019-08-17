@@ -1,6 +1,6 @@
 package com.holkiew.yomenik.gateway.config.cloud;
 
-import com.holkiew.yomenik.gateway.authentication.entity.LocalPrincipal;
+import com.holkiew.yomenik.gateway.authentication.model.LocalPrincipal;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ public class GatewayGlobalFilter {
                 .cast(LocalPrincipal.class)
                 .map(principal -> {
                     exchange.getRequest().mutate()
-                            .header("PRINCIPAL-NAME", principal.getName())
-                            .header("PRINCIPAL-ID", principal.getId())
+                            .header(AuxiliaryHeader.PRINCIPAL_NAME.name, principal.getName())
+                            .header(AuxiliaryHeader.PRINCIPAL_ID.name, principal.getId())
                             .build();
                     return exchange;
                 })
