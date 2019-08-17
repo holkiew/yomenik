@@ -37,12 +37,12 @@ spring:
             - Path=/auth/{segment}
           filters:
             - SetPath=/{segment}
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/user/{segment}
-          filters:
-            - SetPath=/{segment}
+      #        - id: user-service
+      #          uri: lb://user-service
+      #          predicates:
+      #            - Path=/user/{segment}
+      #          filters:
+      #            - SetPath=/{segment}
       globalcors:
         corsConfigurations:
           '[/**]':
