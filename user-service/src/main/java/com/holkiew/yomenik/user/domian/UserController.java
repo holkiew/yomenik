@@ -25,9 +25,4 @@ public class UserController {
         return userService.saveNewUser(request);
     }
 
-    @GetMapping("/dupa")
-    public Mono<String> getUserByUsernameOrId() {
-        return Mono.just("dupa");
-    }
-
 }
