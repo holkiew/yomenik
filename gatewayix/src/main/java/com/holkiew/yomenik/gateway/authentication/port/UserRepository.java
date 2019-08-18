@@ -9,7 +9,6 @@ public interface UserRepository {
 
     Mono<User> findByUsername(String username);
     Mono<Boolean> existsByUsername(String username);
-
     Mono<User> save(User user);
 
 }

@@ -1,8 +1,10 @@
 package com.holkiew.yomenik.battlesim.simulator;
 
+import com.holkiew.yomenik.battlesim.configuration.cloud.model.Principal;
 import com.holkiew.yomenik.battlesim.simulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.simulator.entity.BattleHistory;
 import com.holkiew.yomenik.battlesim.simulator.model.BattleRecap;
+import com.holkiew.yomenik.battlesim.simulator.model.exception.HistoryAlreadyIssuedException;
 import com.holkiew.yomenik.battlesim.simulator.port.BattleHistoryRepository;
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.Army;
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.BattleStage;
@@ -10,14 +12,12 @@ import com.holkiew.yomenik.battlesim.simulator.ship.battle.BattleStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 import reactor.util.function.Tuples;
 
-import java.rmi.activation.UnknownObjectException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -39,24 +39,24 @@ public class BattleService {
         return repository.findFirstByIsIssuedTrue(pageable);
     }
 
-    public Mono<BattleHistory> newBattle(NewBattleRequest request, ServerHttpRequest serverRequest) {
+    public Mono<BattleHistory> newBattle(NewBattleRequest request, Principal principal) {
         var army1 = Army.of(request.getArmy1());
         var army2 = Army.of(request.getArmy2());
-        return resolveBattle(army1, army2, request.getStageDelay(), getPrincipalId(serverRequest).orElseThrow());
+        return resolveBattle(army1, army2, request.getStageDelay(), principal.getId());
     }
 
-    public Mono<BattleHistory> getCurrentBattle(ServerHttpRequest serverRequest) {
-        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(getPrincipalId(serverRequest).orElseThrow())
+    public Mono<BattleHistory> getCurrentBattle(Principal principal) {
+        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId())
                 .handle(updateIssuedBattles())
-                .retry(UnknownObjectException.class::isInstance)
+                .retry(HistoryAlreadyIssuedException.class::isInstance)
                 .cast(BattleHistory.class)
                 .flatMap(repository::save)
                 .map(filterOutFutureResults());
 
     }
 
-    public Mono<BattleHistory> cancelCurrentBattle(ServerHttpRequest serverRequest) {
-        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(getPrincipalId(serverRequest).orElseThrow())
+    public Mono<BattleHistory> cancelCurrentBattle(Principal principal) {
+        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId())
                 .flatMap(battleHistory -> getFirstNotIssuedStage(battleHistory)
                         .map(entry -> Mono.just(Tuples.of(battleHistory, entry)))
                         .orElse(Mono.empty()))
@@ -110,10 +110,9 @@ public class BattleService {
             var isIssued = battleHistory.getEndDate().isBefore(currentTime.minusSeconds(battleHistory.getStageDelay()));
             battleHistory.setIsIssued(isIssued);
             if (isIssued) {
-                // TODO customowy ex
                 // TODO przegrzmocic metode, wywalic handle, nie powinno sie zagniezdzac publisherow
                 repository.save(battleHistory).subscribe();
-                synchronousSink.error(new UnknownObjectException("Object has been issued"));
+                synchronousSink.error(new HistoryAlreadyIssuedException("Object has been issued"));
             } else {
                 // TODO to tez juz nie ma sensu, jest getter dynamicznie robiajacy obczajke
                 battleHistory.getBattleRecapMap().values().stream()
@@ -138,8 +137,5 @@ public class BattleService {
         };
     }
 
-    protected Optional<String> getPrincipalId(ServerHttpRequest request) {
-        return Optional.ofNullable(request.getHeaders().getFirst("PRINCIPAL-ID"));
-    }
 
 }

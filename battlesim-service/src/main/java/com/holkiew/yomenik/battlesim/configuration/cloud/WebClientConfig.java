@@ -4,9 +4,10 @@ import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchan
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
+import springfox.documentation.spring.web.WebFluxObjectMapperConfigurer;
 
 @Configuration
-public class WebClientConfig {
+public class WebClientConfig extends WebFluxObjectMapperConfigurer {
 
     @Bean
     WebClient webClient(LoadBalancerExchangeFilterFunction lbFilter) {

@@ -8,9 +8,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
 import spock.lang.Specification
 
-//@RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = GatewayApplication.class)
-//@WebFluxTest
 @ContextConfiguration(classes = GatewayApplication.class)
 @WebAppConfiguration
 @WebFluxTest
@@ -22,14 +19,9 @@ class UserRepositoryAdapterTest extends Specification {
     @Autowired
     UserRepositoryAdapter testedObj
 
-    def jakisTest() {
-        given:
-            def s1 = ""
-        when:
-            def s = ""
-        then:
+    def springContextTest() {
+        expect:
             context != null
             testedObj != null
-            testedObj.findByUsername("user").log().subscribe()
     }
 }

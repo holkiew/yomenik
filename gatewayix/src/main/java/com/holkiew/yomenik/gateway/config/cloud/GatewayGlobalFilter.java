@@ -1,6 +1,7 @@
 package com.holkiew.yomenik.gateway.config.cloud;
 
 import com.holkiew.yomenik.gateway.authentication.model.LocalPrincipal;
+import com.holkiew.yomenik.gateway.config.cloud.model.AuxiliaryHeader;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
