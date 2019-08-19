@@ -15,7 +15,7 @@ public class NewUserRequest {
     @NonNull
     private String password;
     @NonNull
-    private String enabled;
+    private Boolean enabled;
     @NotEmpty
     private List<Role> roles;
 }

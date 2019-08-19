@@ -27,21 +27,21 @@ public class AuthenticationService {
         return userRepository.findByUsername(request.getUsername())
                 .filter(user -> passwordEncoder.encode(request.getPassword()).equals(user.getPassword()))
                 .map(jwtUtils::generateToken)
-                .switchIfEmpty(Mono.error(new Exception("Wrong username or password")));
+                .switchIfEmpty(Mono.error(new RuntimeException("Wrong username or password")));
     }
 
-    public Mono<User> registerNewUser(RegisterRequest request) {
-        return userRepository.findByUsername(request.getUsername())
-                .map(user -> Mono.error(new Exception("User already exists")))
-                .defaultIfEmpty(Mono.just(User.builder()
+    public Mono<String> registerNewUser(RegisterRequest request) {
+        return userRepository.save(
+                User.builder()
                         .username(request.getUsername())
                         .password(passwordEncoder.encode(request.getPassword()))
                         .roles(Collections.singletonList(Role.ROLE_USER))
                         .enabled(true)
-                        .build()
-                ))
-                .cast(User.class)
-                .flatMap(userRepository::save);
+                        .build())
+                .map(jwtUtils::generateToken)
+                .switchIfEmpty(Mono.error(new RuntimeException("User already exists")));
+
+
     }
 
 }

@@ -2,12 +2,12 @@ package com.holkiew.yomenik.gateway.authentication.dto.service;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Data
 public class RegisterRequest {
-    @NotNull
+    @Size(min = 3, max = 12)
     private String username;
-    @NotNull
+    @Size(min = 3, max = 12)
     private String password;
 }

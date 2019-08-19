@@ -20,8 +20,8 @@ public class UserController {
         return userService.getUserByUsernameOrId(id, username);
     }
 
-    @PutMapping("/user")
-    public Mono<User> saveNewUser(@RequestBody @Valid NewUserRequest request) {
+    @PostMapping("/user")
+    public Object saveNewUser(@RequestBody @Valid NewUserRequest request) {
         return userService.saveNewUser(request);
     }
 

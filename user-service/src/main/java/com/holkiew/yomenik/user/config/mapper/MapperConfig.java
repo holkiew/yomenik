@@ -19,7 +19,9 @@ public class MapperConfig {
     }
 
     private void newUserRequestMapping(ModelMapper modelMapper) {
+        //TODO te mappingi nie dzialaja i co wiecej psuuja domyslne dzialanie, zawsze rzucajac nulla
         var typeMap = modelMapper.createTypeMap(NewUserRequest.class, User.class);
         typeMap.addMapping(NewUserRequest::getId, (destination, value) -> destination.setId(Objects.nonNull(value) ? value.toString() : User.createUniqueId()));
+        typeMap.addMappings(mapper -> mapper.when(Objects::isNull).map(NewUserRequest::getId, (destination, value) -> destination.setId(User.createUniqueId())));
     }
 }

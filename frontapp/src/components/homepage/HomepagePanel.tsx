@@ -4,9 +4,10 @@ import * as env from "../../config.json";
 import {fromEvent, Observable} from 'rxjs';
 import {Button, Card, CardBody, CardHeader, CardText, CardTitle, Col, Container, Fade, Label, Row} from 'reactstrap';
 import Axios from "axios-observable";
+// import InputRange from 'react-input-range';
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
-import {getRequestHeaderToken, removeToken} from "security/TokenUtil";
+import {getRequestHeaderToken} from "security/TokenUtil";
 import ShipForm from "./ShipForm";
 import "./homepagepanel.css"
 
@@ -18,12 +19,14 @@ interface BattleHistoryDTO {
     startDate: Date,
     endDate: Date,
     isIssued: boolean
+    sliderValue: number
 }
 
 export default class HomepagePanel extends React.Component<RouteComponentProps, any> {
     public readonly state = {
         battleText: "",
-        currentBattleVisible: false
+        currentBattleVisible: false,
+        sliderValue: 5
     };
 
     private shipForm1: React.RefObject<any> = React.createRef();
@@ -40,7 +43,7 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                     currentBattleVisible: text !== ""
                 })
                 }, error => {
-                    console.info(error)
+                console.info(JSON.stringify(error))
                 }
             );
     }
@@ -62,19 +65,22 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                 <Row className="justify-content-md-center">
                     <Button onClick={this.postNewBattle} style={{marginBottom: "1rem"}}>New battle</Button>
                 </Row>
-                <Row className="justify-content-md-center">
-                    <Button onClick={this.logout} style={{marginBottom: "1rem"}}>Logout</Button>
-                </Row>
-                <Row className="justify-content-md-center">
-                    <Button onClick={this.dupa} style={{marginBottom: "1rem"}}>dupa</Button>
-                </Row>
+                {/*<Row>*/}
+                {/*    <InputRange*/}
+                {/*        maxValue={20}*/}
+                {/*        minValue={3}*/}
+                {/*        value={this.state.sliderValue}*/}
+                {/*        formatLabel={value => `${value}sec`}*/}
+                {/*        onChange={value => this.setState({ sliderValue: value })}*/}
+                {/*    />*/}
+                {/*</Row>*/}
                 <Row>
                     <Fade in={this.state.currentBattleVisible}>
                         <Card>
                             <CardBody>
                                 <CardTitle>Current battle</CardTitle>
                                 <CardHeader><Button onClick={this.cancelBattleRequest}
-                                                    style={{marginBottom: "1rem"}}>dupa</Button></CardHeader>
+                                                    style={{marginBottom: "1rem"}}>cancel battle</Button></CardHeader>
                                 <CardText style={{whiteSpace: "pre-wrap"}}>{this.state.battleText}</CardText>
                             </CardBody>
                         </Card>
@@ -111,11 +117,6 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
             data).subscribe(value => console.info(value));
     };
 
-    private dupa = () => {
-        Axios.get(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/dupa`)
-            .subscribe(value => console.info(value));
-    };
-
     private cancelBattleRequest = () => {
         Axios.delete(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/currentBattle`)
             .subscribe(value => console.info(value));
@@ -133,11 +134,6 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
             };
         });
     };
-
-    private logout = () => {
-        removeToken();
-        this.props.history.push("/");
-    }
 }
 
 

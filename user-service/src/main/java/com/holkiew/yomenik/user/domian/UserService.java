@@ -14,8 +14,8 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
     private final ModelMapper mapper;
+
 
     public Mono<User> getUserByUsernameOrId(String id, String username) {
         if (Objects.nonNull(id)) {
@@ -23,12 +23,13 @@ public class UserService {
         } else if (Objects.nonNull(username)) {
             return userRepository.findByUsername(username);
         } else {
-            return Mono.error(new Exception("User not found"));
+            return Mono.error(new RuntimeException("User not found"));
         }
     }
 
     public Mono<User> saveNewUser(NewUserRequest request) {
         User user = mapper.map(request, User.class);
+        user.setId(Objects.nonNull(user.getId()) ? user.getId() : User.createUniqueId());
         return userRepository.save(user);
     }
 }

@@ -11,3 +11,28 @@
     opacity: 0;
     transition: visibility 0s 3s, opacity 3s linear;
 }
+
+.btn-primary:focus {
+    background: black !important;
+    border: none !important;
+    -webkit-box-shadow: none !important;;
+    box-shadow: none !important;;
+}
+
+.btn-primary {
+    background: black !important;
+    border: none !important;
+}
+
+.btn-primary.active {
+    background: #c3a50a !important;
+    border: none !important;
+}
+
+.flex-container {
+    display: flex;
+    height: 60vh;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+

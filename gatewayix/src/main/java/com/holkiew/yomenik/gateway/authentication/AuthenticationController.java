@@ -24,17 +24,18 @@ public class AuthenticationController {
     private final AuthenticationService authService;
 
     @PostMapping("/login")
-    public Mono<ResponseEntity<?>> login(@RequestBody AuthRequest request) {
+    public Mono<ResponseEntity<AuthResponse>> login(@RequestBody AuthRequest request) {
         return authService.login(request)
-                .doOnError(throwable -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build())
-                .map(token -> ResponseEntity.ok(new AuthResponse(token)));
+                .map(token -> ResponseEntity.ok(new AuthResponse(token)))
+                .onErrorReturn(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+
     }
 
     @PostMapping("/register")
-    public Mono<ResponseEntity<?>> registerNewUser(@RequestBody @Valid RegisterRequest request) {
+    public Mono<ResponseEntity<AuthResponse>> registerNewUser(@RequestBody @Valid RegisterRequest request) {
         return authService.registerNewUser(request)
-                .doOnError(throwable -> ResponseEntity.badRequest().build())
-                .map(user -> ResponseEntity.ok().build());
+                .map(token -> ResponseEntity.ok(new AuthResponse(token)))
+                .onErrorReturn(ResponseEntity.badRequest().build());
     }
 
 }
