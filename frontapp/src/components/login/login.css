@@ -6,6 +6,12 @@
     background-color: #DDD;
 }
 
+.black-canvas {
+    background-color: black;
+    /*height: 100%;*/
+    min-height: 100vh;
+}
+
 .errorAlert {
     visibility: hidden;
     opacity: 0;

@@ -14,7 +14,7 @@ export default class Header extends React.Component<any, any> {
     public render() {
         if (isTokenStored()) {
             return (
-                <Nav className="navbar navbar-expand-sm navbar-dark bg-dark">
+                <Nav className="navbar navbar-expand-sm" style={{background: "none"}}>
                     <NavbarBrand>
                         <a href="https://github.com/holkiew">github.com/holkiew</a>
                     </NavbarBrand>

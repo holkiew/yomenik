@@ -8,14 +8,13 @@ import Header from "./common/Header";
 
 const Routes = () =>
     <BrowserRouter>
-        <div>
+        <div className="background-container">
             <Header/>
             <Switch>
                 <Route exact path="/" component={Login}/>
                 <Route path="/login" component={Login}/>
                 <SecureRoute path="/panel" component={HomePanel}/>
             </Switch>
-
         </div>
     </BrowserRouter>;
 

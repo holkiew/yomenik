@@ -2,9 +2,23 @@ import * as React from 'react';
 import {RouteComponentProps} from 'react-router-dom'
 import * as env from "../../config.json";
 import {fromEvent, Observable} from 'rxjs';
-import {Button, Card, CardBody, CardHeader, CardText, CardTitle, Col, Container, Fade, Label, Row} from 'reactstrap';
+import {
+    Button,
+    Card,
+    CardBody,
+    CardHeader,
+    CardText,
+    CardTitle,
+    Col,
+    Container,
+    Fade,
+    FormFeedback,
+    Input,
+    InputGroup,
+    Label,
+    Row
+} from 'reactstrap';
 import Axios from "axios-observable";
-// import InputRange from 'react-input-range';
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
 import {getRequestHeaderToken} from "security/TokenUtil";
@@ -18,21 +32,23 @@ interface BattleHistoryDTO {
     },
     startDate: Date,
     endDate: Date,
-    isIssued: boolean
-    sliderValue: number
+    isIssued: boolean,
+    stageIssueTime: number
 }
 
 export default class HomepagePanel extends React.Component<RouteComponentProps, any> {
     public readonly state = {
         battleText: "",
         currentBattleVisible: false,
-        sliderValue: 5
+        stageIssueTime: 5
     };
 
     private shipForm1: React.RefObject<any> = React.createRef();
     private shipForm2: React.RefObject<any> = React.createRef();
+    private stageIssueTimeRef: React.RefObject<any> = React.createRef();
 
     public componentDidMount(): void {
+        this.stageIssueTimeRef.current.value = this.state.stageIssueTime;
         this.getCurrentBattleRequest()
             .subscribe(value => {
                 const dto: BattleHistoryDTO = JSON.parse(value.data);
@@ -50,6 +66,7 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
 
     public render() {
         return (
+
             <Container>
                 <Row className="justify-content-md-center">
                     <Col className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={{border: "1px solid #d8d8d8"}}>
@@ -65,15 +82,14 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                 <Row className="justify-content-md-center">
                     <Button onClick={this.postNewBattle} style={{marginBottom: "1rem"}}>New battle</Button>
                 </Row>
-                {/*<Row>*/}
-                {/*    <InputRange*/}
-                {/*        maxValue={20}*/}
-                {/*        minValue={3}*/}
-                {/*        value={this.state.sliderValue}*/}
-                {/*        formatLabel={value => `${value}sec`}*/}
-                {/*        onChange={value => this.setState({ sliderValue: value })}*/}
-                {/*    />*/}
-                {/*</Row>*/}
+                <Row>
+                    <InputGroup size="sm">
+                        <Label>Stage issue delay (sec) {"\u00a0"}</Label>
+                        <Input type="number" innerRef={this.stageIssueTimeRef} invalid={!this.isIssueTimeValid()}
+                               onChange={e => this.setState({stageIssueTime: e.target.value})}/>
+                        <FormFeedback>From 3 to 60 seconds</FormFeedback>
+                    </InputGroup>
+                </Row>
                 <Row>
                     <Fade in={this.state.currentBattleVisible}>
                         <Card>
@@ -107,15 +123,23 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
     }
 
     private postNewBattle = () => {
-        const data = {
-            army1: this.shipForm1.current.getData(),
-            army2: this.shipForm2.current.getData(),
-            stageDelay: 3
-        };
-        console.info(data)
-        Axios.post(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/newBattle`,
-            data).subscribe(value => console.info(value));
+        if (this.isIssueTimeValid()) {
+            const data = {
+                army1: this.shipForm1.current.getData(),
+                army2: this.shipForm2.current.getData(),
+                stageDelay: this.state.stageIssueTime
+            };
+            console.info(data)
+            Axios.post(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/newBattle`,
+                data).subscribe(value => console.info(value));
+        }
     };
+
+    private isIssueTimeValid(): boolean {
+        const stageDelayTime = this.state.stageIssueTime;
+        return stageDelayTime >= 3 && stageDelayTime <= 60;
+
+    }
 
     private cancelBattleRequest = () => {
         Axios.delete(`${env.backendServer.baseUrl}${env.backendServer.services.battlesim}/currentBattle`)

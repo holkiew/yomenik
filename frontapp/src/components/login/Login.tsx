@@ -38,7 +38,7 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
 
     public render() {
         return (
-            <div>
+            <div className="black-canvas">
                 <div className="flex-container">
                     <Container>
                         <Container className="col-xs-12 col-sm-12 col-lg-12">
