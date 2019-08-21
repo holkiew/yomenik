@@ -13,6 +13,8 @@ public interface BattleHistoryRepository extends ReactiveMongoRepository<BattleH
 
     Mono<BattleHistory> findFirstByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
 
-    Flux<BattleHistory> findFirstByIsIssuedTrue(Pageable pageable);
+    Flux<BattleHistory> findByUserIdAndIsIssuedTrue(String userId, Pageable pageable);
+
+    Mono<Long> countByUserIdAndIsIssuedTrue(String userId);
 
 }

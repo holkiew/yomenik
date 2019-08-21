@@ -1,14 +1,12 @@
 import * as React from 'react';
-import {Input, InputGroup, Label} from 'reactstrap';
+import {FormFeedback, Input, InputGroup, Label} from 'reactstrap';
 
 
 export default class ShipForm extends React.Component<any, any> {
-    private shipslvl1: React.RefObject<any> = React.createRef();
-    private shipslvl2: React.RefObject<any> = React.createRef();
-    private shipslvl3: React.RefObject<any> = React.createRef();
-
-    constructor(props: any) {
-        super(props);
+    public readonly state = {
+        shipslvl1: undefined,
+        shipslvl2: undefined,
+        shipslvl3: undefined
     }
 
     public render() {
@@ -16,21 +14,27 @@ export default class ShipForm extends React.Component<any, any> {
             <div>
                 <InputGroup size="sm">
                     <Label>Ship level 1 {"\u00a0"}</Label>
-                    <Input type="number" innerRef={this.shipslvl1}
-                        // onChange={(e) => this.setState({loginInput: e.target.value})}
+                    <Input type="number"
+                           invalid={!this.isInputValid(this.state.shipslvl1)}
+                           onChange={(e) => this.setState({shipslvl1: e.target.value})}
                     />
+                    <FormFeedback>max 1000</FormFeedback>
                 </InputGroup>
                 <InputGroup size="sm">
                     <Label>Ship level 2 {"\u00a0"}</Label>
-                    <Input type="number" innerRef={this.shipslvl2}
-                        // onChange={(e) => this.setState({loginInput: e.target.value})}
+                    <Input type="number"
+                           invalid={!this.isInputValid(this.state.shipslvl2)}
+                           onChange={(e) => this.setState({shipslvl2: e.target.value})}
                     />
+                    <FormFeedback>max 1000</FormFeedback>
                 </InputGroup>
                 <InputGroup size="sm">
                     <Label>Ship level 3 {"\u00a0"}</Label>
-                    <Input type="number" innerRef={this.shipslvl3}
-                        // onChange={(e) => this.setState({loginInput: e.target.value})}
+                    <Input type="number"
+                           invalid={!this.isInputValid(this.state.shipslvl3)}
+                           onChange={(e) => this.setState({shipslvl3: e.target.value})}
                     />
+                    <FormFeedback>max 1000</FormFeedback>
                 </InputGroup>
             </div>
         );
@@ -38,9 +42,18 @@ export default class ShipForm extends React.Component<any, any> {
 
     public getData: {} = () => {
         return {
-            shipsLevel1: this.shipslvl1.current.value,
-            shipsLevel2: this.shipslvl2.current.value,
-            shipsLevel3: this.shipslvl3.current.value
+            shipsLevel1: this.state.shipslvl1,
+            shipsLevel2: this.state.shipslvl2,
+            shipsLevel3: this.state.shipslvl3
+        }
+    };
+
+    private isInputValid = (value: any): boolean => {
+        if (value === undefined) {
+            return true
+        } else {
+            const val = Number(value);
+            return val >= 0 && val <= 1000
         }
     }
 }

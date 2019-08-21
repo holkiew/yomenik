@@ -13,12 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
+import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -35,8 +36,11 @@ public class BattleService {
 
     private final BattleHistoryRepository repository;
 
-    public Flux<BattleHistory> getBattleHistory(Pageable pageable) {
-        return repository.findFirstByIsIssuedTrue(pageable);
+    public Mono<Tuple2<List<BattleHistory>, Long>> getBattleHistory(Principal principal, Pageable pageable) {
+        // TODO Trzeba jednym customowym zapytaniem to zrobic
+        return repository.findByUserIdAndIsIssuedTrue(principal.getId(), pageable)
+                .collectList()
+                .zipWith(repository.countByUserIdAndIsIssuedTrue(principal.getId()));
     }
 
     public Mono<BattleHistory> newBattle(NewBattleRequest request, Principal principal) {

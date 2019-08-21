@@ -1,0 +1,47 @@
+.paginate {
+    padding-left: 0px;
+}
+
+.page-item {
+    color: whitesmoke;
+}
+
+.page-item:hover {
+    color: blanchedalmond;
+}
+
+.page-item > a {
+    color: whitesmoke;
+}
+
+.page-item:hover > a {
+    color: blanchedalmond;
+}
+
+.active-item {
+    font-size: 1.2rem;
+    color: gold !important;
+}
+
+.paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.paginate li {
+    display: inline-block;
+    padding-left: 3px;
+    padding-right: 3px;
+    cursor: pointer;
+}
+
+.paginate li.previous {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.paginate li.next {
+    padding-left: 15px;
+    padding-right: 15px;
+}
