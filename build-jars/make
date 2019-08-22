@@ -1,0 +1,12 @@
+#!/bin/sh
+java -jar cloudconfig.jar --spring.profiles.active=native
+sleep 5
+java -jar eurekson.jar
+sleep 5
+java -jar gatewayix.jar
+sleep 5
+java -jar user-service.jar
+sleep 5
+java -jar battlesim-service.jar
+sleep 5
+
