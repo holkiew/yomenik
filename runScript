@@ -1,13 +1,13 @@
 #!/bin/sh
 cd build-jars
-java -jar cloudconfig.jar --spring.profiles.active=native
+java -jar -Dspring.profiles.active=native cloudconfig.jar &
 sleep 5
-java -jar eurekson.jar
+java -jar eurekson.jar &
 sleep 5
-java -jar gatewayix.jar
+java -jar user-service.jar &
 sleep 5
-java -jar user-service.jar
+java -jar gatewayix.jar &
 sleep 5
-java -jar battlesim-service.jar
+java -jar battlesim-service.jar &
 sleep 5
 

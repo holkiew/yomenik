@@ -13,6 +13,10 @@
     <name>eurekson</name>
     <description>Service discovery server</description>
 
+    <properties>
+        <main.class>com.holkiew.yomenik.eurekson.DiscoveryApplication</main.class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

@@ -149,6 +149,7 @@
     <build>
         <plugins>
             <plugin>
+                <!--za duzo i za czesto buduje tych libow-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -179,6 +180,8 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>${main.class}</mainClass>
+                                <!--bug https://issues.apache.org/jira/browse/MJAR-156-->
+                            <useUniqueVersions>false</useUniqueVersions>
                         </manifest>
                     </archive>
                 </configuration>

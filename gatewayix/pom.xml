@@ -13,6 +13,10 @@
     <name>gatewayix</name>
     <description>Cloud gateway and auth server</description>
 
+    <properties>
+        <main.class>com.holkiew.yomenik.gateway.GatewayApplication</main.class>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

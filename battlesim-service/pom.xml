@@ -13,6 +13,10 @@
     <name>battlesim-service</name>
     <description>battle simulator</description>
 
+    <properties>
+        <main.class>com.holkiew.yomenik.battlesim.BattleSimulatorApplication</main.class>
+    </properties>
+
     <dependencies>
         <!--CORE-->
         <dependency>
