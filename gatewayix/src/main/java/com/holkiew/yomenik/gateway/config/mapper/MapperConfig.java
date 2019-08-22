@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class MapperConfig {
 
     @Bean
+    // TODO nie dziala zbyt dobrze, wolny + customowe mappingi zawsze zwracaja nulle
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }

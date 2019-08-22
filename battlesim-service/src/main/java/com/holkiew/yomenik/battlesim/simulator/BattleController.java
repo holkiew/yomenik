@@ -1,6 +1,6 @@
 package com.holkiew.yomenik.battlesim.simulator;
 
-import com.holkiew.yomenik.battlesim.configuration.cloud.model.Principal;
+import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.simulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.simulator.entity.BattleHistory;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.holkiew.yomenik.battlesim.simulator
 
+import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal
 import com.holkiew.yomenik.battlesim.simulator.entity.BattleHistory
 import com.holkiew.yomenik.battlesim.simulator.port.BattleHistoryRepository
 import com.holkiew.yomenik.battlesim.simulator.ship.battle.Army
@@ -18,9 +19,11 @@ class BattleServiceTest extends Specification {
 
     def repository = Mock(BattleHistoryRepository)
     BattleService testedObj
+    Principal principal
 
     def setup() {
         testedObj = Spy(new BattleService(this.repository))
+        principal = new Principal("id", "username")
     }
 
     def "Should cancel unissued battle"() {
@@ -30,17 +33,16 @@ class BattleServiceTest extends Specification {
             def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
             def battleStrategy = BattleStrategy.of(army1, army2)
             battleStrategy.battleStage = BattleStage.NEW
-            def battleHistory = new BattleHistory(battleStrategy, "id", LocalDateTime.now().minusSeconds(3), 3)
+            def battleHistory = new BattleHistory(battleStrategy, principal.getId(), LocalDateTime.now().minusSeconds(3), 3)
             battleStrategy.battleStage = BattleStage.ROUND_1
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(10))
             battleStrategy.battleStage = BattleStage.ROUND_2
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(11))
         and:
-            1 * testedObj.getPrincipalId(_) >> Optional.of("id")
-            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate("id") >> Mono.just(battleHistory)
+            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
             1 * repository.save(_ as BattleHistory) >> { BattleHistory bh -> Mono.just(bh) }
         when:
-            def publisher = testedObj.cancelCurrentBattle()
+            def publisher = testedObj.cancelCurrentBattle(principal)
         then: "first unissued should only remain and penalty round calculated"
             StepVerifier.create(publisher)
                     .expectSubscription()
@@ -58,17 +60,16 @@ class BattleServiceTest extends Specification {
             def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
             def battleStrategy = BattleStrategy.of(army1, army2)
             battleStrategy.battleStage = BattleStage.NEW
-            def battleHistory = new BattleHistory(battleStrategy, "id", LocalDateTime.now().minusSeconds(3), 3)
+            def battleHistory = new BattleHistory(battleStrategy, principal.getId(), LocalDateTime.now().minusSeconds(3), 3)
             battleStrategy.battleStage = BattleStage.ROUND_1
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().minusSeconds(3))
             battleStrategy.battleStage = BattleStage.END
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(3))
         and:
-            1 * testedObj.getPrincipalId(_) >> Optional.of("id")
-            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate("id") >> Mono.just(battleHistory)
+            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
             0 * repository.save(_)
         when:
-            def publisher = testedObj.cancelCurrentBattle()
+            def publisher = testedObj.cancelCurrentBattle(principal)
         then: "History should be filtered out"
             StepVerifier.create(publisher)
                     .expectSubscription()

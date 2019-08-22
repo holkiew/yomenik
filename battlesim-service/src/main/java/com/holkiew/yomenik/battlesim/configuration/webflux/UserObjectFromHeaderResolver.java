@@ -1,6 +1,6 @@
-package com.holkiew.yomenik.battlesim.configuration.cloud;
+package com.holkiew.yomenik.battlesim.configuration.webflux;
 
-import com.holkiew.yomenik.battlesim.configuration.cloud.model.Principal;
+import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.BindingContext;

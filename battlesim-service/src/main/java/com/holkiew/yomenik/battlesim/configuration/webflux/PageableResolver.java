@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.configuration.cloud;
+package com.holkiew.yomenik.battlesim.configuration.webflux;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;

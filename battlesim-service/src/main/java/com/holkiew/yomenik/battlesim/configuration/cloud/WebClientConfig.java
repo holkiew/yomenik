@@ -10,6 +10,8 @@ import springfox.documentation.spring.web.WebFluxObjectMapperConfigurer;
 public class WebClientConfig extends WebFluxObjectMapperConfigurer {
 
     @Bean
+        // TODO: nowa wersja clouda udostepnia reactiveLoadBalancer
+        // TODO: takie commonowe bzdury do jednego projektu i jako dependency wrzucic
     WebClient webClient(LoadBalancerExchangeFilterFunction lbFilter) {
         return WebClient.builder()
                 .filter(lbFilter)

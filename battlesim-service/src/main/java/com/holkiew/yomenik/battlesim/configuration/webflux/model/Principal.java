@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.configuration.cloud.model;
+package com.holkiew.yomenik.battlesim.configuration.webflux.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
