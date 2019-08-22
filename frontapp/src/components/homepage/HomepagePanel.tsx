@@ -77,7 +77,7 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
             <Container>
                 <Col className="col-xs-12">
                     <Row>
-                        <Col className="col-xs-12 col-sm-12 col-md-46 col-lg-6 text-center">
+                        <Col className="col-xs-12 col-sm-12 col-md-6 col-lg-6 text-center">
                             <Row className="justify-content-center">
                                 <Col className="col-xs-12 col-sm-6 col-md-6 col-lg-5">
                                     <Label>Army 1</Label>
@@ -138,9 +138,11 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
                                 )}
                             </Row>
                         </Col>
-                        <Col className="col-xs-12 col-sm-12 col-md-6 col-lg-6 text-center">
+                        <Col className="col-md-offset-2 col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <Row className="justify-content-center">
-                                <BattleHistoryPageableList/>
+                                <Col className="col-md-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8 text-center">
+                                    <BattleHistoryPageableList/>
+                                </Col>
                             </Row>
                         </Col>
                     </Row>

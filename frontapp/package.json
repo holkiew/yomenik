@@ -1,6 +1,6 @@
 {
-  "name": "ecma",
-  "version": "0.1.0",
+  "name": "yomenik",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@types/jwt-decode": "^2.2.1",
