@@ -10,4 +10,6 @@ java -jar gatewayix.jar &
 sleep 5
 java -jar battlesim-service.jar &
 sleep 5
-
+cd ../frontapp
+yarn build
+serve -s build &
