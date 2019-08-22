@@ -13,11 +13,13 @@
     <name>cloudconfig</name>
     <description>Cloud config server</description>
 
+    <properties>
+        <main.class>com.holkiew.yomenik.cloudconfig.ConfigApplication</main.class>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
-
     </dependencies>
 </project>

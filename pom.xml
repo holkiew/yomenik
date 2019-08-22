@@ -31,6 +31,7 @@
         <maven-compiler.version>3.8.1</maven-compiler.version>
         <spock.version>1.3-groovy-2.5</spock.version>
         <assertJ.version>3.13.2</assertJ.version>
+        <main.class>!!!override!!!</main.class>
     </properties>
 
     <dependencies>
@@ -154,6 +155,11 @@
                 <configuration>
                     <finalName>${artifactId}</finalName>
                     <outputDirectory>${project.parent.basedir}/build-jars</outputDirectory>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>

@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.gateway;
+package com.holkiew.yomenik.cloudconfig;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
