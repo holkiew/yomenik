@@ -1,6 +1,8 @@
 HELP.md
 target/
 build-jars
+!build/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -14,7 +16,6 @@ build-jars
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
 
 ### VS Code ###
 .vscode/
