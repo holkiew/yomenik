@@ -1,15 +1,15 @@
 #!/bin/sh
 sudo service mongod start &
 cd /home/ec2-user/repos/yomenik/build/backend
-java -jar -Dspring.profiles.active=native cloudconfig.jar &
+/usr/java/jdk-12.0.2/bin/java -jar -Dspring.profiles.active=native cloudconfig.jar &
 sleep 10
-java -jar eurekson.jar &
+/usr/java/jdk-12.0.2/bin/java -jar eurekson.jar &
 sleep 10
-java -jar user-service.jar &
+/usr/java/jdk-12.0.2/bin/java -jar user-service.jar &
 sleep 10
-java -jar gatewayix.jar &
+/usr/java/jdk-12.0.2/bin/java -jar gatewayix.jar &
 sleep 10
-java -jar battlesim-service.jar &
+/usr/java/jdk-12.0.2/bin/java -jar battlesim-service.jar &
 sleep 10
 cd ../frontend
 sudo serve -p 80 &
