@@ -1,7 +1,7 @@
 #!/bin/sh
 sudo service mongod start &
 cd /home/ec2-user/repos/yomenik/build/backend
-sudo java -jar -Dspring.profiles.active=native cloudconfig.jar &
+java -jar -Dspring.profiles.active=native cloudconfig.jar &
 sleep 10
 cd ../frontend
 sudo serve -p 80 &
