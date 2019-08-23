@@ -1,15 +1,15 @@
 #!/bin/sh
-cd build-jars
-java -jar -Dspring.profiles.active=native cloudconfig.jar &
+sudo service mongod start
+cd /home/ec2-user/repos/yomenik/build-jars
+sudo java -jar -Dspring.profiles.active=native cloudconfig.jar &
 sleep 5
-java -jar eurekson.jar &
+sudo java -jar eurekson.jar &
 sleep 5
-java -jar user-service.jar &
+sudo java -jar user-service.jar &
 sleep 5
-java -jar gatewayix.jar &
+sudo java -jar gatewayix.jar &
 sleep 5
-java -jar battlesim-service.jar &
+sudo java -jar battlesim-service.jar &
 sleep 5
 cd ../frontapp
-yarn build
-serve -s build &
+sudo serve -p 80 -s build &

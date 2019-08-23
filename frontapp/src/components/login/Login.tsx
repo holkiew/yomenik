@@ -4,7 +4,7 @@ import {Alert, Button, ButtonGroup, Container, Form, FormFeedback, FormGroup, In
 import {RouteComponentProps} from "react-router-dom";
 import Axios from "axios-observable";
 import {isTokenStored, removeToken, setToken} from "security/TokenUtil";
-import logo from '/static/yomenik.png';
+import logo from 'static/yomenik.png';
 import "./login.css";
 
 enum LOGIN_STATE {INITIAL, LOGIN_SUCCESSFUL, LOGIN_FAILED}
