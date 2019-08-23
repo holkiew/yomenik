@@ -1,0 +1,5 @@
+ps aux | grep ... <- menadzer zadan odpowiednik
+top -o %MEM <- sprawdzamy po pamieci co kto ile
+free -m <- pamiec
+crontab -l / -e <- lista, edycja crontaba (rozrozniamy po uzytkownikach)
+su root :))
