@@ -2,6 +2,7 @@ HELP.md
 target/
 build-jars
 !build/
+build/frontend/node_modules
 
 ### IntelliJ IDEA ###
 .idea

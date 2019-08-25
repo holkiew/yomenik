@@ -25,7 +25,9 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     public Mono<Boolean> existsByUsername(String username) {
-        return findByUsername(username).map(user -> true);
+        return findByUsername(username)
+                .map(user -> true)
+                .defaultIfEmpty(false);
     }
 
     public Mono<User> save(User user) {
