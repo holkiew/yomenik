@@ -11,4 +11,4 @@ sleep 20
 cd ../frontend
 sudo yarn install &
 sleep 30
-yarn start &
+sudo yarn start &
