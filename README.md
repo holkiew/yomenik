@@ -1,6 +1,6 @@
 # Yomenik
 
-Online Mon-Fri 9:00-15:00: [AWS-LINK]
+Online Mon-Fri 9:00-15:00: ec2-52-56-215-176.eu-west-2.compute.amazonaws.com or 52.56.215.176
 ## Stack
  - Webflux, Cloud (Eureka, Config, Gateway), Reactive Data mongodb (Java 12 w/o Switch expr. )
  - Mongodb 
