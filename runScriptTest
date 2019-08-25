@@ -4,6 +4,6 @@ cd /home/ec2-user/repos/yomenik/build/backend
 /usr/java/jdk-12.0.2/bin/java -jar -Dspring.profiles.active=native cloudconfig.jar &
 sleep 10
 cd ../frontend
-yarn install &
+sudo yarn install &
 sleep 30
 yarn start &
