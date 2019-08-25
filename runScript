@@ -9,5 +9,6 @@ sleep 20
 /usr/java/jdk-12.0.2/bin/java -jar gatewayix.jar &
 /usr/java/jdk-12.0.2/bin/java -jar battlesim-service.jar &
 cd ../frontend
-yarn install
+yarn install &
+sleep 30
 yarn start &
