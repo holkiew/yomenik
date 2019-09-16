@@ -17,4 +17,6 @@ public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
     protected String getDatabaseName() {
         return "test";
     }
+
+
 }

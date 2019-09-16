@@ -13,4 +13,4 @@ app.get('/*', function (req, res) {
 const port = 80;
 app.listen(port);
 
-console.info(`Server listening at port ${port}`)
+console.info(`Server listening on port ${port}`)
