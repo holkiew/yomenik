@@ -23,11 +23,11 @@ public class UserObjectFromHeaderResolver implements HandlerMethodArgumentResolv
         return Mono.just(exchange.getRequest().getHeaders())
                 .map(httpHeaders -> {
                     var id = httpHeaders.getFirst("PRINCIPAL-ID");
-                    var username = httpHeaders.getFirst("PRINCIPAL-NAME");
-                    if (Objects.isNull(id) || Objects.isNull(username)) {
+//                    var username = httpHeaders.getFirst("PRINCIPAL-NAME");
+                    if (Objects.isNull(id)) {
                         return Mono.error(new UserHeaderResolverException());
                     }
-                    return new Principal(id, username);
+                    return new Principal(id);
                 });
     }
 

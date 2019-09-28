@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Mine extends Building {
-    private int baseIncome;
+public class IronMine extends Building {
+    public final static int BASE_INCOME = 3600;
+    public final static float PER_LEVEL_INCREASE = 1.05f;
 }

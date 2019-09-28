@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.galaxy.port;
+package com.holkiew.yomenik.battlesim.planet.port;
 
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;

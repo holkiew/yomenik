@@ -1,17 +1,21 @@
 package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
-import com.holkiew.yomenik.battlesim.galaxy.port.PlanetRepository;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
+import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
+import com.holkiew.yomenik.battlesim.planet.model.building.IronMine;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
+import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
+import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,14 +25,31 @@ public class PlanetService {
 
     private final PlanetRepository planetRepository;
 
+    public Mono<Resources> getPlanetResources(String planetId, Principal principal) {
+        return planetRepository.findByIdAndUserId(planetId, principal.getId())
+                .map(planet -> {
+                    // TODO::: base_income.. + other resources
+                    int incomePerHour = IronMine.BASE_INCOME;
+                    incomePerHour += planet.getBuildings().values().stream()
+                            .filter(building -> building.getBuildingType().equals(BuildingType.MINE))
+                            .mapToInt(building -> (int) (building.getLevel() * IronMine.PER_LEVEL_INCREASE * IronMine.BASE_INCOME))
+                            .sum();
+                    planet.getResources().getIron().updateAmountByIncome(incomePerHour);
+                    return planet;
+                })
+                .flatMap(planetRepository::save)
+                .map(Planet::getResources);
+    }
+
     public Mono<Planet> downgradeBuilding(DowngradeBuildingRequest request, Principal principal) {
         return planetRepository.findByIdAndUserId(request.getPlanetId(), principal.getId())
-                .map(planet -> downgradeBuilding(request, planet))
+                .flatMap(planet -> downgradeBuilding(request, planet))
                 .cast(Planet.class)
                 .flatMap(planetRepository::save);
     }
 
     public Mono<Planet> createOrUpgradeBuilding(NewBuildingRequest request, Principal principal) {
+        // TODO if building is resource type, then update resources to avoid surplus
         return planetRepository.findByIdAndUserId(request.getPlanetId(), principal.getId())
                 .map(planet -> createOrUpgradeBuilding(request, planet))
                 .doOnError(log::error)
@@ -40,7 +61,7 @@ public class PlanetService {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
         if (buildingOptional.isPresent()) {
             Object error = upgradeBuilding(request, buildingOptional.get());
-            if (error != null) return error;
+            if (Objects.nonNull(error)) return error;
         } else {
             buildBuilding(request, planet);
         }
@@ -48,7 +69,6 @@ public class PlanetService {
     }
 
     private void buildBuilding(NewBuildingRequest request, Planet planet) {
-        // TODO:: validator, if enough resources then level up
         var building = Building.builder()
                 .buildingType(request.getBuildingType())
                 .slot(request.getSlot())
@@ -66,7 +86,7 @@ public class PlanetService {
         return null;
     }
 
-    private Object downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
+    private Mono<Object> downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
         buildingOptional.ifPresent(building -> {
             // TODO: requirements, resources back?
@@ -77,7 +97,7 @@ public class PlanetService {
                 planet.getBuildings().remove(request.getSlot());
             }
         });
-        return buildingOptional.isPresent() ? planet : Mono.empty();
+        return buildingOptional.isPresent() ? Mono.just(planet) : Mono.empty();
     }
 
     private Optional<Building> getBuilding(Planet planet, int slot) {

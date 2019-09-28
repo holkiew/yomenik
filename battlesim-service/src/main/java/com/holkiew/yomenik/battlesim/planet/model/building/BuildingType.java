@@ -8,15 +8,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum BuildingType {
-    MINE("mine"),
-    CITY("city");
+    MINE("ironMine", IronMine.class),
+    CITY("city", City.class);
 
     private static final Map<String, BuildingType> ENUM_MAP;
 
     private String name;
+    private Class klass;
 
-    BuildingType(String name) {
+    BuildingType(String name, Class klass) {
         this.name = name;
+        this.klass = klass;
     }
 
     static {
