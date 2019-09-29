@@ -26,17 +26,9 @@ public class PlanetService {
     private final PlanetRepository planetRepository;
 
     public Mono<Resources> getPlanetResources(String planetId, Principal principal) {
+        // TODO::: base_income.. + other resources
         return planetRepository.findByIdAndUserId(planetId, principal.getId())
-                .map(planet -> {
-                    // TODO::: base_income.. + other resources
-                    int incomePerHour = IronMine.BASE_INCOME;
-                    incomePerHour += planet.getBuildings().values().stream()
-                            .filter(building -> building.getBuildingType().equals(BuildingType.MINE))
-                            .mapToInt(building -> (int) (building.getLevel() * IronMine.PER_LEVEL_INCREASE * IronMine.BASE_INCOME))
-                            .sum();
-                    planet.getResources().getIron().updateAmountByIncome(incomePerHour);
-                    return planet;
-                })
+                .map(this::updatePlanetResourcesByIncome)
                 .flatMap(planetRepository::save)
                 .map(Planet::getResources);
     }
@@ -57,6 +49,16 @@ public class PlanetService {
                 .flatMap(planetRepository::save);
     }
 
+    private Planet updatePlanetResourcesByIncome(Planet planet) {
+        int incomePerHour = IronMine.BASE_INCOME;
+        incomePerHour += planet.getBuildings().values().stream()
+                .filter(building -> building.getBuildingType().equals(BuildingType.MINE))
+                .mapToInt(building -> (int) (Math.pow(IronMine.PER_LEVEL_INCREASE, building.getLevel()) * IronMine.BASE_INCOME))
+                .sum();
+        planet.getResources().getIron().updateAmountByIncome(incomePerHour);
+        return planet;
+    }
+
     private Object createOrUpgradeBuilding(NewBuildingRequest request, Planet planet) {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
         if (buildingOptional.isPresent()) {
@@ -66,6 +68,20 @@ public class PlanetService {
             buildBuilding(request, planet);
         }
         return planet;
+    }
+
+    private Mono<Object> downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
+        Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
+        buildingOptional.ifPresent(building -> {
+            // TODO: requirements, resources back?
+            int level = building.getLevel();
+            if (level > 1) {
+                building.setLevel(level - 1);
+            } else {
+                planet.getBuildings().remove(request.getSlot());
+            }
+        });
+        return buildingOptional.isPresent() ? Mono.just(planet) : Mono.empty();
     }
 
     private void buildBuilding(NewBuildingRequest request, Planet planet) {
@@ -84,20 +100,6 @@ public class PlanetService {
             return Mono.error(new RuntimeException("Wrong building type, POTENTIAL FLAW"));
         }
         return null;
-    }
-
-    private Mono<Object> downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
-        Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
-        buildingOptional.ifPresent(building -> {
-            // TODO: requirements, resources back?
-            int level = building.getLevel();
-            if (level > 1) {
-                building.setLevel(level - 1);
-            } else {
-                planet.getBuildings().remove(request.getSlot());
-            }
-        });
-        return buildingOptional.isPresent() ? Mono.just(planet) : Mono.empty();
     }
 
     private Optional<Building> getBuilding(Planet planet, int slot) {
