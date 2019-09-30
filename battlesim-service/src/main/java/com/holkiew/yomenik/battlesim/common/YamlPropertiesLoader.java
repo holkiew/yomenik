@@ -22,7 +22,6 @@ public class YamlPropertiesLoader {
     static {
         String yamlConfigDir = "config_values/";
         var loadedYamls = getLoadedYamls(yamlConfigDir);
-        loadedYamls = Optional.empty();
         LOADED_YAMLS = Collections.unmodifiableMap(loadedYamls.orElseThrow(() -> new NullPointerException("YAML files not loaded")));
         log.info("YAMLs loaded");
     }
