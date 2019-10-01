@@ -17,6 +17,11 @@ public abstract class Resource {
         this.lastIncomeAddition = LocalDateTime.now();
     }
 
+    public Resource(long amount, LocalDateTime lastIncomeAddition) {
+        this.amount = amount;
+        this.lastIncomeAddition = lastIncomeAddition;
+    }
+
     public void updateAmountByIncome(long incomePerHour) {
         LocalDateTime now = LocalDateTime.now();
         long between = ChronoUnit.MILLIS.between(lastIncomeAddition, now);
@@ -25,7 +30,11 @@ public abstract class Resource {
         this.amount += income;
     }
 
-    public void addResource(long amount) {
-        this.amount += amount;
+    public void add(Resource resource) {
+        this.amount += resource.getAmount();
+    }
+
+    public void subtract(Resource resource) {
+        this.amount -= resource.getAmount();
     }
 }

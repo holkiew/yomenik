@@ -1,6 +1,8 @@
 package com.holkiew.yomenik.battlesim.planet.model.building;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.holkiew.yomenik.battlesim.planet.entity.Building;
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,11 +16,12 @@ public enum BuildingType {
     private static final Map<String, BuildingType> ENUM_MAP;
 
     private String name;
-    private Class klass;
+    @Getter
+    private Class<? extends Building> tClass;
 
-    BuildingType(String name, Class klass) {
+    BuildingType(String name, Class<? extends Building> tClass) {
         this.name = name;
-        this.klass = klass;
+        this.tClass = tClass;
     }
 
     static {

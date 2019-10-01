@@ -5,6 +5,7 @@ import com.holkiew.yomenik.battlesim.planet.entity.Building;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
 import com.holkiew.yomenik.battlesim.planet.model.building.IronMine;
+import com.holkiew.yomenik.battlesim.planet.model.exception.NotEnoughResourcesException;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -26,7 +26,6 @@ public class PlanetService {
     private final PlanetRepository planetRepository;
 
     public Mono<Resources> getPlanetResources(String planetId, Principal principal) {
-        // TODO::: base_income.. + other resources
         return planetRepository.findByIdAndUserId(planetId, principal.getId())
                 .map(this::updatePlanetResourcesByIncome)
                 .flatMap(planetRepository::save)
@@ -35,14 +34,15 @@ public class PlanetService {
 
     public Mono<Planet> downgradeBuilding(DowngradeBuildingRequest request, Principal principal) {
         return planetRepository.findByIdAndUserId(request.getPlanetId(), principal.getId())
+                .map(this::updatePlanetResourcesByIncome)
                 .flatMap(planet -> downgradeBuilding(request, planet))
                 .cast(Planet.class)
                 .flatMap(planetRepository::save);
     }
 
     public Mono<Planet> createOrUpgradeBuilding(NewBuildingRequest request, Principal principal) {
-        // TODO if building is resource type, then update resources to avoid surplus
         return planetRepository.findByIdAndUserId(request.getPlanetId(), principal.getId())
+                .map(this::updatePlanetResourcesByIncome)
                 .map(planet -> createOrUpgradeBuilding(request, planet))
                 .doOnError(log::error)
                 .cast(Planet.class)
@@ -53,7 +53,7 @@ public class PlanetService {
         int incomePerHour = IronMine.BASE_INCOME;
         incomePerHour += planet.getBuildings().values().stream()
                 .filter(building -> building.getBuildingType().equals(BuildingType.MINE))
-                .mapToInt(building -> (int) (Math.pow(IronMine.PER_LEVEL_INCREASE, building.getLevel()) * IronMine.BASE_INCOME))
+                .mapToLong(building -> (long) (Math.pow(IronMine.BASE_INCOME_PER_LEVEL_INCREASE, building.getLevel()) * IronMine.BASE_INCOME))
                 .sum();
         planet.getResources().getIron().updateAmountByIncome(incomePerHour);
         return planet;
@@ -61,11 +61,14 @@ public class PlanetService {
 
     private Object createOrUpgradeBuilding(NewBuildingRequest request, Planet planet) {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
-        if (buildingOptional.isPresent()) {
-            Object error = upgradeBuilding(request, buildingOptional.get());
-            if (Objects.nonNull(error)) return error;
-        } else {
-            buildBuilding(request, planet);
+        try {
+            if (buildingOptional.isPresent()) {
+                upgradeBuilding(request, buildingOptional.get(), planet);
+            } else {
+                buildBuilding(request, planet);
+            }
+        } catch (NotEnoughResourcesException e) {
+            return Mono.error(e);
         }
         return planet;
     }
@@ -73,10 +76,12 @@ public class PlanetService {
     private Mono<Object> downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
         buildingOptional.ifPresent(building -> {
-            // TODO: requirements, resources back?
-            int level = building.getLevel();
-            if (level > 1) {
-                building.setLevel(level - 1);
+            int buildingLevel = building.getLevel();
+            Resources levelCost = building.getLevelCost(buildingLevel);
+            levelCost.divide(0.1);
+            planet.getResources().add(levelCost);
+            if (buildingLevel > 1) {
+                building.setLevel(buildingLevel - 1);
             } else {
                 planet.getBuildings().remove(request.getSlot());
             }
@@ -84,22 +89,35 @@ public class PlanetService {
         return buildingOptional.isPresent() ? Mono.just(planet) : Mono.empty();
     }
 
-    private void buildBuilding(NewBuildingRequest request, Planet planet) {
+    private void buildBuilding(NewBuildingRequest request, Planet planet) throws NotEnoughResourcesException {
+        int buildingNextLevel = 1;
         var building = Building.builder()
                 .buildingType(request.getBuildingType())
                 .slot(request.getSlot())
-                .level(1).build();
-        planet.getBuildings().put(request.getSlot(), building);
+                .level(buildingNextLevel).build();
+        Resources nextLevelCost = building.getLevelCost(buildingNextLevel);
+        if (planet.getResources().hasMoreOrEqual(nextLevelCost)) {
+            planet.getResources().subtract(nextLevelCost);
+            planet.getBuildings().put(request.getSlot(), building);
+        } else {
+            throw new NotEnoughResourcesException();
+        }
+
     }
 
-    private Object upgradeBuilding(NewBuildingRequest request, Building building) {
+    private void upgradeBuilding(NewBuildingRequest request, Building building, Planet planet) throws NotEnoughResourcesException {
         if (building.getBuildingType().equals(request.getBuildingType())) {
-            // TODO:: validator, if enough resources then level up
-            building.setLevel(building.getLevel() + 1);
+            int buildingNextLevel = building.getLevel() + 1;
+            Resources nextLevelCost = building.getLevelCost(buildingNextLevel);
+            if (planet.getResources().hasMoreOrEqual(nextLevelCost)) {
+                planet.getResources().subtract(nextLevelCost);
+                building.setLevel(buildingNextLevel);
+            } else {
+                throw new NotEnoughResourcesException();
+            }
         } else {
-            return Mono.error(new RuntimeException("Wrong building type, POTENTIAL FLAW"));
+            throw new RuntimeException("Wrong building type, POTENTIAL FLAW");
         }
-        return null;
     }
 
     private Optional<Building> getBuilding(Planet planet, int slot) {

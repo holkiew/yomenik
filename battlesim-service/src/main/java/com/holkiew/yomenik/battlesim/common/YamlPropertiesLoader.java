@@ -26,11 +26,21 @@ public class YamlPropertiesLoader {
         log.info("YAMLs loaded");
     }
 
-    public static <T> Optional<T> load(Class<T> toValueType) {
+    public static <T> T load(Class<T> toValueType) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, FAIL_ON_UNKNOWN_PROPERTIES);
         Map specificObjectMap = (Map) LOADED_YAMLS.get(toValueType.getSimpleName());
-        return Optional.ofNullable(mapper.convertValue(specificObjectMap, toValueType));
+        return mapper.convertValue(specificObjectMap, toValueType);
+    }
+
+    public static <T> T load(Map<Object, Object> specificObjectMap, Class<T> toValueType) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper.convertValue(specificObjectMap, toValueType);
+    }
+
+    public static <T> Map<Object, Object> getObjectMap(Class<T> toValueType) {
+        return (Map<Object, Object>) LOADED_YAMLS.get(toValueType.getSimpleName());
     }
 
     private static Optional<Map<String, Object>> getLoadedYamls(String yamlConfigDir) {

@@ -2,12 +2,12 @@ package com.holkiew.yomenik.battlesim.planet.model.resource;
 
 import java.time.LocalDateTime;
 
-public class Iron extends Resource {
-    public Iron(long amount) {
+public class Concrete extends Resource {
+    public Concrete(long amount) {
         super(amount);
     }
 
-    public Iron(long amount, LocalDateTime lastIncomeAddition) {
+    public Concrete(long amount, LocalDateTime lastIncomeAddition) {
         super(amount, lastIncomeAddition);
     }
 
