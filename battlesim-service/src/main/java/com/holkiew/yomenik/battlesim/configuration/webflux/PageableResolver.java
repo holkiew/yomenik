@@ -24,8 +24,8 @@ public class PageableResolver implements HandlerMethodArgumentResolver {
     public Mono<Object> resolveArgument(MethodParameter parameter, BindingContext bindingContext, ServerWebExchange exchange) {
         return Mono.just(exchange.getRequest().getQueryParams())
                 .map(queryParamsMap -> {
-                    int page = Integer.valueOf(Objects.requireNonNull(queryParamsMap.getFirst("page")));
-                    int size = Integer.valueOf(Objects.requireNonNull((queryParamsMap.getFirst("size"))));
+                    int page = Integer.parseInt(Objects.requireNonNull(queryParamsMap.getFirst("page")));
+                    int size = Integer.parseInt(Objects.requireNonNull((queryParamsMap.getFirst("size"))));
                     var sort = Optional.ofNullable(queryParamsMap.getFirst("sort"));
 
                     if (sort.isPresent()) {

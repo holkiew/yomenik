@@ -20,7 +20,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 @Log4j2
 @SuppressWarnings("unchecked")
-public abstract class MongoInsertsLoader<D, T extends ReactiveMongoRepository> {
+public abstract class MongoInsertsLoader<D, T extends ReactiveMongoRepository<D, ?>> {
 
     @Getter
     protected final T repository;
@@ -28,7 +28,6 @@ public abstract class MongoInsertsLoader<D, T extends ReactiveMongoRepository> {
     protected D[] data;
     @Setter
     protected Function<D, Mono<Boolean>> checkIfObjectAlreadyExistsFun;
-
 
     public Flux<D> getDataStream() {
         if (Objects.isNull(repository) || Objects.isNull(data) || Objects.isNull(checkIfObjectAlreadyExistsFun)) {
@@ -45,7 +44,7 @@ public abstract class MongoInsertsLoader<D, T extends ReactiveMongoRepository> {
     private Flux<D> injectData(Function<D, Mono<Boolean>> checkIfObjectAlreadyExistsFun, D... objects) {
         AtomicInteger retryCounter = new AtomicInteger(1);
         return Flux.just(objects)
-                .flatMap(usr -> Mono.just(Tuples.of(usr, checkIfObjectAlreadyExistsFun.apply(usr))))
+                .flatMap(obj -> Mono.just(Tuples.of(obj, checkIfObjectAlreadyExistsFun.apply(obj))))
                 .filterWhen(tuple -> BooleanUtils.not(tuple.getT2()))
                 .flatMap(tuple -> repository.save(tuple.getT1()))
                 .doOnNext(obj -> log.info("Saved object: " + obj))
