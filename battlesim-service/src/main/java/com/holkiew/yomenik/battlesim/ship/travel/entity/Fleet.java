@@ -1,17 +1,23 @@
-package com.holkiew.yomenik.battlesim.ship.travel.model;
+package com.holkiew.yomenik.battlesim.ship.travel.entity;
 
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import io.github.classgraph.json.Id;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @AllArgsConstructor
-@ToString
-@Getter
+@NoArgsConstructor
+@Data
+@Document
 public class Fleet {
+    @Id
+    private String id;
     private Map<ShipType, Long> ships;
     private boolean onRoute;
     private String planetIdFrom;
@@ -20,6 +26,7 @@ public class Fleet {
     private LocalDateTime arrivalTime;
 
     public Fleet(Map<ShipType, Long> ships) {
+        this.id = UUID.randomUUID().toString();
         this.ships = ships;
     }
 
@@ -32,9 +39,6 @@ public class Fleet {
     }
 
     public boolean isOnRoute() {
-        if (onRoute) {
-            onRoute = LocalDateTime.now().isAfter(arrivalTime);
-        }
-        return onRoute;
+        return LocalDateTime.now().isBefore(arrivalTime);
     }
 }

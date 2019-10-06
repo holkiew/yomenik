@@ -37,10 +37,12 @@ public class InitialInserts {
                     put(ShipType.SHIP_LEVEL3, 10L);
                 }})
                 .build();
-        Planet planet2 = new Planet("2", null, galaxy.getId(), Tuples.of(1, 2));
-        Planet planet3 = new Planet("3", "2", galaxy.getId(), Tuples.of(1, 3));
+        Planet planet2 = new Planet("2", "1", galaxy.getId(), Tuples.of(1, 2));
+//        Planet planet3 = new Planet("3", "3", galaxy.getId(), Tuples.of(1, 3));
 
-        planetInserts.setData(planet1, planet2, planet3);
+        planetInserts.setData(planet1, planet2
+                //, planet3
+        );
         galaxyInserts.setData(galaxy);
         planetInserts.getDataStream().log()
                 .flatMap(planet ->

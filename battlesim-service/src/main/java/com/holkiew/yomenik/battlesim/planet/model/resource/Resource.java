@@ -2,11 +2,13 @@ package com.holkiew.yomenik.battlesim.planet.model.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Data
+@NoArgsConstructor
 public abstract class Resource {
     private long amount;
     @JsonIgnore

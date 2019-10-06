@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
-import com.holkiew.yomenik.battlesim.ship.travel.model.Fleet;
+import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -18,7 +18,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
-public abstract class Building {
+public class Building {
     public static int BASE_INCOME;
     public static float BASE_INCOME_PER_LEVEL_INCREASE;
     public static Resources BASE_COST;

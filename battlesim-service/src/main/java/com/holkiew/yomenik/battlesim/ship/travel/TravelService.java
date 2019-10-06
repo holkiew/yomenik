@@ -5,7 +5,7 @@ import com.holkiew.yomenik.battlesim.planet.PlanetFacade;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
 import com.holkiew.yomenik.battlesim.ship.travel.dto.MoveShipRequest;
-import com.holkiew.yomenik.battlesim.ship.travel.model.Fleet;
+import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,10 +14,12 @@ import reactor.util.function.Tuple2;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,12 +31,22 @@ public class TravelService {
 
     public Mono<Boolean> moveShips(MoveShipRequest request, Principal principal) {
         return planetFacade.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
+                .map(this::updatePlanetResidingShips)
                 .filter(planetHasRequestedShips(request))
                 .zipWith(planetFacade.findById(request.getPlanetIdTo()))
-                .map(transferShipsBetweenPlanets(request))
+                .map(sendShipsOnRoute(request))
                 .flatMapMany(planetTuple -> planetFacade.saveAll(Flux.just(planetTuple.getT1(), planetTuple.getT2())))
                 .hasElements();
         // TODO return arrival time?
+    }
+
+    Planet updatePlanetResidingShips(Planet planet) {
+        List<Fleet> arrivedFleets = planet.getOnRouteFleets().stream()
+                .filter(fleet -> !fleet.isOnRoute() && fleet.getPlanetIdTo().equals(planet.getId()))
+                .peek((fleet) -> fleet.getShips().forEach((key, value) -> planet.getResidingFleet().merge(key, value, Long::sum)))
+                .collect(Collectors.toList());
+        planet.getOnRouteFleets().removeAll(arrivedFleets);
+        return planet;
     }
 
     private Predicate<Planet> planetHasRequestedShips(MoveShipRequest request) {
@@ -48,17 +60,14 @@ public class TravelService {
         };
     }
 
-    private Function<Tuple2<Planet, Planet>, Tuple2<Planet, Planet>> transferShipsBetweenPlanets(MoveShipRequest request) {
+    private Function<Tuple2<Planet, Planet>, Tuple2<Planet, Planet>> sendShipsOnRoute(MoveShipRequest request) {
         return planetsTuple -> {
             Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetsTuple).get();
             Planet planetFrom = planetsTuple.getT1();
             Planet planetTo = planetsTuple.getT2();
             planetFrom.getOnRouteFleets().add(fleetOnRoute);
             planetTo.getOnRouteFleets().add(fleetOnRoute);
-            fleetOnRoute.setRoute(planetFrom.getId(), planetTo.getId(), LocalDateTime.now().plusSeconds(travelTimeSeconds));
-            // TODO:: skanowanie tych flot za kazdym pobraniem danych o flocie
-            //residingFleetTo.put(requestedShip, residingFleetTo.getOrDefault(requestedShip, 0L) + requestedAmount);
-
+            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(travelTimeSeconds));
             return planetsTuple;
         };
     }
@@ -71,10 +80,10 @@ public class TravelService {
             Planet planetFrom = planetsTuple.getT1();
             var residingFleetFrom = planetFrom.getResidingFleet();
 
-            long departingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;
-            residingFleetFrom.put(requestedShipType, departingFleetAmount);
+            long remainingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;
+            residingFleetFrom.put(requestedShipType, remainingFleetAmount);
             HashMap<ShipType, Long> fleet = new HashMap<>();
-            fleet.put(requestedShipType, departingFleetAmount);
+            fleet.put(requestedShipType, requestedShipAmount);
             return fleet;
         }).reduce((map1, map2) -> {
             map1.putAll(map2);
