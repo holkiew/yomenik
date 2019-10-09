@@ -2,26 +2,57 @@ package com.holkiew.yomenik.battlesim.planet.model.building;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
+import com.holkiew.yomenik.battlesim.planet.entity.CityProperties;
+import com.holkiew.yomenik.battlesim.planet.entity.IronMineProperties;
+import com.holkiew.yomenik.battlesim.planet.entity.Properties;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum BuildingType {
-    MINE("ironMine", IronMine.class),
-    CITY("city", City.class);
+    IRON_MINE("IronMine", null, IronMineProperties.class),
+    CITY("City", null, CityProperties.class);
 
     private static final Map<String, BuildingType> ENUM_MAP;
-
     private String name;
-    @Getter
-    private Class<? extends Building> tClass;
+    @Getter(AccessLevel.PUBLIC)
+    private Properties properties;
+    private Class<? extends Properties> propertiesClass;
 
-    BuildingType(String name, Class<? extends Building> tClass) {
+    BuildingType(String name, Properties properties, Class<? extends Properties> propertiesClass) {
         this.name = name;
-        this.tClass = tClass;
+        this.properties = properties;
+        this.propertiesClass = propertiesClass;
+    }
+
+    @Component
+    @RequiredArgsConstructor
+    public static class PropertiesInjector {
+        private final Map<String, ? extends Properties> allProperties;
+
+        @PostConstruct
+        public void postConstruct() {
+            for (BuildingType bt : EnumSet.allOf(BuildingType.class)) {
+                bt.properties = this.getPropertiesByClass(allProperties, bt.propertiesClass);
+            }
+        }
+
+        private <T> T getPropertiesByClass(Map<String, ? extends T> properties, Class tClass){
+            char[] c = tClass.getSimpleName().toCharArray();
+            c[0] = Character.toLowerCase(c[0]);
+            var qualifier = new String(c);
+            return properties.get(qualifier);
+        }
     }
 
     static {

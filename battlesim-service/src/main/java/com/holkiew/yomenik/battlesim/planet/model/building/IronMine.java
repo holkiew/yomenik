@@ -8,8 +8,4 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class IronMine extends Building {
 
-    static {
-        loadCommonStaticVariables(IronMine.class);
-    }
-
 }

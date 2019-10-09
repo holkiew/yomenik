@@ -1,16 +1,20 @@
 package com.holkiew.yomenik.battlesim.planet.model.resource;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class Resources {
     private Iron iron;
 
     public boolean hasMoreOrEqual(Resources otherResources) {
         long otherIron = otherResources.getIron().getAmount();
         return this.iron.getAmount() > otherIron;
+    }
+
+    public Resources(Iron iron) {
+        this.iron = iron;
     }
 
     public void add(Resources otherResources) {

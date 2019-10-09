@@ -1,6 +1,0 @@
-IronMine:
-  baseIncome: 3600
-  increasePerLevel: 1.30
-  baseCost:
-    iron: 1000
-  baseCostIncreasePerLevel: 2.5

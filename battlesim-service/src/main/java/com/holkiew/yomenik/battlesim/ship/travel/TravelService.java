@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -29,14 +30,15 @@ public class TravelService {
     private final PlanetFacade planetFacade;
     private final static Long travelTimeSeconds = 15L;
 
-    public Mono<Boolean> moveShips(MoveShipRequest request, Principal principal) {
+    public Mono<LocalDateTime> moveShips(MoveShipRequest request, Principal principal) {
         return planetFacade.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
                 .map(this::updatePlanetResidingShips)
                 .filter(planetHasRequestedShips(request))
                 .zipWith(planetFacade.findById(request.getPlanetIdTo()))
                 .map(sendShipsOnRoute(request))
                 .flatMapMany(planetTuple -> planetFacade.saveAll(Flux.just(planetTuple.getT1(), planetTuple.getT2())))
-                .hasElements();
+                .then()
+
         // TODO return arrival time?
     }
 
@@ -68,6 +70,8 @@ public class TravelService {
             planetFrom.getOnRouteFleets().add(fleetOnRoute);
             planetTo.getOnRouteFleets().add(fleetOnRoute);
             fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(travelTimeSeconds));
+            .map(context -> context.put("fleet", fleetOnRoute));
+
             return planetsTuple;
         };
     }

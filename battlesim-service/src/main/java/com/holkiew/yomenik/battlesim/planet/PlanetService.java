@@ -2,9 +2,9 @@ package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
+import com.holkiew.yomenik.battlesim.planet.entity.IronMineProperties;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
-import com.holkiew.yomenik.battlesim.planet.model.building.IronMine;
 import com.holkiew.yomenik.battlesim.planet.model.exception.NotEnoughResourcesException;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,10 +51,11 @@ public class PlanetService {
     }
 
     private Planet updatePlanetResourcesByIncome(Planet planet) {
-        int incomePerHour = IronMine.BASE_INCOME;
-        incomePerHour += planet.getBuildings().values().stream()
-                .filter(building -> building.getBuildingType().equals(BuildingType.MINE))
-                .mapToLong(building -> (long) (Math.pow(IronMine.BASE_INCOME_PER_LEVEL_INCREASE, building.getLevel()) * IronMine.BASE_INCOME))
+        IronMineProperties properties = (IronMineProperties) BuildingType.IRON_MINE.getProperties();
+        int incomePerHour = properties.baseIncome;
+                incomePerHour += planet.getBuildings().values().stream()
+                .filter(building -> building.getBuildingType().equals(BuildingType.IRON_MINE))
+                .mapToLong(building -> (long) (Math.pow(properties.baseCostIncreasePerLevel, building.getLevel()) * properties.baseIncome))
                 .sum();
         planet.getResources().getIron().updateAmountByIncome(incomePerHour);
         return planet;
