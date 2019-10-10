@@ -12,4 +12,8 @@ public class MonoFluxUtils {
     public static <T> Function<Planet, Publisher<? extends Tuple2<Planet, T>>> combineFluxWithMono(T object) {
         return planet -> Mono.just(object).map(fleet -> Tuples.of(planet, fleet));
     }
+
+    public static <T> Function<Planet, Publisher<? extends Tuple2<Planet, T>>> combineFluxWithMono(Mono<T> mono) {
+        return planet -> mono.map(fleet -> Tuples.of(planet, fleet));
+    }
 }
