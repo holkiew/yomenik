@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +21,9 @@ public class TravelController {
     private final TravelService travelService;
 
     @PutMapping("/shiptravel")
-    public Mono<ResponseEntity<Object>> moveShips(@RequestBody @Valid MoveShipRequest request, Principal principal) {
+    public Mono<ResponseEntity<LocalDateTime>> moveShips(@RequestBody @Valid MoveShipRequest request, Principal principal) {
         return travelService.moveShips(request, principal)
-                .map(didMove -> didMove ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build())
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -35,11 +34,8 @@ public class TravelService {
                 .map(this::updatePlanetResidingShips)
                 .filter(planetHasRequestedShips(request))
                 .zipWith(planetFacade.findById(request.getPlanetIdTo()))
-                .map(sendShipsOnRoute(request))
-                .flatMapMany(planetTuple -> planetFacade.saveAll(Flux.just(planetTuple.getT1(), planetTuple.getT2())))
-                .then()
-
-        // TODO return arrival time?
+                .flatMap(sendShipsOnRoute(request))
+                .map(Fleet::getArrivalTime);
     }
 
     Planet updatePlanetResidingShips(Planet planet) {
@@ -62,7 +58,7 @@ public class TravelService {
         };
     }
 
-    private Function<Tuple2<Planet, Planet>, Tuple2<Planet, Planet>> sendShipsOnRoute(MoveShipRequest request) {
+    private Function<Tuple2<Planet, Planet>, Mono<Fleet>> sendShipsOnRoute(MoveShipRequest request) {
         return planetsTuple -> {
             Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetsTuple).get();
             Planet planetFrom = planetsTuple.getT1();
@@ -70,11 +66,12 @@ public class TravelService {
             planetFrom.getOnRouteFleets().add(fleetOnRoute);
             planetTo.getOnRouteFleets().add(fleetOnRoute);
             fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(travelTimeSeconds));
-            .map(context -> context.put("fleet", fleetOnRoute));
-
-            return planetsTuple;
+            return planetFacade.saveAll(Flux.just(planetFrom, planetTo))
+                    .next()
+                    .map(planet -> fleetOnRoute);
         };
     }
+
 
     private Optional<Fleet> subtractFleetFromFromPlanet(MoveShipRequest request, Tuple2<Planet, Planet> planetsTuple) {
         return request.getFleet().entrySet().stream().map((entry) -> {
