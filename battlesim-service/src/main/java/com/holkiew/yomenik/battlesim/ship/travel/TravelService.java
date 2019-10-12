@@ -6,17 +6,13 @@ import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
 import com.holkiew.yomenik.battlesim.ship.travel.dto.ExecuteTravelMissionRequest;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
-import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
-import reactor.util.function.Tuple3;
-import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -45,20 +41,6 @@ public class TravelService {
                 .map(Fleet::getArrivalTime);
     }
 
-
-    private Publisher<Tuple3<TravelMissonType, Fleet, Planet>> getPlanetOnRouteFleets(Planet planet) {
-        var fleetStream = planet.getOnRouteFleets().asMap().entrySet().stream().map(entry -> {
-            Flux<Fleet> allById = fleetRepository.findAllById(entry.getValue()).doOnError(log::error);
-            return Tuples.of(entry.getKey(), allById, planet);
-        });
-        return Flux.fromStream(fleetStream).flatMap(tuple -> tuple.getT2().map(fleet -> Tuples.of(tuple.getT1(), fleet, tuple.getT3())));
-    }
-
-    Planet updatePlanetResidingShips(Planet planet) {
-        log.error("unsupported, TravelMissionWorker's responsibility");
-        return planet;
-    }
-
     private Predicate<Planet> planetHasRequestedShips(ExecuteTravelMissionRequest request) {
         return planet -> {
             var requestedFleet = request.getFleet();
@@ -84,14 +66,11 @@ public class TravelService {
         };
     }
 
-
     private Optional<Fleet> subtractFleetFromFromPlanet(ExecuteTravelMissionRequest request, Planet planetFrom) {
         return request.getFleet().entrySet().stream().map((entry) -> {
             ShipType requestedShipType = entry.getKey();
             Long requestedShipAmount = entry.getValue();
-
             var residingFleetFrom = planetFrom.getResidingFleet();
-
             long remainingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;
             residingFleetFrom.put(requestedShipType, remainingFleetAmount);
             HashMap<ShipType, Long> fleet = new HashMap<>();
@@ -102,5 +81,4 @@ public class TravelService {
             return map1;
         }).map(Fleet::new);
     }
-
 }
