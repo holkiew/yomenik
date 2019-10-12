@@ -17,7 +17,7 @@ public class PlanetController {
 
     private final PlanetService planetService;
 
-    @PostMapping("/building")
+    @PutMapping("/building")
     public Mono<ResponseEntity<Object>> createOrUpgradeBuilding(@RequestBody @Valid NewBuildingRequest request, Principal principal) {
         return planetService.createOrUpgradeBuilding(request, principal)
                 .map(planet -> ResponseEntity.ok().build())

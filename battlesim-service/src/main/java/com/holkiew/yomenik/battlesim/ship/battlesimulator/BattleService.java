@@ -25,7 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.holkiew.yomenik.battlesim.ship.util.UtilMethods.toEnumMap;
+import static com.holkiew.yomenik.battlesim.common.util.EnumUtils.toEnumMap;
 
 
 @Service

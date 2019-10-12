@@ -1,11 +1,12 @@
 package com.holkiew.yomenik.battlesim.planet.entity;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
-import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
+import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,13 +17,12 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import reactor.util.function.Tuple2;
 
-import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
-@Document
 @AllArgsConstructor
+@Document
 @NoArgsConstructor
 @CompoundIndexes({
         @CompoundIndex(name = "galaxy_coordinates", unique = true, def = "{'galaxyId' : 1, 'coordinateX': 1, 'coordinateY': 1}")
@@ -42,8 +42,7 @@ public class Planet {
     @Builder.Default
     private Map<ShipType, Long> residingFleet = Maps.newHashMap();
     @Builder.Default
-    private List<Fleet> onRouteFleets = Lists.newArrayList();
-
+    private ListMultimap<TravelMissonType, String> onRouteFleets = ArrayListMultimap.create();
 
     public Planet(String id, String userId, int galaxyId, Tuple2<Integer, Integer> coordinates) {
         this.id = id;
@@ -54,7 +53,6 @@ public class Planet {
         this.resources = new Resources(new Iron(0));
         this.buildings = Maps.newHashMap();
         this.residingFleet = Maps.newHashMap();
-        this.onRouteFleets = Lists.newArrayList();
+        this.onRouteFleets = ArrayListMultimap.create();
     }
-
 }

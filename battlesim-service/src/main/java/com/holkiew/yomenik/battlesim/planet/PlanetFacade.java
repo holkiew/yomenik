@@ -23,4 +23,5 @@ public class PlanetFacade {
     public Flux<Planet> saveAll(Flux<Planet> planets) {
         return planetRepository.saveAll(planets);
     }
+
 }

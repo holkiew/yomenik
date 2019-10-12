@@ -1,0 +1,24 @@
+POST http://localhost:8080/shiptravel
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+{
+  "planetIdFrom": 1,
+  "planetIdTo": 2,
+  "fleet": {
+    "shipsLevel1": 5,
+    "shipsLevel3": 5
+  },
+  "missonType": "transfer"
+}
+
+<> 2019-10-06T060331.500.json
+<> 2019-10-06T060312.500.json
+<> 2019-10-06T054505.500.json
+<> 2019-10-06T053603.500.json
+<> 2019-10-06T053149.500.json
+
+###
+

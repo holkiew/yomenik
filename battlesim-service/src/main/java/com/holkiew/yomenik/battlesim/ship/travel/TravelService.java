@@ -4,50 +4,62 @@ import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.planet.PlanetFacade;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
-import com.holkiew.yomenik.battlesim.ship.travel.dto.MoveShipRequest;
+import com.holkiew.yomenik.battlesim.ship.travel.dto.ExecuteTravelMissionRequest;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
+import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
+import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple3;
+import reactor.util.function.Tuples;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class TravelService {
 
     private final PlanetFacade planetFacade;
-    private final static Long travelTimeSeconds = 15L;
+    private final FleetRepository fleetRepository;
 
-    public Mono<LocalDateTime> moveShips(MoveShipRequest request, Principal principal) {
+    public final static Long TRAVEL_TIME_SECONDS = 15L;
+
+    public Mono<LocalDateTime> executeTravelMission(ExecuteTravelMissionRequest request, Principal principal) {
         return planetFacade.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
-                .map(this::updatePlanetResidingShips)
+                .log()
                 .filter(planetHasRequestedShips(request))
                 .zipWith(planetFacade.findById(request.getPlanetIdTo()))
                 .flatMap(sendShipsOnRoute(request))
                 .map(Fleet::getArrivalTime);
     }
 
+
+    private Publisher<Tuple3<TravelMissonType, Fleet, Planet>> getPlanetOnRouteFleets(Planet planet) {
+        var fleetStream = planet.getOnRouteFleets().asMap().entrySet().stream().map(entry -> {
+            Flux<Fleet> allById = fleetRepository.findAllById(entry.getValue()).doOnError(log::error);
+            return Tuples.of(entry.getKey(), allById, planet);
+        });
+        return Flux.fromStream(fleetStream).flatMap(tuple -> tuple.getT2().map(fleet -> Tuples.of(tuple.getT1(), fleet, tuple.getT3())));
+    }
+
     Planet updatePlanetResidingShips(Planet planet) {
-        List<Fleet> arrivedFleets = planet.getOnRouteFleets().stream()
-                .filter(fleet -> !fleet.isOnRoute() && fleet.getPlanetIdTo().equals(planet.getId()))
-                .peek((fleet) -> fleet.getShips().forEach((key, value) -> planet.getResidingFleet().merge(key, value, Long::sum)))
-                .collect(Collectors.toList());
-        planet.getOnRouteFleets().removeAll(arrivedFleets);
+        log.error("unsupported, TravelMissionWorker's responsibility");
         return planet;
     }
 
-    private Predicate<Planet> planetHasRequestedShips(MoveShipRequest request) {
+    private Predicate<Planet> planetHasRequestedShips(ExecuteTravelMissionRequest request) {
         return planet -> {
             var requestedFleet = request.getFleet();
             return requestedFleet.entrySet().stream()
@@ -58,27 +70,26 @@ public class TravelService {
         };
     }
 
-    private Function<Tuple2<Planet, Planet>, Mono<Fleet>> sendShipsOnRoute(MoveShipRequest request) {
+    private Function<Tuple2<Planet, Planet>, Mono<Fleet>> sendShipsOnRoute(ExecuteTravelMissionRequest request) {
         return planetsTuple -> {
-            Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetsTuple).get();
             Planet planetFrom = planetsTuple.getT1();
             Planet planetTo = planetsTuple.getT2();
-            planetFrom.getOnRouteFleets().add(fleetOnRoute);
-            planetTo.getOnRouteFleets().add(fleetOnRoute);
-            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(travelTimeSeconds));
+            Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetFrom).get();
+            planetFrom.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
+            planetTo.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
+            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(TRAVEL_TIME_SECONDS), request.getMissonType());
             return planetFacade.saveAll(Flux.just(planetFrom, planetTo))
                     .next()
-                    .map(planet -> fleetOnRoute);
+                    .flatMap(planet -> fleetRepository.save(fleetOnRoute));
         };
     }
 
 
-    private Optional<Fleet> subtractFleetFromFromPlanet(MoveShipRequest request, Tuple2<Planet, Planet> planetsTuple) {
+    private Optional<Fleet> subtractFleetFromFromPlanet(ExecuteTravelMissionRequest request, Planet planetFrom) {
         return request.getFleet().entrySet().stream().map((entry) -> {
             ShipType requestedShipType = entry.getKey();
             Long requestedShipAmount = entry.getValue();
 
-            Planet planetFrom = planetsTuple.getT1();
             var residingFleetFrom = planetFrom.getResidingFleet();
 
             long remainingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;

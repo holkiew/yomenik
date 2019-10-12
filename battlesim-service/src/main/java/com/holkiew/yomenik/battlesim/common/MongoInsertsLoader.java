@@ -48,11 +48,13 @@ public abstract class MongoInsertsLoader<D, T extends ReactiveMongoRepository<D,
                 .filterWhen(tuple -> BooleanUtils.not(tuple.getT2()))
                 .flatMap(tuple -> repository.save(tuple.getT1()))
                 .doOnNext(obj -> log.info("Saved object: " + obj))
-                .doOnComplete(() -> log.info("Initial injection complete"))
+                .doOnComplete(() ->
+                        log.info("Initial injection of " + getClass().getSimpleName() + " completed"))
                 .delaySubscription(Duration.ofSeconds(3))
+                .doOnError(log::error)
                 .retryWhen(Retry.any()
                         .fixedBackoff(Duration.ofSeconds(10))
-                        .doOnRetry(context -> log.warn("No connection to database/external service, retry " + retryCounter.addAndGet(1))));
+                        .doOnRetry(context -> log.warn("Error, retry " + retryCounter.addAndGet(1))));
     }
 
     public void setData(D... data) {

@@ -17,4 +17,5 @@ public interface BattleHistoryRepository extends ReactiveMongoRepository<BattleH
 
     Mono<Long> countByUserIdAndIsIssuedTrue(String userId);
 
+
 }

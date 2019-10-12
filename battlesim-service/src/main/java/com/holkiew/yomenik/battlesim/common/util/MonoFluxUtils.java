@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.ship.util;
+package com.holkiew.yomenik.battlesim.common.util;
 
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import org.reactivestreams.Publisher;

@@ -2,11 +2,11 @@ package com.holkiew.yomenik.battlesim.ship.battlesimulator.battle;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.holkiew.yomenik.battlesim.common.util.MultimapCollector;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.ArmyRecap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipFactory;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
-import com.holkiew.yomenik.battlesim.ship.util.MultimapCollector;
 import lombok.Data;
 
 import java.util.Map;

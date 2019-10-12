@@ -1,0 +1,19 @@
+POST http://localhost:8080/building
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+{
+  "planetId": "4678a99d-f99d-43d5-9139-e28bbce4d6cb",
+  "slot": 1,
+  "buildingType": "ironMine"
+}
+
+<> 2019-09-28T093621.500.json
+<> 2019-09-28T093411.400.json
+<> 2019-09-28T092125.200.json
+<> 2019-09-28T085858.200.json
+
+###
+

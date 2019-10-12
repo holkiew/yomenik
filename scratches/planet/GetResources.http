@@ -1,0 +1,17 @@
+GET http://localhost:8080/resource?planetId=4678a99d-f99d-43d5-9139-e28bbce4d6cb
+Accept: */*
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+
+
+<> 2019-09-28T095341.200.json
+<> 2019-09-28T095338.200.json
+<> 2019-09-28T095334.200.json
+<> 2019-09-28T095244.400.json
+<> 2019-09-28T095237.400.json
+<> 2019-09-28T092125.200.json
+<> 2019-09-28T085858.200.json
+
+###
+
