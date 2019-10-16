@@ -16,3 +16,4 @@ public class GalaxyService {
         return galaxyRepository.findById(galaxyNum);
     }
 }
+

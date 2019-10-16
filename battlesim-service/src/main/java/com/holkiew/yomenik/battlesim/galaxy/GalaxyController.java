@@ -19,4 +19,6 @@ public class GalaxyController {
                 .map(galaxy -> ResponseEntity.ok().build())
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
+
+
 }
