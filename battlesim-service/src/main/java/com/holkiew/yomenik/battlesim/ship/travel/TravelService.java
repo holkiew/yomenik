@@ -30,11 +30,8 @@ public class TravelService {
     private final PlanetFacade planetFacade;
     private final FleetRepository fleetRepository;
 
-    public final static Long TRAVEL_TIME_SECONDS = 15L;
-
     public Mono<LocalDateTime> executeTravelMission(ExecuteTravelMissionRequest request, Principal principal) {
         return planetFacade.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
-                .log()
                 .filter(planetHasRequestedShips(request))
                 .zipWith(planetFacade.findById(request.getPlanetIdTo()))
                 .flatMap(sendShipsOnRoute(request))
@@ -59,7 +56,7 @@ public class TravelService {
             Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetFrom).get();
             planetFrom.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
             planetTo.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
-            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), LocalDateTime.now().plusSeconds(TRAVEL_TIME_SECONDS), request.getMissonType());
+            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), getArrivalTime(planetFrom, planetTo), request.getMissonType());
             return planetFacade.saveAll(Flux.just(planetFrom, planetTo))
                     .next()
                     .flatMap(planet -> fleetRepository.save(fleetOnRoute));
@@ -80,5 +77,15 @@ public class TravelService {
             map1.putAll(map2);
             return map1;
         }).map(Fleet::new);
+    }
+
+    private LocalDateTime getArrivalTime(Planet planetFrom, Planet planetTo) {
+        if (planetFrom.getSolarSystemId().equals(planetTo.getSolarSystemId())) {
+            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * 5;
+            return LocalDateTime.now().plusSeconds((int) distance);
+        } else {
+            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * 15;
+            return LocalDateTime.now().plusSeconds((int) distance);
+        }
     }
 }
