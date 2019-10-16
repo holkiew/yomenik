@@ -2,6 +2,8 @@ package com.holkiew.yomenik.battlesim.ship.travel;
 
 import com.holkiew.yomenik.battlesim.planet.PlanetFacade;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.BattleFacade;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
@@ -25,6 +27,7 @@ public class TravelMissionWorker {
 
     private final FleetRepository fleetRepository;
     private final PlanetFacade planetFacade;
+    private final BattleFacade battleFacade;
 
     @PostConstruct
     public void startWorker() {
@@ -33,7 +36,6 @@ public class TravelMissionWorker {
                 .flatMap(this::getFleetTargetPlanets)
                 .flatMap(this::executeMission)
                 .flatMap(this::cleanupExecutedMissions)
-//                .doOnEach(log::info)
                 .doOnError(log::error)
                 .subscribe();
         log.info("Worker initialized");
@@ -53,7 +55,8 @@ public class TravelMissionWorker {
                 addFleetToTargetPlanet(ftp);
                 break;
             case ATTACK:
-                throw new UnsupportedOperationException();
+                // TODO
+                battleFacade.newBattle(new NewBattleRequest(ftp.fleet.getShips(), ftp.planetTo.getResidingFleet()));
             case TRANSFER:
                 Fleet transferFleet = setFleetOnReturnMission(ftp);
                 return fleetRepository.save(transferFleet).thenReturn(ftp);
