@@ -53,7 +53,7 @@ public class InitialInserts {
         planetInserts.getDataStream().log()
                 .map(planet -> {
                     Arrays.stream(solarSystemInserts.getData()).filter(ss -> ss.getId().equals(planet.getSolarSystemId()))
-                            .findFirst().ifPresent(solarSystem -> solarSystem.getPlanetsCoordinates().put(planet.getCoordinates(), planet.getId()));
+                            .findFirst().ifPresent(solarSystem -> solarSystem.getPlanetsCoordinatesIds().put(planet.getCoordinates(), planet.getId()));
                     return planet;
                 })
                 .doOnComplete(() -> galaxyInserts.getDataStream().flatMap(g -> {

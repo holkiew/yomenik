@@ -23,6 +23,6 @@ public class SolarSystemInserts extends MongoInsertsLoader<SolarSystem, SolarSys
         var solarSystem2 = SolarSystem.builder().id("2").galaxyId(1).NextSolarSystemId("3").prevSolarSystemId("1").build();
         var solarSystem3 = SolarSystem.builder().id("3").galaxyId(1).prevSolarSystemId("2").build();
         this.setData(solarSystem1, solarSystem2, solarSystem3);
-        Arrays.stream(this.data).forEach(ss -> ss.setPlanetsCoordinates(Maps.newHashMap()));
+        Arrays.stream(this.data).forEach(ss -> ss.setPlanetsCoordinatesIds(Maps.newHashMap()));
     }
 }

@@ -1,5 +1,6 @@
 package com.holkiew.yomenik.battlesim.ship.travel;
 
+import com.holkiew.yomenik.battlesim.common.ReactorWorker;
 import com.holkiew.yomenik.battlesim.planet.PlanetFacade;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.BattleFacade;
@@ -10,26 +11,21 @@ import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static com.holkiew.yomenik.battlesim.ship.travel.TravelService.TRAVEL_TIME_SECONDS;
 
-@Component
 @RequiredArgsConstructor
 @Log4j2
-public class TravelMissionWorker {
+public class TravelMissionWorker extends ReactorWorker {
 
     private final FleetRepository fleetRepository;
     private final PlanetFacade planetFacade;
     private final BattleFacade battleFacade;
 
-    @PostConstruct
     public void startWorker() {
         Flux.interval(Duration.ofSeconds(1L))
                 .flatMap(l -> fleetRepository.findAllByArrivalTimeBeforeAndMissionCompletedFalse(LocalDateTime.now()))
@@ -38,7 +34,7 @@ public class TravelMissionWorker {
                 .flatMap(this::cleanupExecutedMissions)
                 .doOnError(log::error)
                 .subscribe();
-        log.info("Worker initialized");
+        log.info("Worker " + this.getClass().getSimpleName() + " initialized");
     }
 
     private Mono<FleetTargetPlanets> getFleetTargetPlanets(Fleet fleet) {
@@ -55,8 +51,20 @@ public class TravelMissionWorker {
                 addFleetToTargetPlanet(ftp);
                 break;
             case ATTACK:
-                // TODO
-                battleFacade.newBattle(new NewBattleRequest(ftp.fleet.getShips(), ftp.planetTo.getResidingFleet()));
+                ftp.planetTo.setDuringBattle(true);
+                var battleHistory = battleFacade.newBattle(new NewBattleRequest(ftp.fleet.getShips(), ftp.planetTo.getResidingFleet()));
+                var fleetDuringBattle = new Fleet(ftp.fleet.getShips(), battleHistory.getId());
+                fleetDuringBattle.setRouteOnPlanets(ftp.planetTo, ftp.planetTo, battleHistory.getEndDate(), TravelMissonType.ATTACK_BATTLE, ftp.fleet.getId());
+                return fleetRepository.save(fleetDuringBattle).thenReturn(ftp);
+            case ATTACK_BATTLE:
+                // TODO: jakis worker inny, albo rzucenie eventem zeby zmienil
+                var battleHistory2 = battleFacade.getById(ftp.fleet.getRelatedBattleHistoryId());
+                if (battleHistory2.getEndDate().isEqual(ftp.fleet.getArrivalTime())) {
+                    break;
+                } else {
+                    ftp.fleet.setArrivalTime(battleHistory2.getEndDate());
+                    return fleetRepository.save(ftp.fleet).thenReturn(ftp);
+                }
             case TRANSFER:
                 Fleet transferFleet = setFleetOnReturnMission(ftp);
                 return fleetRepository.save(transferFleet).thenReturn(ftp);
@@ -66,7 +74,8 @@ public class TravelMissionWorker {
 
     private Fleet setFleetOnReturnMission(FleetTargetPlanets ftp) {
         var transferBackFleet = new Fleet(ftp.fleet.getShips());
-        transferBackFleet.setRouteOnPlanets(ftp.planetFrom, ftp.planetTo, LocalDateTime.now().plusSeconds(TRAVEL_TIME_SECONDS), TravelMissonType.TRANSFER_BACK, ftp.fleet.getId());
+        Duration flightDuration = Duration.between(ftp.fleet.getArrivalTime(), ftp.fleet.getDepartureTime());
+        transferBackFleet.setRouteOnPlanets(ftp.planetFrom, ftp.planetTo, LocalDateTime.now().plusSeconds(flightDuration.toSeconds()), TravelMissonType.TRANSFER_BACK, ftp.fleet.getId());
         return transferBackFleet;
     }
 

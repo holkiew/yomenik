@@ -6,7 +6,7 @@ import com.holkiew.yomenik.battlesim.common.util.EnumUtils;
 import java.util.Map;
 
 public enum TravelMissonType {
-    ATTACK, TRANSFER, TRANSFER_BACK, MOVE;
+    ATTACK, ATTACK_BATTLE, TRANSFER, TRANSFER_BACK, MOVE;
 
     private static final Map<String, TravelMissonType> ENUM_MAP;
 

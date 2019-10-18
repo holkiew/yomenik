@@ -20,7 +20,7 @@ public class SolarSystem {
     @Id
     private String id;
     private int galaxyId;
-    private Map<Coordinates, String> planetsCoordinates;
+    private Map<Coordinates, String> planetsCoordinatesIds;
     // TODO
 //    private List<String> neighbouringSolarSystemIds;
     private String prevSolarSystemId;

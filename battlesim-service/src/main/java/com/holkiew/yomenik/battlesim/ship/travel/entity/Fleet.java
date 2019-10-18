@@ -31,10 +31,17 @@ public class Fleet {
     private TravelMissonType missionType;
     private Boolean missionCompleted;
     private List<String> relatedMissions;
+    private String relatedBattleHistoryId;
 
     public Fleet(Map<ShipType, Long> ships) {
         this.id = UUID.randomUUID().toString();
         this.ships = ships;
+    }
+
+    public Fleet(Map<ShipType, Long> ships, String relatedBattleHistoryId) {
+        this.id = UUID.randomUUID().toString();
+        this.ships = ships;
+        this.relatedBattleHistoryId = relatedBattleHistoryId;
     }
 
     public void setRoute(String planetIdTo, String planetIdFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType) {

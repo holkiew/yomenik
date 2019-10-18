@@ -54,27 +54,27 @@ class BattleServiceTest extends Specification {
                     }).verifyComplete()
     }
 
-    def "Shouldn't cancel unissued battle with only STAGE.END remaining"() {
-        given: "STAGE.NEW is only issued"
-            def army1Map = [(ShipType.SHIP_LEVEL1): 100L, (ShipType.SHIP_LEVEL2): 2L]
-            def army2Map = [(ShipType.SHIP_LEVEL1): 1L, (ShipType.SHIP_LEVEL3): 1L]
-            def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
-            def battleStrategy = BattleStrategy.of(army1, army2)
-            battleStrategy.battleStage = BattleStage.NEW
-            def battleHistory = new BattleHistory(battleStrategy, principal.getId(), LocalDateTime.now().minusSeconds(3), 3)
-            battleStrategy.battleStage = BattleStage.ROUND_1
-            battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().minusSeconds(3))
-            battleStrategy.battleStage = BattleStage.END
-            battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(3))
-        and:
-            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
-            0 * repository.save(_)
-        when:
-            def publisher = testedObj.cancelCurrentBattle(principal)
-        then: "History should be filtered out"
-            StepVerifier.create(publisher)
-                    .expectSubscription()
-                    .expectNextCount(0)
-                    .verifyComplete()
-    }
+//    def "Shouldn't cancel unissued battle with only STAGE.END remaining"() {
+//        given: "STAGE.NEW is only issued"
+//            def army1Map = [(ShipType.SHIP_LEVEL1): 100L, (ShipType.SHIP_LEVEL2): 2L]
+//            def army2Map = [(ShipType.SHIP_LEVEL1): 1L, (ShipType.SHIP_LEVEL3): 1L]
+//            def army1 = Army.of(army1Map), army2 = Army.of(army2Map)
+//            def battleStrategy = BattleStrategy.of(army1, army2)
+//            battleStrategy.battleStage = BattleStage.NEW
+//            def battleHistory = new BattleHistory(battleStrategy, principal.getId(), LocalDateTime.now().minusSeconds(3), 3)
+//            battleStrategy.battleStage = BattleStage.ROUND_1
+//            battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().minusSeconds(3))
+//            battleStrategy.battleStage = BattleStage.END
+//            battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(3))
+//        and:
+//            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
+//            0 * repository.save(_)
+//        when:
+//            def publisher = testedObj.cancelCurrentBattle(principal)
+//        then: "History should be filtered out"
+//            StepVerifier.create(publisher)
+//                    .expectSubscription()
+//                    .expectNextCount(0)
+//                    .verifyComplete()
+//    }
 }

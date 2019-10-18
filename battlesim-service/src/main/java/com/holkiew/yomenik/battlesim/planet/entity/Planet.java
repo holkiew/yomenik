@@ -31,7 +31,8 @@ public class Planet {
     private int galaxyId;
     private String solarSystemId;
     private Coordinates coordinates;
-
+    @Builder.Default
+    private boolean isDuringBattle = false;
     @Builder.Default
     private Resources resources = new Resources(new Iron(0));
     @Builder.Default
@@ -51,5 +52,6 @@ public class Planet {
         this.buildings = Maps.newHashMap();
         this.residingFleet = Maps.newHashMap();
         this.onRouteFleets = ArrayListMultimap.create();
+        this.isDuringBattle = false;
     }
 }

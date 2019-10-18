@@ -7,15 +7,21 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 
 @Repository
 public interface BattleHistoryRepository extends ReactiveMongoRepository<BattleHistory, String> {
+
+    Flux<BattleHistory> findAllByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
 
     Mono<BattleHistory> findFirstByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
 
     Flux<BattleHistory> findByUserIdAndIsIssuedTrue(String userId, Pageable pageable);
 
     Mono<Long> countByUserIdAndIsIssuedTrue(String userId);
+
+    Flux<BattleHistory> findAllByIsIssuedFalseAndNextRoundDateBefore(LocalDateTime before);
 
 
 }

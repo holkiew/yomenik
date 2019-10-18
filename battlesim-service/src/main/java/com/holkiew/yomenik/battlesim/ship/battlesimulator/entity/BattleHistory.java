@@ -23,9 +23,11 @@ public class BattleHistory {
     private String userId;
     private Map<BattleStage, BattleRecap> battleRecapMap;
     private LocalDateTime startDate;
+    private LocalDateTime nextRoundDate;
     private LocalDateTime endDate;
     private Boolean isIssued;
     private Long stageDelay;
+    private BattleStage currentStage;
 
     public BattleHistory(BattleStrategy battleStrategy, String userId, LocalDateTime startTime, long stageDelay) {
         this.id = UUID.randomUUID().toString();
@@ -34,7 +36,9 @@ public class BattleHistory {
         this.battleRecapMap = new EnumMap<>(BattleStage.class);
         this.isIssued = false;
         this.addNewEntry(battleStrategy, startTime);
+        this.nextRoundDate = startTime;
         this.stageDelay = stageDelay;
+        this.currentStage = BattleStage.NEW;
     }
 
     public void addNewEntry(BattleStrategy battleStrategy, LocalDateTime stageTime) {
