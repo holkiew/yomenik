@@ -40,7 +40,7 @@ class BattleServiceTest extends Specification {
             battleStrategy.battleStage = BattleStage.ROUND_2
             battleHistory.addNewEntry(battleStrategy, LocalDateTime.now().plusSeconds(11))
         and:
-            1 * repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
+            1 * repository.findFirstByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(principal.getId()) >> Mono.just(battleHistory)
             1 * repository.save(_ as BattleHistory) >> { BattleHistory bh -> Mono.just(bh) }
         when:
             def publisher = testedObj.cancelCurrentBattle(principal)

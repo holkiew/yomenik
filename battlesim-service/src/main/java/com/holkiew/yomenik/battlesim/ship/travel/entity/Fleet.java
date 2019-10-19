@@ -31,6 +31,7 @@ public class Fleet {
     private TravelMissonType missionType;
     private Boolean missionCompleted;
     private List<String> relatedMissions;
+    // TODO: jakis index na tym zapiac
     private String relatedBattleHistoryId;
 
     public Fleet(Map<ShipType, Long> ships) {
@@ -56,6 +57,11 @@ public class Fleet {
     public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType, String... relatedMissionsIds) {
         this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissonType);
         this.relatedMissions = Lists.newArrayList(relatedMissionsIds);
+    }
+
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType, List<String> relatedMissionsIds) {
+        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissonType);
+        this.relatedMissions = relatedMissionsIds;
     }
 
     public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType) {

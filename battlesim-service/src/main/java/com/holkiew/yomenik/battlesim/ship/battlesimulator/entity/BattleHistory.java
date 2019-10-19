@@ -9,9 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Document
 @Data
@@ -20,7 +18,7 @@ public class BattleHistory {
 
     @Id
     private String id;
-    private String userId;
+    private List<String> involvedUserIds;
     private Map<BattleStage, BattleRecap> battleRecapMap;
     private LocalDateTime startDate;
     private LocalDateTime nextRoundDate;
@@ -29,9 +27,9 @@ public class BattleHistory {
     private Long stageDelay;
     private BattleStage currentStage;
 
-    public BattleHistory(BattleStrategy battleStrategy, String userId, LocalDateTime startTime, long stageDelay) {
+    public BattleHistory(BattleStrategy battleStrategy, LocalDateTime startTime, long stageDelay, String... involvedUserIds) {
         this.id = UUID.randomUUID().toString();
-        this.userId = userId;
+        this.involvedUserIds = Arrays.asList(involvedUserIds);
         this.startDate = startTime;
         this.battleRecapMap = new EnumMap<>(BattleStage.class);
         this.isIssued = false;

@@ -24,5 +24,5 @@ public class SolarSystem {
     // TODO
 //    private List<String> neighbouringSolarSystemIds;
     private String prevSolarSystemId;
-    private String NextSolarSystemId;
+    private String nextSolarSystemId;
 }

@@ -5,8 +5,6 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 
-import javax.swing.text.Document;
-
 public class CoordinatesConverter {
 
     @WritingConverter
@@ -18,10 +16,11 @@ public class CoordinatesConverter {
     }
 
     @ReadingConverter
-    public static class Read implements Converter<Document, Coordinates> {
+    public static class Read implements Converter<String, Coordinates> {
         @Override
-        public Coordinates convert(Document source) {
-            return new Coordinates(999, 999);
+        public Coordinates convert(String source) {
+            String[] split = source.split(", ");
+            return new Coordinates(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
         }
     }
 }

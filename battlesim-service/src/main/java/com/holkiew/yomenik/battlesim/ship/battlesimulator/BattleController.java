@@ -25,8 +25,9 @@ public class BattleController {
     private final BattleService battleService;
 
     @PostMapping("/battle")
-    public Mono<ResponseEntity<Object>> newBattle(@RequestBody @Valid NewBattleRequest request, Principal principal) {
-        return battleService.newBattle(request, principal)
+    @Deprecated
+    public Mono<ResponseEntity<Object>> newBattle(@RequestBody @Valid NewBattleRequest request) {
+        return battleService.newBattle(request)
                 .map(battleHistory -> ResponseEntity.ok().build())
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

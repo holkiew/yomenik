@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @Repository
 public interface BattleHistoryRepository extends ReactiveMongoRepository<BattleHistory, String> {
 
-    Flux<BattleHistory> findAllByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
+    Flux<BattleHistory> findAllByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(String userId);
 
-    Mono<BattleHistory> findFirstByUserIdAndIsIssuedFalseOrderByStartDate(String userId);
+    Mono<BattleHistory> findFirstByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(String userId);
 
-    Flux<BattleHistory> findByUserIdAndIsIssuedTrue(String userId, Pageable pageable);
+    Flux<BattleHistory> findByInvolvedUserIdsContainsAndIsIssuedTrue(String userId, Pageable pageable);
 
-    Mono<Long> countByUserIdAndIsIssuedTrue(String userId);
+    Mono<Long> countByInvolvedUserIdsContainsAndIsIssuedTrue(String userId);
 
     Flux<BattleHistory> findAllByIsIssuedFalseAndNextRoundDateBefore(LocalDateTime before);
 

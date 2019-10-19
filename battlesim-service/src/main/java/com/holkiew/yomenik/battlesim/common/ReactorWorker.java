@@ -1,13 +1,16 @@
 package com.holkiew.yomenik.battlesim.common;
 
-import org.springframework.stereotype.Component;
+import org.reactivestreams.Subscription;
+import reactor.core.publisher.Flux;
 
-import javax.annotation.PostConstruct;
+import java.util.function.Consumer;
 
+public interface ReactorWorker {
+    Flux<?> getUpstream();
 
-@Component
-public abstract class ReactorWorker {
+    Consumer<Throwable> doOnError();
 
-    @PostConstruct
-    public abstract void startWorker();
+    Runnable doOnTerminate();
+
+    Consumer<Subscription> doOnSubscribe();
 }

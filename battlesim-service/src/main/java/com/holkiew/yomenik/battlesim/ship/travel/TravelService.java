@@ -1,12 +1,13 @@
 package com.holkiew.yomenik.battlesim.ship.travel;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
-import com.holkiew.yomenik.battlesim.planet.PlanetFacade;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.entity.BattleHistory;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
 import com.holkiew.yomenik.battlesim.ship.travel.dto.ExecuteTravelMissionRequest;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
+import com.holkiew.yomenik.battlesim.ship.travel.port.PlanetPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -27,15 +28,24 @@ import java.util.function.Predicate;
 @Log4j2
 public class TravelService {
 
-    private final PlanetFacade planetFacade;
+    private final PlanetPort planetService;
     private final FleetRepository fleetRepository;
 
     public Mono<LocalDateTime> executeTravelMission(ExecuteTravelMissionRequest request, Principal principal) {
-        return planetFacade.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
+        return planetService.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
                 .filter(planetHasRequestedShips(request))
-                .zipWith(planetFacade.findById(request.getPlanetIdTo()))
+                .zipWith(planetService.findById(request.getPlanetIdTo()))
                 .flatMap(sendShipsOnRoute(request))
                 .map(Fleet::getArrivalTime);
+    }
+
+    public Mono<Fleet> battleEndDateChangeEvent(BattleHistory battleHistory) {
+        return fleetRepository.findByRelatedBattleHistoryId(battleHistory.getId())
+                .map(fleet -> {
+                    fleet.setArrivalTime(battleHistory.getEndDate());
+                    return fleet;
+                })
+                .flatMap(fleetRepository::save);
     }
 
     private Predicate<Planet> planetHasRequestedShips(ExecuteTravelMissionRequest request) {
@@ -57,7 +67,7 @@ public class TravelService {
             planetFrom.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
             planetTo.getOnRouteFleets().put(request.getMissonType(), fleetOnRoute.getId());
             fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), getArrivalTime(planetFrom, planetTo), request.getMissonType());
-            return planetFacade.saveAll(Flux.just(planetFrom, planetTo))
+            return planetService.saveAll(Flux.just(planetFrom, planetTo))
                     .next()
                     .flatMap(planet -> fleetRepository.save(fleetOnRoute));
         };
@@ -70,7 +80,7 @@ public class TravelService {
             var residingFleetFrom = planetFrom.getResidingFleet();
             long remainingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;
             residingFleetFrom.put(requestedShipType, remainingFleetAmount);
-            HashMap<ShipType, Long> fleet = new HashMap<>();
+            var fleet = new HashMap<ShipType, Long>();
             fleet.put(requestedShipType, requestedShipAmount);
             return fleet;
         }).reduce((map1, map2) -> {

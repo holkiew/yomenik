@@ -8,6 +8,7 @@ import com.holkiew.yomenik.battlesim.ship.battlesimulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.entity.BattleHistory;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.BattleRecap;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.BattleHistoryRepository;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.TravelPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,43 +30,40 @@ import static com.holkiew.yomenik.battlesim.common.util.EnumUtils.toEnumMap;
 public class BattleService {
 
     private final BattleHistoryRepository repository;
+    private final TravelPort travelService;
+    private final long STAGE_DELAY = 5L;
 
     public Mono<Tuple2<List<BattleHistory>, Long>> getBattleHistory(Principal principal, Pageable pageable) {
         // TODO Trzeba jednym customowym zapytaniem to zrobic
-        return repository.findByUserIdAndIsIssuedTrue(principal.getId(), pageable)
+        return repository.findByInvolvedUserIdsContainsAndIsIssuedTrue(principal.getId(), pageable)
                 .collectList()
-                .zipWith(repository.countByUserIdAndIsIssuedTrue(principal.getId()));
+                .zipWith(repository.countByInvolvedUserIdsContainsAndIsIssuedTrue(principal.getId()));
     }
 
-    public Mono<BattleHistory> newBattle(NewBattleRequest request, Principal principal) {
-        var army1 = Army.of(request.getArmy1());
-        var army2 = Army.of(request.getArmy2());
-        return resolveBattle(army1, army2, request.getStageDelay(), principal.getId());
+    public Mono<BattleHistory> newBattle(NewBattleRequest request) {
+        var battleStrategy = BattleStrategy.of(Army.of(request.getArmy1()), Army.of(request.getArmy2()));
+        var time = LocalDateTime.now();
+        var battleHistory = new BattleHistory(battleStrategy, time, STAGE_DELAY, request.getArmy1UserId(), request.getArmy2UserId());
+        while (!battleStrategy.isBattleEnded()) {
+            battleStrategy.resolveRound();
+            time = time.plusSeconds(STAGE_DELAY);
+            battleHistory.addNewEntry(battleStrategy, time);
+        }
+        battleHistory.setEndDate(time.plusSeconds(STAGE_DELAY));
+        return repository.save(battleHistory);
     }
 
     public Flux<BattleHistory> getCurrentBattles(Principal principal) {
-        return repository.findAllByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId())
+        return repository.findAllByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(principal.getId())
                 .map(this::filterOutFutureResults);
     }
 
     public Mono<BattleHistory> cancelCurrentBattle(Principal principal) {
-        return repository.findFirstByUserIdAndIsIssuedFalseOrderByStartDate(principal.getId())
+        return repository.findFirstByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(principal.getId())
                 .map(battleHistory -> Tuples.of(battleHistory, getFirstNotIssuedStage(battleHistory)))
                 .map(tuple -> updateCancelledBattleHistory(tuple.getT1(), tuple.getT2()))
-                .flatMap(repository::save);
-    }
-
-    protected Mono<BattleHistory> resolveBattle(Army army1, Army army2, long stageDelay, String userId) {
-        var battleStrategy = BattleStrategy.of(army1, army2);
-        var time = LocalDateTime.now();
-        var battleHistory = new BattleHistory(battleStrategy, userId, time, stageDelay);
-        while (!battleStrategy.isBattleEnded()) {
-            battleStrategy.resolveRound();
-            time = time.plusSeconds(stageDelay);
-            battleHistory.addNewEntry(battleStrategy, time);
-        }
-        battleHistory.setEndDate(time.plusSeconds(stageDelay));
-        return repository.save(battleHistory);
+                .zipWhen(travelService::battleEndDateChangeEvent)
+                .flatMap(tuple -> repository.save(tuple.getT1()));
     }
 
     private BattleRecap getFirstNotIssuedStage(BattleHistory battleHistory) {
@@ -84,13 +82,12 @@ public class BattleService {
 
     private void resolveRetreatingBattle(BattleHistory battleHistory, BattleRecap battleRecap) {
         var retreatingArmy = Army.of(battleRecap.getArmy1Recap());
-        var army2 = Army.of(battleRecap.getArmy1Recap());
+        var army2 = Army.of(battleRecap.getArmy2Recap());
 
         BattleStrategy battleStrategy = BattleStrategy.of(retreatingArmy, army2);
-        LocalDateTime time = LocalDateTime.now().plusSeconds(battleHistory.getStageDelay());
         battleStrategy.resolveRetreatRound();
-        battleHistory.addNewEntry(battleStrategy, time);
-        battleHistory.setEndDate(time.plusSeconds(battleHistory.getStageDelay()));
+        battleHistory.addNewEntry(battleStrategy, battleHistory.getNextRoundDate());
+        battleHistory.setEndDate(battleHistory.getNextRoundDate().plusSeconds(battleHistory.getStageDelay()));
     }
 
     private BattleHistory filterOutFutureResults(BattleHistory battleHistory) {

@@ -5,9 +5,9 @@ import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.convert.WritingConverter;
+import org.springframework.data.convert.ReadingConverter;
 
-@WritingConverter
+@ReadingConverter
 public class TravelMissionTypeMultimapConverter implements Converter<Document, ListMultimap<TravelMissonType, String>> {
 
     @Override
