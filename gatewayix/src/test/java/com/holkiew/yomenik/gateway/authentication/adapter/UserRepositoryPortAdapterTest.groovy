@@ -11,7 +11,7 @@ import spock.lang.Specification
 @ContextConfiguration(classes = GatewayApplication.class)
 @WebAppConfiguration
 @WebFluxTest
-class UserRepositoryAdapterTest extends Specification {
+class UserRepositoryPortAdapterTest extends Specification {
 
     @Autowired
     ApplicationContext context

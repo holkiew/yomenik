@@ -1,0 +1,4 @@
+increasePerLevel: 1.30
+baseCost:
+  iron: 100
+baseCostIncreasePerLevel: 2.5

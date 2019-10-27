@@ -1,17 +1,15 @@
 package com.holkiew.yomenik.battlesim.planet.model.request;
 
-import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
+import com.holkiew.yomenik.battlesim.planet.model.research.ResearchType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class NewBuildingRequest {
+public class NewResearchRequest {
     @NotBlank
     private String planetId;
     @NotNull
-    private Integer slot;
-    @NotNull
-    private BuildingType buildingType;
+    private ResearchType researchType;
 }

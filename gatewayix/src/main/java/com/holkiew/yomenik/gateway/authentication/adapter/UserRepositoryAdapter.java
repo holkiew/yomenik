@@ -2,7 +2,7 @@ package com.holkiew.yomenik.gateway.authentication.adapter;
 
 import com.holkiew.yomenik.gateway.authentication.dto.userservice.NewUserRequest;
 import com.holkiew.yomenik.gateway.authentication.entity.User;
-import com.holkiew.yomenik.gateway.authentication.port.UserRepository;
+import com.holkiew.yomenik.gateway.authentication.port.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class UserRepositoryAdapter implements UserRepository {
+public class UserRepositoryAdapter implements UserRepositoryPort {
     private final WebClient webclient;
     private final ModelMapper modelMapper;
 

@@ -2,22 +2,26 @@ package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
-import com.holkiew.yomenik.battlesim.planet.entity.IronMineProperties;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
+import com.holkiew.yomenik.battlesim.planet.entity.Research;
 import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
+import com.holkiew.yomenik.battlesim.planet.model.building.properties.IronMineProperties;
 import com.holkiew.yomenik.battlesim.planet.model.exception.NotEnoughResourcesException;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
+import com.holkiew.yomenik.battlesim.planet.model.request.NewResearchRequest;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
+import com.holkiew.yomenik.battlesim.planet.port.ResearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ import java.util.Optional;
 public class PlanetService {
 
     private final PlanetRepository planetRepository;
+    private final ResearchRepository researchRepository;
 
     public Mono<Resources> getPlanetResources(String planetId, Principal principal) {
         return planetRepository.findByIdAndUserId(planetId, principal.getId())
@@ -50,10 +55,35 @@ public class PlanetService {
                 .flatMap(planetRepository::save);
     }
 
+    public Mono<Tuple2<Planet, Research>> newResearch(NewResearchRequest request, Principal principal) {
+        return planetRepository.findById(request.getPlanetId())
+                .map(this::updatePlanetResourcesByIncome)
+                .zipWith(researchRepository.findById(principal.getId()))
+                .flatMap(upgradeResearch(request))
+                .flatMap(tuple -> planetRepository.save(tuple.getT1()).zipWith(researchRepository.save(tuple.getT2())));
+
+    }
+
+    private Function<Tuple2<Planet, Research>, Mono<? extends Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {
+        return tuple -> {
+            Planet planet = tuple.getT1();
+            var userResearchLevels = tuple.getT2().getResearchLevels();
+            int nextLevel = userResearchLevels.get(request.getResearchType()) + 1;
+            var nextLevelCost = request.getResearchType().getProperties().getCostByLevel(nextLevel);
+            if (planet.getResources().hasMoreOrEqual(nextLevelCost)) {
+                planet.getResources().subtract(nextLevelCost);
+                userResearchLevels.put(request.getResearchType(), nextLevel);
+            } else {
+                return Mono.empty();
+            }
+            return Mono.just(tuple);
+        };
+    }
+
     private Planet updatePlanetResourcesByIncome(Planet planet) {
         IronMineProperties properties = (IronMineProperties) BuildingType.IRON_MINE.getProperties();
         int incomePerHour = properties.baseIncome;
-                incomePerHour += planet.getBuildings().values().stream()
+        incomePerHour += planet.getBuildings().values().stream()
                 .filter(building -> building.getBuildingType().equals(BuildingType.IRON_MINE))
                 .mapToLong(building -> (long) (Math.pow(properties.baseCostIncreasePerLevel, building.getLevel()) * properties.baseIncome))
                 .sum();
@@ -78,8 +108,9 @@ public class PlanetService {
     private Mono<Object> downgradeBuilding(DowngradeBuildingRequest request, Planet planet) {
         Optional<Building> buildingOptional = getBuilding(planet, request.getSlot());
         buildingOptional.ifPresent(building -> {
+
             int buildingLevel = building.getLevel();
-            Resources levelCost = building.getLevelCost(buildingLevel);
+            Resources levelCost = building.getBuildingType().getProperties().getLevelCost(buildingLevel);
             levelCost.divide(0.1);
             planet.getResources().add(levelCost);
             if (buildingLevel > 1) {
@@ -97,7 +128,7 @@ public class PlanetService {
                 .buildingType(request.getBuildingType())
                 .slot(request.getSlot())
                 .level(buildingNextLevel).build();
-        Resources nextLevelCost = building.getLevelCost(buildingNextLevel);
+        Resources nextLevelCost = building.getBuildingType().getProperties().getLevelCost(buildingNextLevel);
         if (planet.getResources().hasMoreOrEqual(nextLevelCost)) {
             planet.getResources().subtract(nextLevelCost);
             planet.getBuildings().put(request.getSlot(), building);
@@ -110,7 +141,7 @@ public class PlanetService {
     private void upgradeBuilding(NewBuildingRequest request, Building building, Planet planet) throws NotEnoughResourcesException {
         if (building.getBuildingType().equals(request.getBuildingType())) {
             int buildingNextLevel = building.getLevel() + 1;
-            Resources nextLevelCost = building.getLevelCost(buildingNextLevel);
+            Resources nextLevelCost = building.getBuildingType().getProperties().getLevelCost(buildingNextLevel);
             if (planet.getResources().hasMoreOrEqual(nextLevelCost)) {
                 planet.getResources().subtract(nextLevelCost);
                 building.setLevel(buildingNextLevel);

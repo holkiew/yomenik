@@ -2,15 +2,15 @@ package com.holkiew.yomenik.battlesim.planet.model.building;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.holkiew.yomenik.battlesim.common.util.EnumUtils;
-import com.holkiew.yomenik.battlesim.planet.entity.CityProperties;
-import com.holkiew.yomenik.battlesim.planet.entity.IronMineProperties;
-import com.holkiew.yomenik.battlesim.planet.entity.Properties;
+import com.holkiew.yomenik.battlesim.planet.model.Properties;
+import com.holkiew.yomenik.battlesim.planet.model.PropertiesInjector;
+import com.holkiew.yomenik.battlesim.planet.model.building.properties.BuildingProperties;
+import com.holkiew.yomenik.battlesim.planet.model.building.properties.CityProperties;
+import com.holkiew.yomenik.battlesim.planet.model.building.properties.IronMineProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -21,40 +21,33 @@ public enum BuildingType {
     private static final Map<String, BuildingType> ENUM_MAP;
     private String name;
     @Getter(AccessLevel.PUBLIC)
-    private Properties properties;
+    private BuildingProperties properties;
     private Class<? extends Properties> propertiesClass;
 
     static {
-        ENUM_MAP = EnumUtils.createEnumMap(BuildingType.class, keyMapper -> keyMapper.name.toLowerCase());
+        ENUM_MAP = EnumUtils.createEnumMap(BuildingType.class, keyMapper -> keyMapper.name);
     }
 
-    BuildingType(String name, Properties properties, Class<? extends Properties> propertiesClass) {
+    BuildingType(String name, BuildingProperties properties, Class<? extends Properties> propertiesClass) {
         this.name = name;
         this.properties = properties;
         this.propertiesClass = propertiesClass;
     }
 
-    @Component
-    @RequiredArgsConstructor
-    public static class PropertiesInjector {
-        private final Map<String, ? extends Properties> allProperties;
-
-        @PostConstruct
-        public void postConstruct() {
-            EnumSet.allOf(BuildingType.class)
-                    .forEach(bt -> bt.properties = this.getPropertiesByClass(allProperties, bt.propertiesClass));
-        }
-
-        private Properties getPropertiesByClass(Map<String, ? extends Properties> properties, Class<? extends Properties> tClass) {
-            char[] c = tClass.getSimpleName().toCharArray();
-            c[0] = Character.toLowerCase(c[0]);
-            var qualifier = new String(c);
-            return properties.get(qualifier);
-        }
-    }
-
     @JsonCreator
     public static BuildingType get(String name) {
         return ENUM_MAP.get(name);
+    }
+
+    @Component
+    public static class BuildingTypePropertiesInjector extends PropertiesInjector {
+        public BuildingTypePropertiesInjector(Map<String, ? extends Properties> allProperties) {
+            super(allProperties);
+        }
+
+        public void postConstruct() {
+            EnumSet.allOf(BuildingType.class)
+                    .forEach(bt -> bt.properties = (BuildingProperties) this.getPropertiesByClass(allProperties, bt.propertiesClass));
+        }
     }
 }

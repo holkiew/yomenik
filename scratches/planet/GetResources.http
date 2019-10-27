@@ -1,8 +1,7 @@
-GET http://localhost:8080/resource?planetId=4678a99d-f99d-43d5-9139-e28bbce4d6cb
+GET http://{{host}}/resource?planetId=1
 Accept: */*
 Cache-Control: no-cache
 PRINCIPAL-ID: 1
-
 
 
 <> 2019-09-28T095341.200.json

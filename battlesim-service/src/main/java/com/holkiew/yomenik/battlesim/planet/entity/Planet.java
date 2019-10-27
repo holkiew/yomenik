@@ -28,6 +28,7 @@ public class Planet {
     @Id
     private String id;
     private String userId;
+    private String researchId;
     private int galaxyId;
     private String solarSystemId;
     private Coordinates coordinates;
@@ -46,6 +47,7 @@ public class Planet {
         this.id = id;
         this.solarSystemId = solarSystemId;
         this.userId = userId;
+        this.researchId = userId;
         this.galaxyId = galaxyId;
         this.coordinates = new Coordinates(coordinates.getT1(), coordinates.getT2());
         this.resources = new Resources(new Iron(0));

@@ -1,12 +1,11 @@
-package com.holkiew.yomenik.battlesim.planet.entity;
+package com.holkiew.yomenik.battlesim.planet.model.building.properties;
 
+import com.holkiew.yomenik.battlesim.planet.model.Properties;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
-import java.util.Map;
 
 @Data
 public abstract class BuildingProperties implements Properties {
@@ -21,8 +20,13 @@ public abstract class BuildingProperties implements Properties {
     public Resources baseCost;
 
     @Autowired
-    public void setBaseCost(@Value(("${baseCost.iron}"))long iron) {
-        this.baseCost = new Resources(new Iron(iron,null));
+    public void setBaseCost(@Value(("${baseCost.iron}")) long iron) {
+        this.baseCost = new Resources(new Iron(iron, null));
+    }
+
+    public Resources getLevelCost(long level) {
+        Iron iron = new Iron((long) (Math.pow(baseCostIncreasePerLevel, level) * baseCost.getIron().getAmount()), null);
+        return new Resources(iron);
     }
 
 }

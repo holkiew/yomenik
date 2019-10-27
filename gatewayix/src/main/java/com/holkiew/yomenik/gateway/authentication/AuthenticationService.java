@@ -4,7 +4,7 @@ import com.holkiew.yomenik.gateway.authentication.dto.service.AuthRequest;
 import com.holkiew.yomenik.gateway.authentication.dto.service.RegisterRequest;
 import com.holkiew.yomenik.gateway.authentication.entity.User;
 import com.holkiew.yomenik.gateway.authentication.model.Role;
-import com.holkiew.yomenik.gateway.authentication.port.UserRepository;
+import com.holkiew.yomenik.gateway.authentication.port.UserRepositoryPort;
 import com.holkiew.yomenik.gateway.authentication.util.JWTUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +19,7 @@ import java.util.Collections;
 @Log4j2
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
 

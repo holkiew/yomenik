@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.planet.entity;
+package com.holkiew.yomenik.battlesim.planet.model.building.properties;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.YamlPropertySourceFactory;
 import lombok.Data;

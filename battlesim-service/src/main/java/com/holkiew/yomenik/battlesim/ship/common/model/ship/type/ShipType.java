@@ -1,10 +1,9 @@
 package com.holkiew.yomenik.battlesim.ship.common.model.ship.type;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.holkiew.yomenik.battlesim.common.util.EnumUtils;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public enum ShipType {
     SHIP_LEVEL1("shipsLevel1"),
@@ -20,11 +19,7 @@ public enum ShipType {
     }
 
     static {
-        Map<String, ShipType> map = new ConcurrentHashMap<>();
-        for (ShipType instance : ShipType.values()) {
-            map.put(instance.name, instance);
-        }
-        ENUM_MAP = Collections.unmodifiableMap(map);
+        ENUM_MAP = EnumUtils.createEnumMap(ShipType.class, shipType -> shipType.name);
     }
 
     @JsonCreator

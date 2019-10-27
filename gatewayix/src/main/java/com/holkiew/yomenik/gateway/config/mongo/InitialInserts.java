@@ -2,7 +2,7 @@ package com.holkiew.yomenik.gateway.config.mongo;
 
 import com.holkiew.yomenik.gateway.authentication.entity.User;
 import com.holkiew.yomenik.gateway.authentication.model.Role;
-import com.holkiew.yomenik.gateway.authentication.port.UserRepository;
+import com.holkiew.yomenik.gateway.authentication.port.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InitialInserts {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserRepositoryPort userRepository;
 
     @PostConstruct
     public void injectDefaultUsers() {

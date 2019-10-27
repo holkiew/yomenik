@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.Weapon;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -51,16 +52,20 @@ public class BattleStrategy {
         var iterator = shootingShips.values().iterator();
 
         while (iterator.hasNext() && !army2Ships.isEmpty()) {
-            var a1Ship = iterator.next();
+            var shootingShip = iterator.next();
             int shipToShoot = randomGenerator.nextInt(army2Ships.size());
             var hitShipEntry = army2Ships.get(shipToShoot);
             Ship hitShip = hitShipEntry.getValue();
-            hitShip.takeHit(a1Ship.getDamage());
-            if (!hitShip.getAlive()) {
-                hitDestroyedShips.put(hitShipEntry.getKey(), hitShip);
-                army2Ships.remove(hitShipEntry);
-                hitShips.remove(hitShipEntry.getKey(), hitShip);
+            for (Weapon shipShoot : shootingShip.getShipShoots()) {
+                hitShip.takeHit(shipShoot);
+                if (!hitShip.getAlive()) {
+                    hitDestroyedShips.put(hitShipEntry.getKey(), hitShip);
+                    army2Ships.remove(hitShipEntry);
+                    hitShips.remove(hitShipEntry.getKey(), hitShip);
+                    break;
+                }
             }
+
         }
     }
 
