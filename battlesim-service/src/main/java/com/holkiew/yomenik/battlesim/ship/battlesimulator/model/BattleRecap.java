@@ -18,10 +18,10 @@ public class BattleRecap {
     private LocalDateTime issueTime;
     private Boolean isIssued;
 
-    public BattleRecap(BattleStrategy battleStrategy, LocalDateTime issueTime) {
+    public BattleRecap(BattleStrategy battleStrategy, LocalDateTime issueTime, String army1UserId, String army2UserId) {
         this.battleStage = battleStrategy.getBattleStage();
-        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips(), battleStrategy.getArmy1().getDestroyedShips());
-        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips(), battleStrategy.getArmy2().getDestroyedShips());
+        this.army1Recap = new ArmyRecap(battleStrategy.getArmy1().getShips(), battleStrategy.getArmy1().getDestroyedShips(), army1UserId);
+        this.army2Recap = new ArmyRecap(battleStrategy.getArmy2().getShips(), battleStrategy.getArmy2().getDestroyedShips(), army2UserId);
         this.issueTime = issueTime;
     }
 

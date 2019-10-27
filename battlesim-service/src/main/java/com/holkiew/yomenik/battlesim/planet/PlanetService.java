@@ -64,7 +64,7 @@ public class PlanetService {
 
     }
 
-    private Function<Tuple2<Planet, Research>, Mono<? extends Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {
+    private Function<Tuple2<Planet, Research>, Mono<Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {
         return tuple -> {
             Planet planet = tuple.getT1();
             var userResearchLevels = tuple.getT2().getResearchLevels();

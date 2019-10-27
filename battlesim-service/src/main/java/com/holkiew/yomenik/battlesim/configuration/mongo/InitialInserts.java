@@ -43,8 +43,6 @@ public class InitialInserts {
     private Publisher<Planet> connectPlanetData(Planet planet) {
         Arrays.stream(solarSystemInserts.getData()).filter(ss -> ss.getId().equals(planet.getSolarSystemId()))
                 .findFirst().ifPresent(solarSystem -> solarSystem.getPlanetsCoordinatesIds().put(planet.getCoordinates(), planet.getId()));
-        Arrays.stream(researchInserts.getData()).filter(research -> research.getId().equals(planet.getUserId()))
-                .findFirst().ifPresent(research -> planet.setResearchId(research.getId()));
         return planetInserts.getRepository().save(planet);
     }
 

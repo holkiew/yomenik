@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-public class TravelServiceTest {
+public class FleetServiceTest {
 
 
     @Test

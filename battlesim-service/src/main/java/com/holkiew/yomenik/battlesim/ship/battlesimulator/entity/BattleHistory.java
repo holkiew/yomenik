@@ -9,7 +9,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Document
 @Data
@@ -18,7 +20,8 @@ public class BattleHistory {
 
     @Id
     private String id;
-    private List<String> involvedUserIds;
+    private String army1UserId;
+    private String army2UserId;
     private Map<BattleStage, BattleRecap> battleRecapMap;
     private LocalDateTime startDate;
     private LocalDateTime nextRoundDate;
@@ -27,19 +30,20 @@ public class BattleHistory {
     private Long stageDelay;
     private BattleStage currentStage;
 
-    public BattleHistory(BattleStrategy battleStrategy, LocalDateTime startTime, long stageDelay, String... involvedUserIds) {
+    public BattleHistory(BattleStrategy battleStrategy, LocalDateTime startTime, long stageDelay, String army1UserId, String army2UserId) {
         this.id = UUID.randomUUID().toString();
-        this.involvedUserIds = Arrays.asList(involvedUserIds);
         this.startDate = startTime;
         this.battleRecapMap = new EnumMap<>(BattleStage.class);
         this.isIssued = false;
         this.addNewEntry(battleStrategy, startTime);
         this.nextRoundDate = startTime;
         this.stageDelay = stageDelay;
+        this.army1UserId = army1UserId;
+        this.army2UserId = army2UserId;
         this.currentStage = BattleStage.NEW;
     }
 
     public void addNewEntry(BattleStrategy battleStrategy, LocalDateTime stageTime) {
-        this.battleRecapMap.put(battleStrategy.getBattleStage(), new BattleRecap(battleStrategy, stageTime));
+        this.battleRecapMap.put(battleStrategy.getBattleStage(), new BattleRecap(battleStrategy, stageTime, army1UserId, army2UserId));
     }
 }

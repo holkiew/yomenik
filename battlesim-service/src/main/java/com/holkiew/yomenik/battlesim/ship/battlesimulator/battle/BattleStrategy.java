@@ -5,6 +5,7 @@ import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.Weapon;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -34,20 +35,20 @@ public class BattleStrategy {
         var army2ShipsCopy = ArrayListMultimap.<ShipType, Ship>create();
         army2ShipsCopy.putAll(army2.getShips());
 
-        resolveFiring(army1.getShips(), army2.getShips(), a2DestroyedShips);
-        resolveFiring(army2ShipsCopy, army1.getShips(), army1.getDestroyedShips());
+        resolveFiring(army1.getShips(), army1.getFleetManagementConfig(), army2.getShips(), a2DestroyedShips);
+        resolveFiring(army2ShipsCopy, army2.getFleetManagementConfig(), army1.getShips(), army1.getDestroyedShips());
 
         army2.getDestroyedShips().putAll(a2DestroyedShips);
         this.battleStage = army1.getShips().size() == 0 || army2.getShips().size() == 0 ? BattleStage.END : battleStage.nextStage();
     }
 
     public void resolveRetreatRound() {
-        resolveFiring(army2.getShips(), army1.getShips(), army1.getDestroyedShips());
+        resolveFiring(army2.getShips(), army2.getFleetManagementConfig(), army1.getShips(), army1.getDestroyedShips());
         this.battleStage = BattleStage.END;
     }
 
     //marks and gets rid of taken down ships, A1 shoots at A2
-    private void resolveFiring(ListMultimap<ShipType, Ship> shootingShips, ListMultimap<ShipType, Ship> hitShips, ListMultimap<ShipType, Ship> hitDestroyedShips) {
+    private void resolveFiring(ListMultimap<ShipType, Ship> shootingShips, FleetManagementConfig shootingShipsConfig, ListMultimap<ShipType, Ship> hitShips, ListMultimap<ShipType, Ship> hitDestroyedShips) {
         var army2Ships = new ArrayList<>(hitShips.entries());
         var iterator = shootingShips.values().iterator();
 

@@ -14,10 +14,12 @@ public class NewBattleRequest {
     private Map<ShipType, Long> army1;
     @NotNull
     private Map<ShipType, Long> army2;
+    @NotNull
     private String army1UserId;
+    @NotNull
     private String army2UserId;
 
-    public NewBattleRequest(@NotNull Map<ShipType, Long> army1, String army1UserId, @NotNull Map<ShipType, Long> army2, String army2UserId) {
+    public NewBattleRequest(@NotNull Map<ShipType, Long> army1, @NotNull String army1UserId, @NotNull Map<ShipType, Long> army2, @NotNull String army2UserId) {
         this.army1 = army1;
         this.army2 = army2;
         this.army1UserId = army1UserId;

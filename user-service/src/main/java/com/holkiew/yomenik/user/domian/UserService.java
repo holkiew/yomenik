@@ -1,6 +1,7 @@
 package com.holkiew.yomenik.user.domian;
 
 import com.holkiew.yomenik.user.domian.dto.NewUserRequest;
+import com.holkiew.yomenik.user.domian.entity.Player;
 import com.holkiew.yomenik.user.domian.entity.User;
 import com.holkiew.yomenik.user.domian.port.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class UserService {
     private final ModelMapper mapper;
 
 
-    public Mono<User> getUserByUsernameOrId(String id, String username) {
+    public Mono<Player> getUserByUsernameOrId(String id, String username) {
         if (Objects.nonNull(id)) {
             return userRepository.findById(id);
         } else if (Objects.nonNull(username)) {
@@ -27,9 +28,11 @@ public class UserService {
         }
     }
 
-    public Mono<User> saveNewUser(NewUserRequest request) {
-        User user = mapper.map(request, User.class);
+    public Mono<Player> saveNewUser(NewUserRequest request) {
+        Player user = (Player) mapper.map(request, User.class);
         user.setId(Objects.nonNull(user.getId()) ? user.getId() : User.createUniqueId());
+        user.setFleetConfigId(user.getId());
+        user.setResearchId(user.getId());
         return userRepository.save(user);
     }
 }

@@ -7,6 +7,7 @@ import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.ArmyRecap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipFactory;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import lombok.Data;
 
 import java.util.Map;
@@ -18,26 +19,23 @@ import java.util.stream.Stream;
 public class Army {
     private ListMultimap<ShipType, Ship> ships;
     private ListMultimap<ShipType, Ship> destroyedShips;
+    private FleetManagementConfig fleetManagementConfig;
 
-    protected Army(ListMultimap<ShipType, Ship> ships) {
+    protected Army(ListMultimap<ShipType, Ship> ships, ListMultimap<ShipType, Ship> destroyedShips, FleetManagementConfig fleetManagementConfig) {
         this.ships = ships;
-        this.destroyedShips = ArrayListMultimap.create();
-    }
-
-    protected Army(ListMultimap<ShipType, Ship> ships, ListMultimap<ShipType, Ship> destroyedShips) {
-        this.ships = ships;
+        this.fleetManagementConfig = fleetManagementConfig;
         this.destroyedShips = destroyedShips;
     }
 
-    public static Army of(Map<ShipType, Long> map) {
+    public static Army of(Map<ShipType, Long> map, FleetManagementConfig fleetManagementConfig) {
         var ships = getShipsFromMap(map);
-        return new Army(ships);
+        return new Army(ships, ArrayListMultimap.create(), fleetManagementConfig);
     }
 
-    public static Army of(ArmyRecap armyRecap) {
+    public static Army of(ArmyRecap armyRecap, FleetManagementConfig fleetManagementConfig) {
         var ships = getShipsFromMap(armyRecap.getShips());
         var destroyedShips = getShipsFromMap(armyRecap.getDestroyedShips());
-        return new Army(ships, destroyedShips);
+        return new Army(ships, destroyedShips, fleetManagementConfig);
     }
 
     private static ListMultimap<ShipType, Ship> getShipsFromMap(Map<ShipType, Long> map) {

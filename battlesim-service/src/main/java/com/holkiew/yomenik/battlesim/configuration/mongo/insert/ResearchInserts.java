@@ -13,7 +13,7 @@ public class ResearchInserts extends MongoInsertsLoader<Research, ResearchReposi
 
     public ResearchInserts(@Autowired ResearchRepository repository) {
         super(repository);
-        this.checkIfObjectAlreadyExistsFun = planet -> repository.existsById(planet.getId());
+        this.checkIfObjectAlreadyExistsFun = research -> repository.existsById(research.getId());
         setData();
     }
 

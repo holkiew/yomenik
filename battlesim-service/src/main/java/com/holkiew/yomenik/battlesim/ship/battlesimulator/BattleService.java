@@ -8,7 +8,9 @@ import com.holkiew.yomenik.battlesim.ship.battlesimulator.dto.NewBattleRequest;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.entity.BattleHistory;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.BattleRecap;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.BattleHistoryRepository;
-import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.TravelPort;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.FleetManagementServicePort;
+import com.holkiew.yomenik.battlesim.ship.battlesimulator.port.TravelServicePort;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,18 +32,29 @@ import static com.holkiew.yomenik.battlesim.common.util.EnumUtils.toEnumMap;
 public class BattleService {
 
     private final BattleHistoryRepository repository;
-    private final TravelPort travelService;
+    private final TravelServicePort travelService;
+    private final FleetManagementServicePort fleetManagementService;
     private final long STAGE_DELAY = 5L;
 
     public Mono<Tuple2<List<BattleHistory>, Long>> getBattleHistory(Principal principal, Pageable pageable) {
         // TODO Trzeba jednym customowym zapytaniem to zrobic
-        return repository.findByInvolvedUserIdsContainsAndIsIssuedTrue(principal.getId(), pageable)
+        return repository.findByArmy1UserIdOrArmy2UserIdAndIsIssuedTrue(principal.getId(), principal.getId(), pageable)
                 .collectList()
-                .zipWith(repository.countByInvolvedUserIdsContainsAndIsIssuedTrue(principal.getId()));
+                .zipWith(repository.countByArmy1UserIdOrArmy2UserIdAndIsIssuedTrue(principal.getId(), principal.getId()));
     }
 
     public Mono<BattleHistory> newBattle(NewBattleRequest request) {
-        var battleStrategy = BattleStrategy.of(Army.of(request.getArmy1()), Army.of(request.getArmy2()));
+        return fleetManagementService.findById(request.getArmy1UserId()).zipWith(fleetManagementService.findById(request.getArmy2UserId()))
+                .flatMap(tuple -> resolveBattle(request, tuple));
+    }
+
+    public Flux<BattleHistory> getCurrentBattles(Principal principal) {
+        return repository.findAllByArmy1UserIdOrArmy2UserIdAndIsIssuedFalseOrderByStartDate(principal.getId(), principal.getId())
+                .map(this::filterOutFutureResults);
+    }
+
+    private Mono<BattleHistory> resolveBattle(NewBattleRequest request, Tuple2<FleetManagementConfig, FleetManagementConfig> tuple) {
+        var battleStrategy = BattleStrategy.of(Army.of(request.getArmy1(), tuple.getT1()), Army.of(request.getArmy2(), tuple.getT2()));
         var time = LocalDateTime.now();
         var battleHistory = new BattleHistory(battleStrategy, time, STAGE_DELAY, request.getArmy1UserId(), request.getArmy2UserId());
         while (!battleStrategy.isBattleEnded()) {
@@ -53,15 +66,10 @@ public class BattleService {
         return repository.save(battleHistory);
     }
 
-    public Flux<BattleHistory> getCurrentBattles(Principal principal) {
-        return repository.findAllByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(principal.getId())
-                .map(this::filterOutFutureResults);
-    }
-
     public Mono<BattleHistory> cancelCurrentBattle(Principal principal) {
-        return repository.findFirstByInvolvedUserIdsContainsAndIsIssuedFalseOrderByStartDate(principal.getId())
+        return repository.findFirstByArmy1UserIdOrArmy2UserIdAndIsIssuedFalseOrderByStartDate(principal.getId(), principal.getId())
                 .map(battleHistory -> Tuples.of(battleHistory, getFirstNotIssuedStage(battleHistory)))
-                .map(tuple -> updateCancelledBattleHistory(tuple.getT1(), tuple.getT2()))
+                .flatMap(tuple -> updateCancelledBattleHistory(tuple.getT1(), tuple.getT2()))
                 .zipWhen(travelService::battleEndDateChangeEvent)
                 .flatMap(tuple -> repository.save(tuple.getT1()));
     }
@@ -71,23 +79,26 @@ public class BattleService {
         return battleHistory.getBattleRecapMap().getOrDefault(nextStage, battleHistory.getBattleRecapMap().get(BattleStage.END));
     }
 
-    private BattleHistory updateCancelledBattleHistory(BattleHistory battleHistory, BattleRecap firstNotIssuedBattleRecap) {
+    private Mono<BattleHistory> updateCancelledBattleHistory(BattleHistory battleHistory, BattleRecap firstNotIssuedBattleRecap) {
         var unresolvedRecapMap = battleHistory.getBattleRecapMap().entrySet().stream()
                 .filter(entry -> entry.getKey().getValue() <= firstNotIssuedBattleRecap.getBattleStage().getValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         battleHistory.setBattleRecapMap(unresolvedRecapMap);
-        resolveRetreatingBattle(battleHistory, firstNotIssuedBattleRecap);
-        return battleHistory;
+        return resolveRetreatingBattle(battleHistory, firstNotIssuedBattleRecap);
     }
 
-    private void resolveRetreatingBattle(BattleHistory battleHistory, BattleRecap battleRecap) {
-        var retreatingArmy = Army.of(battleRecap.getArmy1Recap());
-        var army2 = Army.of(battleRecap.getArmy2Recap());
+    private Mono<BattleHistory> resolveRetreatingBattle(BattleHistory battleHistory, BattleRecap battleRecap) {
+        return fleetManagementService.findById(battleHistory.getArmy1UserId()).zipWith(fleetManagementService.findById(battleHistory.getArmy2UserId()))
+                .map(tuple -> {
+                    var retreatingArmy = Army.of(battleRecap.getArmy1Recap(), tuple.getT1());
+                    var army2 = Army.of(battleRecap.getArmy2Recap(), tuple.getT2());
 
-        BattleStrategy battleStrategy = BattleStrategy.of(retreatingArmy, army2);
-        battleStrategy.resolveRetreatRound();
-        battleHistory.addNewEntry(battleStrategy, battleHistory.getNextRoundDate());
-        battleHistory.setEndDate(battleHistory.getNextRoundDate().plusSeconds(battleHistory.getStageDelay()));
+                    BattleStrategy battleStrategy = BattleStrategy.of(retreatingArmy, army2);
+                    battleStrategy.resolveRetreatRound();
+                    battleHistory.addNewEntry(battleStrategy, battleHistory.getNextRoundDate());
+                    battleHistory.setEndDate(battleHistory.getNextRoundDate().plusSeconds(battleHistory.getStageDelay()));
+                    return battleHistory;
+                });
     }
 
     private BattleHistory filterOutFutureResults(BattleHistory battleHistory) {
