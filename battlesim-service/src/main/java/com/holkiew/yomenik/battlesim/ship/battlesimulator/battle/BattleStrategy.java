@@ -3,13 +3,17 @@ package com.holkiew.yomenik.battlesim.ship.battlesimulator.battle;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.Weapon;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.ShipClassGroupTemplate;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Data
 public class BattleStrategy {
@@ -31,8 +35,8 @@ public class BattleStrategy {
     }
 
     public void resolveRound() {
-        var a2DestroyedShips = ArrayListMultimap.<ShipType, Ship>create();
-        var army2ShipsCopy = ArrayListMultimap.<ShipType, Ship>create();
+        var a2DestroyedShips = ArrayListMultimap.<ShipClassType, Ship>create();
+        var army2ShipsCopy = ArrayListMultimap.<ShipClassType, Ship>create();
         army2ShipsCopy.putAll(army2.getShips());
 
         resolveFiring(army1.getShips(), army1.getFleetManagementConfig(), army2.getShips(), a2DestroyedShips);
@@ -47,27 +51,57 @@ public class BattleStrategy {
         this.battleStage = BattleStage.END;
     }
 
-    //marks and gets rid of taken down ships, A1 shoots at A2
-    private void resolveFiring(ListMultimap<ShipType, Ship> shootingShips, FleetManagementConfig shootingShipsConfig, ListMultimap<ShipType, Ship> hitShips, ListMultimap<ShipType, Ship> hitDestroyedShips) {
-        var army2Ships = new ArrayList<>(hitShips.entries());
+    private void resolveFiring(ListMultimap<ShipClassType, Ship> shootingShips, FleetManagementConfig shootingShipsConfig, ListMultimap<ShipClassType, Ship> hitShips, ListMultimap<ShipClassType, Ship> hitDestroyedShips) {
+        var defendingShips = new ArrayList<>(hitShips.values());
         var iterator = shootingShips.values().iterator();
+        var shipGroupTemplates = shootingShipsConfig.getShipGroupTemplates();
 
-        while (iterator.hasNext() && !army2Ships.isEmpty()) {
+        while (iterator.hasNext() && !defendingShips.isEmpty()) {
             var shootingShip = iterator.next();
-            int shipToShoot = randomGenerator.nextInt(army2Ships.size());
-            var hitShipEntry = army2Ships.get(shipToShoot);
-            Ship hitShip = hitShipEntry.getValue();
-            for (Weapon shipShoot : shootingShip.getShipShoots()) {
-                hitShip.takeHit(shipShoot);
-                if (!hitShip.getAlive()) {
-                    hitDestroyedShips.put(hitShipEntry.getKey(), hitShip);
-                    army2Ships.remove(hitShipEntry);
-                    hitShips.remove(hitShipEntry.getKey(), hitShip);
+            var shootingShipConfig = shipGroupTemplates.get(shootingShip.getShipClassType());
+            switch (shootingShipConfig.getFireMode()) {
+                case FIXED:
+                    resolveFixedShooting(hitShips, hitDestroyedShips, defendingShips, shootingShipConfig);
                     break;
-                }
+                case SCATTER:
+                    resolveScatterShooting(hitShips, hitDestroyedShips, defendingShips, shootingShipConfig);
+                    break;
             }
-
         }
+    }
+
+    private void resolveFixedShooting(ListMultimap<ShipClassType, Ship> hitShips, ListMultimap<ShipClassType, Ship> hitDestroyedShips, ArrayList<Ship> defendingShips, ShipClassGroupTemplate shootingShipConfig) {
+
+        Ship hitShip;
+        hitShip = drawShipToShoot(defendingShips);
+        for (Weapon shipShoot : shootingShipConfig.getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+            hitShip.takeHit(shipShoot);
+            if (!hitShip.getAlive()) {
+                hitDestroyedShips.put(hitShip.getShipClassType(), hitShip);
+                defendingShips.remove(hitShip);
+                hitShips.remove(hitShip.getShipClassType(), hitShip);
+                break;
+            }
+        }
+    }
+
+    private void resolveScatterShooting(ListMultimap<ShipClassType, Ship> hitShips, ListMultimap<ShipClassType, Ship> hitDestroyedShips, ArrayList<Ship> defendingShips, ShipClassGroupTemplate shootingShipConfig) {
+        Ship hitShip;
+        for (Weapon shipShoot : shootingShipConfig.getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+            hitShip = drawShipToShoot(defendingShips);
+            hitShip.takeHit(shipShoot);
+            if (!hitShip.getAlive()) {
+                hitDestroyedShips.put(hitShip.getShipClassType(), hitShip);
+                defendingShips.remove(hitShip);
+                hitShips.remove(hitShip.getShipClassType(), hitShip);
+                break;
+            }
+        }
+    }
+
+    private Ship drawShipToShoot(List<Ship> defendingShips) {
+        int shipToShoot = randomGenerator.nextInt(defendingShips.size());
+        return defendingShips.get(shipToShoot);
     }
 
     public boolean isBattleEnded() {

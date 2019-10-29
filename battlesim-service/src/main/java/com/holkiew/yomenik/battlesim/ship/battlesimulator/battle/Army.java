@@ -5,8 +5,8 @@ import com.google.common.collect.ListMultimap;
 import com.holkiew.yomenik.battlesim.common.util.MultimapCollector;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.ArmyRecap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipFactory;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import lombok.Data;
 
@@ -17,17 +17,17 @@ import java.util.stream.Stream;
 
 @Data
 public class Army {
-    private ListMultimap<ShipType, Ship> ships;
-    private ListMultimap<ShipType, Ship> destroyedShips;
+    private ListMultimap<ShipClassType, Ship> ships;
+    private ListMultimap<ShipClassType, Ship> destroyedShips;
     private FleetManagementConfig fleetManagementConfig;
 
-    protected Army(ListMultimap<ShipType, Ship> ships, ListMultimap<ShipType, Ship> destroyedShips, FleetManagementConfig fleetManagementConfig) {
+    protected Army(ListMultimap<ShipClassType, Ship> ships, ListMultimap<ShipClassType, Ship> destroyedShips, FleetManagementConfig fleetManagementConfig) {
         this.ships = ships;
         this.fleetManagementConfig = fleetManagementConfig;
         this.destroyedShips = destroyedShips;
     }
 
-    public static Army of(Map<ShipType, Long> map, FleetManagementConfig fleetManagementConfig) {
+    public static Army of(Map<ShipClassType, Long> map, FleetManagementConfig fleetManagementConfig) {
         var ships = getShipsFromMap(map);
         return new Army(ships, ArrayListMultimap.create(), fleetManagementConfig);
     }
@@ -38,8 +38,8 @@ public class Army {
         return new Army(ships, destroyedShips, fleetManagementConfig);
     }
 
-    private static ListMultimap<ShipType, Ship> getShipsFromMap(Map<ShipType, Long> map) {
-        return (ListMultimap<ShipType, Ship>) map.entrySet().stream()
+    private static ListMultimap<ShipClassType, Ship> getShipsFromMap(Map<ShipClassType, Long> map) {
+        return (ListMultimap<ShipClassType, Ship>) map.entrySet().stream()
                 .filter(entry -> Objects.nonNull(entry.getValue()))
                 .map(entry -> Stream.generate(
                         () -> ShipFactory.getShip(entry.getKey()))

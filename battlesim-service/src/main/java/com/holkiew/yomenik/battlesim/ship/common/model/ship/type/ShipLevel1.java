@@ -7,6 +7,6 @@ import java.util.List;
 public class ShipLevel1 extends Ship {
 
     public ShipLevel1(Integer healthPoints, Integer shieldsPoints, Integer armorPoints, List<Weapon> weaponTypes) {
-        super(healthPoints, shieldsPoints, armorPoints, weaponTypes);
+        super(healthPoints, shieldsPoints, armorPoints, weaponTypes, ShipClassType.SHIP_LEVEL1);
     }
 }

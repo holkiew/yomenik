@@ -3,26 +3,30 @@ package com.holkiew.yomenik.battlesim.ship.common.model.ship.type;
 
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.Weapon;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Transient;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public abstract class Ship {
     private Integer healthPoints;
     private Integer shieldsPoints;
     private Integer armorPoints;
     private List<Weapon> weaponTypes;
+    private ShipClassType shipClassType;
 
     @Transient
     private Boolean alive;
 
-    public Ship(Integer healthPoints, Integer shieldsPoints, Integer armorPoints, List<Weapon> weaponTypes) {
+    public Ship(Integer healthPoints, Integer shieldsPoints, Integer armorPoints, List<Weapon> weaponTypes, ShipClassType shipClassType) {
         this.healthPoints = healthPoints;
         this.shieldsPoints = shieldsPoints;
         this.armorPoints = armorPoints;
         this.weaponTypes = weaponTypes;
         this.alive = healthPoints > 0;
+        this.shipClassType = shipClassType;
     }
 
     public List<Weapon> getShipShoots() {

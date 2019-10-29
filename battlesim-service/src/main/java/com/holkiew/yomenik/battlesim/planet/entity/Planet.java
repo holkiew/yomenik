@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +37,7 @@ public class Planet {
     @Builder.Default
     private Map<Integer, Building> buildings = Maps.newHashMap();
     @Builder.Default
-    private Map<ShipType, Long> residingFleet = Maps.newHashMap();
+    private Map<ShipClassType, Long> residingFleet = Maps.newHashMap();
     @Builder.Default
     private ListMultimap<TravelMissonType, String> onRouteFleets = ArrayListMultimap.create();
 

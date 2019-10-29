@@ -1,9 +1,6 @@
 package com.holkiew.yomenik.battlesim.configuration.mongo;
 
-import com.holkiew.yomenik.battlesim.configuration.mongo.insert.GalaxyInserts;
-import com.holkiew.yomenik.battlesim.configuration.mongo.insert.PlanetInserts;
-import com.holkiew.yomenik.battlesim.configuration.mongo.insert.ResearchInserts;
-import com.holkiew.yomenik.battlesim.configuration.mongo.insert.SolarSystemInserts;
+import com.holkiew.yomenik.battlesim.configuration.mongo.insert.*;
 import com.holkiew.yomenik.battlesim.galaxy.entity.Galaxy;
 import com.holkiew.yomenik.battlesim.galaxy.entity.SolarSystem;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
@@ -24,6 +21,7 @@ public class InitialInserts {
     private final GalaxyInserts galaxyInserts;
     private final ResearchInserts researchInserts;
     private final SolarSystemInserts solarSystemInserts;
+    private final FleetManagementConfigInserts fleetManagementConfigInserts;
 
     @PostConstruct
     public void initialInserts() {
@@ -31,12 +29,12 @@ public class InitialInserts {
     }
 
     private void galaxyAndPlanetInserts() {
-
         planetInserts.getDataStream().log()
                 .flatMap(this::connectPlanetData)
                 .doOnComplete(() -> galaxyInserts.getDataStream().flatMap(this::connectGalaxyData).subscribe())
                 .doOnComplete(solarSystemInserts::insertData)
                 .doOnComplete(researchInserts::insertData)
+                .doOnComplete(fleetManagementConfigInserts::insertData)
                 .subscribe();
     }
 

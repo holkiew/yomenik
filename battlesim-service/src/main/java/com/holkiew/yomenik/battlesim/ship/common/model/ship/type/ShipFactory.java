@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 
 public class ShipFactory {
 
-    public static Optional<Ship> getShip(ShipType shipType) {
-        switch (shipType) {
+    public static Optional<Ship> getShip(ShipClassType shipClassType) {
+        switch (shipClassType) {
             case SHIP_LEVEL1:
                 return Optional.of(getShipLevel1());
             case SHIP_LEVEL2:

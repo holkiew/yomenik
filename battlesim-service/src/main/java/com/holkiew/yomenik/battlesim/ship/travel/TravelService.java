@@ -3,7 +3,7 @@ package com.holkiew.yomenik.battlesim.ship.travel;
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.entity.BattleHistory;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.dto.ExecuteTravelMissionRequest;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import com.holkiew.yomenik.battlesim.ship.travel.port.FleetRepository;
@@ -75,13 +75,13 @@ public class TravelService {
 
     private Optional<Fleet> subtractFleetFromFromPlanet(ExecuteTravelMissionRequest request, Planet planetFrom) {
         return request.getFleet().entrySet().stream().map((entry) -> {
-            ShipType requestedShipType = entry.getKey();
+            ShipClassType requestedShipClassType = entry.getKey();
             Long requestedShipAmount = entry.getValue();
             var residingFleetFrom = planetFrom.getResidingFleet();
-            long remainingFleetAmount = residingFleetFrom.get(requestedShipType) - requestedShipAmount;
-            residingFleetFrom.put(requestedShipType, remainingFleetAmount);
-            var fleet = new HashMap<ShipType, Long>();
-            fleet.put(requestedShipType, requestedShipAmount);
+            long remainingFleetAmount = residingFleetFrom.get(requestedShipClassType) - requestedShipAmount;
+            residingFleetFrom.put(requestedShipClassType, remainingFleetAmount);
+            var fleet = new HashMap<ShipClassType, Long>();
+            fleet.put(requestedShipClassType, requestedShipAmount);
             return fleet;
         }).reduce((map1, map2) -> {
             map1.putAll(map2);

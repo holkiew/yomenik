@@ -5,7 +5,7 @@ import com.holkiew.yomenik.battlesim.common.ReactorWorker;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.battle.BattleStage;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.dto.NewBattleRequest;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import com.holkiew.yomenik.battlesim.ship.travel.port.BattleHistoryPort;
@@ -110,7 +110,7 @@ public class TravelMissionWorker implements ReactorWorker {
         return getFleetOnReturnMission(ftp, ftp.fleet.getShips());
     }
 
-    private Fleet getFleetOnReturnMission(FleetTargetPlanets ftp, Map<ShipType, Long> returningShips) {
+    private Fleet getFleetOnReturnMission(FleetTargetPlanets ftp, Map<ShipClassType, Long> returningShips) {
         var transferBackFleet = new Fleet(returningShips);
         Duration flightDuration = Duration.between(ftp.fleet.getDepartureTime(), ftp.fleet.getArrivalTime());
         var relatedIds = Lists.newArrayList(ftp.fleet.getRelatedBattleHistoryId());
