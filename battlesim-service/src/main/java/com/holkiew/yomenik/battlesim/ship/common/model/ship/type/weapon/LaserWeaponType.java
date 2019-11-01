@@ -9,7 +9,7 @@ import java.util.Map;
 public enum LaserWeaponType implements LaserWeapon {
     LASER1("Laser1", 25);
 
-    private static final Map<String, LaserWeaponType> ENUM_MAP;
+    public static final Map<String, LaserWeaponType> ENUM_MAP;
 
     private String name;
     @Getter
@@ -21,7 +21,7 @@ public enum LaserWeaponType implements LaserWeapon {
     }
 
     static {
-        ENUM_MAP = EnumUtils.createEnumMap(LaserWeaponType.class, shipType -> shipType.name);
+        ENUM_MAP = EnumUtils.createEnumMap(LaserWeaponType.class, weaponType -> weaponType.name);
     }
 
     @JsonCreator

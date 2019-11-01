@@ -1,7 +1,6 @@
 package com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity;
 
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
-import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.ShipClassGroupTemplate;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.ShipGroupTemplate;
 import io.github.classgraph.json.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +18,7 @@ import java.util.Map;
 public class FleetManagementConfig {
     @Id
     private String id;
-    private Map<ShipClassType, ShipClassGroupTemplate> shipGroupTemplates;
+    private Map<String, ShipGroupTemplate> shipGroupTemplates;
 
     public String getUserId() {
         return this.id;

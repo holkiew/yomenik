@@ -1,12 +1,11 @@
 package com.holkiew.yomenik.battlesim.planet.entity;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.MultimapBuilder;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,9 +36,9 @@ public class Planet {
     @Builder.Default
     private Map<Integer, Building> buildings = Maps.newHashMap();
     @Builder.Default
-    private Map<ShipClassType, Long> residingFleet = Maps.newHashMap();
+    private Map<String, Long> residingFleet = Maps.newHashMap();
     @Builder.Default
-    private ListMultimap<TravelMissonType, String> onRouteFleets = ArrayListMultimap.create();
+    private ListMultimap<TravelMissonType, String> onRouteFleets = MultimapBuilder.enumKeys(TravelMissonType.class).arrayListValues().build();
 
     public Planet(String id, String userId, int galaxyId, Tuple2<Integer, Integer> coordinates, String solarSystemId) {
         this.id = id;
@@ -50,7 +49,7 @@ public class Planet {
         this.resources = new Resources(new Iron(0));
         this.buildings = Maps.newHashMap();
         this.residingFleet = Maps.newHashMap();
-        this.onRouteFleets = ArrayListMultimap.create();
+        this.onRouteFleets = MultimapBuilder.enumKeys(TravelMissonType.class).arrayListValues().build();
         this.isDuringBattle = false;
     }
 }

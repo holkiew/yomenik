@@ -2,10 +2,10 @@ package com.holkiew.yomenik.battlesim.ship.battlesimulator.battle;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.holkiew.yomenik.battlesim.common.model.ShipClassType;
 import com.holkiew.yomenik.battlesim.common.util.MultimapCollector;
 import com.holkiew.yomenik.battlesim.ship.battlesimulator.model.ArmyRecap;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.Ship;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipFactory;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import lombok.Data;
@@ -27,27 +27,28 @@ public class Army {
         this.destroyedShips = destroyedShips;
     }
 
-    public static Army of(Map<ShipClassType, Long> map, FleetManagementConfig fleetManagementConfig) {
-        var ships = getShipsFromMap(map);
+    public static Army of(Map<String, Long> map, FleetManagementConfig fleetManagementConfig) {
+        var ships = getShipsFromMap(map, fleetManagementConfig);
         return new Army(ships, ArrayListMultimap.create(), fleetManagementConfig);
     }
 
     public static Army of(ArmyRecap armyRecap, FleetManagementConfig fleetManagementConfig) {
-        var ships = getShipsFromMap(armyRecap.getShips());
-        var destroyedShips = getShipsFromMap(armyRecap.getDestroyedShips());
+        var ships = getShipsFromMap(armyRecap.getShips(), fleetManagementConfig);
+        var destroyedShips = getShipsFromMap(armyRecap.getDestroyedShips(), fleetManagementConfig);
         return new Army(ships, destroyedShips, fleetManagementConfig);
     }
 
-    private static ListMultimap<ShipClassType, Ship> getShipsFromMap(Map<ShipClassType, Long> map) {
+    private static ListMultimap<ShipClassType, Ship> getShipsFromMap(Map<String, Long> map, FleetManagementConfig fleetManagementConfig) {
         return (ListMultimap<ShipClassType, Ship>) map.entrySet().stream()
-                .filter(entry -> Objects.nonNull(entry.getValue()))
-                .map(entry -> Stream.generate(
-                        () -> ShipFactory.getShip(entry.getKey()))
-                        .parallel()
-                        .limit(entry.getValue())
-                        .filter(Optional::isPresent).map(Optional::get)
-                        .collect(MultimapCollector.toMultimap(o -> entry.getKey()))
-                ).reduce((map1, map2) -> {
+                .filter(entry -> Objects.nonNull(entry.getValue()) && fleetManagementConfig.getShipGroupTemplates().containsKey(entry.getKey()))
+                .map(entry -> {
+                    var shipClassName = fleetManagementConfig.getShipGroupTemplates().get(entry.getKey()).getShipClassType();
+                    return Stream.generate(
+                            () -> ShipFactory.getShip(shipClassName))
+                            .limit(entry.getValue())
+                            .flatMap(Optional::stream)
+                            .collect(MultimapCollector.toMultimap(s -> shipClassName, s -> s.withFleetGroupTemplateName(entry.getKey())));
+                }).reduce((map1, map2) -> {
                     map1.putAll(map2);
                     return map1;
                 }).orElse(ArrayListMultimap.create());

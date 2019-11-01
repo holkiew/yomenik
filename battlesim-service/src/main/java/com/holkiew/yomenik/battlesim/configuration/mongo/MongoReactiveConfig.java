@@ -3,6 +3,7 @@ package com.holkiew.yomenik.battlesim.configuration.mongo;
 import com.holkiew.yomenik.battlesim.configuration.mongo.converter.CoordinatesConverter;
 import com.holkiew.yomenik.battlesim.configuration.mongo.converter.MultimapEnumKeyConverter;
 import com.holkiew.yomenik.battlesim.configuration.mongo.converter.TravelMissionTypeMultimapConverter;
+import com.holkiew.yomenik.battlesim.configuration.mongo.converter.WeaponConverter;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,7 @@ public class MongoReactiveConfig extends AbstractReactiveMongoConfiguration {
             converters.add(new TravelMissionTypeMultimapConverter());
             converters.add(new CoordinatesConverter.Read());
             converters.add(new CoordinatesConverter.Write());
+            converters.add(new WeaponConverter.Read());
             return new MongoCustomConversions(converters);
         }
     }

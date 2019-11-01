@@ -8,8 +8,8 @@ PRINCIPAL-ID: 1
   "planetIdFrom": 1,
   "planetIdTo": 2,
   "fleet": {
-    "shipsLevel1": 5,
-    "shipsLevel3": 2
+    "SHIP_LEVEL1_template": 50,
+    "SHIP_LEVEL3_template": 2
   },
   "missonType": "attack"
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 public enum KineticWeaponType implements KineticWeapon {
     KINETIC1("Kinetic1", 25);
 
-    private static final Map<String, KineticWeaponType> ENUM_MAP;
+    public static final Map<String, KineticWeaponType> ENUM_MAP;
 
     private String name;
     @Getter

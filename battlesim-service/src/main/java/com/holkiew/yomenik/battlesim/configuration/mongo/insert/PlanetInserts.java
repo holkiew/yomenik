@@ -4,7 +4,6 @@ import com.holkiew.yomenik.battlesim.common.MongoInsertsLoader;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.util.function.Tuples;
@@ -21,13 +20,13 @@ public class PlanetInserts extends MongoInsertsLoader<Planet, PlanetRepository> 
     }
 
     private void setData() {
+        var planet1ResidingFleet = new HashMap<String, Long>();
+        planet1ResidingFleet.put("SHIP_LEVEL1_template", 100L);
+        planet1ResidingFleet.put("SHIP_LEVEL3_template", 10L);
         Planet planet1 = Planet.builder()
                 .id("1").userId("1").galaxyId(1).coordinates(new Coordinates(1, 1))
                 .solarSystemId("1")
-                .residingFleet(new HashMap<>() {{
-                    put(ShipClassType.SHIP_LEVEL1, 100L);
-                    put(ShipClassType.SHIP_LEVEL3, 10L);
-                }})
+                .residingFleet(planet1ResidingFleet)
                 .build();
         Planet planet2 = new Planet("2", "1", 1, Tuples.of(1, 2), "1");
         setData(planet1, planet2);

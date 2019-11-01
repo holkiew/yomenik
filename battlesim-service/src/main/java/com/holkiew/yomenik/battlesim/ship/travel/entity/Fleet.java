@@ -2,7 +2,6 @@ package com.holkiew.yomenik.battlesim.ship.travel.entity;
 
 import com.google.common.collect.Lists;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import io.github.classgraph.json.Id;
 import lombok.AllArgsConstructor;
@@ -23,7 +22,7 @@ import java.util.UUID;
 public class Fleet {
     @Id
     private String id;
-    private Map<ShipClassType, Long> ships;
+    private Map<String, Long> ships;
     private String planetIdFrom;
     private String planetIdTo;
     private LocalDateTime departureTime;
@@ -31,15 +30,14 @@ public class Fleet {
     private TravelMissonType missionType;
     private Boolean missionCompleted;
     private List<String> relatedMissions;
-    // TODO: jakis index na tym zapiac
     private String relatedBattleHistoryId;
 
-    public Fleet(Map<ShipClassType, Long> ships) {
+    public Fleet(Map<String, Long> ships) {
         this.id = UUID.randomUUID().toString();
         this.ships = ships;
     }
 
-    public Fleet(Map<ShipClassType, Long> ships, String relatedBattleHistoryId) {
+    public Fleet(Map<String, Long> ships, String relatedBattleHistoryId) {
         this.id = UUID.randomUUID().toString();
         this.ships = ships;
         this.relatedBattleHistoryId = relatedBattleHistoryId;

@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.ship.common.model.ship.type;
+package com.holkiew.yomenik.battlesim.common.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.holkiew.yomenik.battlesim.common.util.EnumUtils;

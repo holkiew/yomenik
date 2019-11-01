@@ -1,7 +1,7 @@
 package com.holkiew.yomenik.battlesim.configuration.mongo.converter;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import org.bson.Document;
 import org.springframework.core.convert.converter.Converter;
@@ -12,7 +12,7 @@ public class TravelMissionTypeMultimapConverter implements Converter<Document, L
 
     @Override
     public ListMultimap<TravelMissonType, String> convert(Document source) {
-        ArrayListMultimap<TravelMissonType, String> map = ArrayListMultimap.create();
+        var map = MultimapBuilder.enumKeys(TravelMissonType.class).arrayListValues().<TravelMissonType, String>build();
         source.forEach((name, id) -> {
             TravelMissonType key = TravelMissonType.get(name);
             if (id instanceof Iterable) {

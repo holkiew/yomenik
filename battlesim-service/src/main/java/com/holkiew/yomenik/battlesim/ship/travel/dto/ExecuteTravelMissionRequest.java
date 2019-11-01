@@ -1,6 +1,5 @@
 package com.holkiew.yomenik.battlesim.ship.travel.dto;
 
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.ShipClassType;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ public class ExecuteTravelMissionRequest {
     @NotNull
     private String planetIdTo;
     @NotNull
-    private Map<ShipClassType, Long> fleet;
+    private Map<String, Long> fleet;
     @NotNull
     private TravelMissonType missonType;
 }

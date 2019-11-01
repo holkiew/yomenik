@@ -1,12 +1,8 @@
 package com.holkiew.yomenik.battlesim.ship.common.model.ship.type;
 
-import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.LaserWeaponType;
+import com.holkiew.yomenik.battlesim.common.model.ShipClassType;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ShipFactory {
 
@@ -24,14 +20,14 @@ public class ShipFactory {
     }
 
     public static ShipLevel1 getShipLevel1() {
-        return new ShipLevel1(100, 0, 0, Collections.singletonList(LaserWeaponType.LASER1));
+        return new ShipLevel1(100, 0, 0);
     }
 
     public static ShipLevel2 getShipLevel2() {
-        return new ShipLevel2(250, 25, 100, Arrays.asList(LaserWeaponType.LASER1, LaserWeaponType.LASER1));
+        return new ShipLevel2(250, 25, 100);
     }
 
     public static ShipLevel3 getShipLevel3() {
-        return new ShipLevel3(1000, 250, 1000, Stream.generate(() -> LaserWeaponType.LASER1).limit(5).collect(Collectors.toList()));
+        return new ShipLevel3(1000, 250, 1000);
     }
 }
