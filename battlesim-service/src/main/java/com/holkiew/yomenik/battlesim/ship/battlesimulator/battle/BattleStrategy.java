@@ -74,7 +74,7 @@ public class BattleStrategy {
 
         Ship hitShip;
         hitShip = drawShipToShoot(defendingShips);
-        for (Weapon shipShoot : shootingShipConfig.getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+        for (Weapon shipShoot : shootingShipConfig.getHull().getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
             hitShip.takeHit(shipShoot);
             if (!hitShip.getAlive()) {
                 hitDestroyedShips.put(hitShip.getShipClassType(), hitShip);
@@ -87,7 +87,7 @@ public class BattleStrategy {
 
     private void resolveScatterShooting(ListMultimap<ShipClassType, Ship> hitShips, ListMultimap<ShipClassType, Ship> hitDestroyedShips, ArrayList<Ship> defendingShips, ShipGroupTemplate shootingShipConfig) {
         Ship hitShip;
-        for (Weapon shipShoot : shootingShipConfig.getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+        for (Weapon shipShoot : shootingShipConfig.getHull().getWeaponSlots().values().stream().filter(Objects::nonNull).collect(Collectors.toList())) {
             hitShip = drawShipToShoot(defendingShips);
             hitShip.takeHit(shipShoot);
             if (!hitShip.getAlive()) {

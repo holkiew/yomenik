@@ -2,6 +2,7 @@ package com.holkiew.yomenik.battlesim.ship.common.model.ship.type;
 
 
 import com.holkiew.yomenik.battlesim.common.model.ShipClassType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.hull.Hull;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.Weapon;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
@@ -22,6 +23,13 @@ public abstract class Ship {
         this.armorPoints = armorPoints;
         this.alive = healthPoints > 0;
         this.shipClassType = shipClassType;
+    }
+
+    public Ship withHull(Hull hull) {
+        this.healthPoints = hull.getHealthPoints();
+        this.shieldsPoints = hull.getShieldsPoints();
+        this.armorPoints = hull.getArmorPoints();
+        return this;
     }
 
     public void takeHit(Weapon shipShot) {

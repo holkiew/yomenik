@@ -9,7 +9,7 @@ import java.util.Map;
 public enum KineticWeaponType implements KineticWeapon {
     KINETIC1("Kinetic1", 25);
 
-    public static final Map<String, KineticWeaponType> ENUM_MAP;
+    private static final Map<String, KineticWeaponType> ENUM_MAP;
 
     private String name;
     @Getter
@@ -21,7 +21,7 @@ public enum KineticWeaponType implements KineticWeapon {
     }
 
     static {
-        ENUM_MAP = EnumUtils.createEnumMap(KineticWeaponType.class, shipType -> shipType.name);
+        ENUM_MAP = EnumUtils.createEnumMap(KineticWeaponType.class, weaponType -> weaponType.name);
     }
 
     @JsonCreator

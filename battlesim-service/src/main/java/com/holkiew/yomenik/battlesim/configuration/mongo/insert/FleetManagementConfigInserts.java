@@ -2,6 +2,8 @@ package com.holkiew.yomenik.battlesim.configuration.mongo.insert;
 
 import com.holkiew.yomenik.battlesim.common.MongoInsertsLoader;
 import com.holkiew.yomenik.battlesim.common.model.ShipClassType;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.hull.Hull;
+import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.hull.HullType;
 import com.holkiew.yomenik.battlesim.ship.common.model.ship.type.weapon.LaserWeaponType;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.FireMode;
@@ -34,11 +36,11 @@ public class FleetManagementConfigInserts extends MongoInsertsLoader<FleetManage
 
     private Map<String, ShipGroupTemplate> getShipClassGroups() {
         var class1Template = new ShipGroupTemplate("SHIP_LEVEL1_template", ShipClassType.SHIP_LEVEL1,
-                Map.ofEntries(Map.entry(1, LaserWeaponType.LASER1)), FireMode.FIXED);
+                new Hull(HullType.SHIP_LEVEL1, Map.ofEntries(Map.entry(1, LaserWeaponType.LASER1))), FireMode.FIXED);
         var class2Template = new ShipGroupTemplate("SHIP_LEVEL2_template", ShipClassType.SHIP_LEVEL2,
-                Map.ofEntries(Map.entry(1, LaserWeaponType.LASER1), Map.entry(2, LaserWeaponType.LASER1)), FireMode.FIXED);
+                new Hull(HullType.SHIP_LEVEL2, Map.ofEntries(Map.entry(1, LaserWeaponType.LASER1), Map.entry(2, LaserWeaponType.LASER1))), FireMode.FIXED);
         var class3Template = new ShipGroupTemplate("SHIP_LEVEL3_template", ShipClassType.SHIP_LEVEL3,
-                IntStream.range(1, 6).boxed().collect(Collectors.toMap(Function.identity(), i -> LaserWeaponType.LASER1)), FireMode.SCATTER);
+                new Hull(HullType.SHIP_LEVEL3, IntStream.range(1, 6).boxed().collect(Collectors.toMap(Function.identity(), i -> LaserWeaponType.LASER1))), FireMode.SCATTER);
         return Stream.of(class1Template, class2Template, class3Template).collect(Collectors.toMap(ShipGroupTemplate::getName, Function.identity()));
     }
 }

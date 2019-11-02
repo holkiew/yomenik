@@ -42,11 +42,13 @@ public class Army {
         return (ListMultimap<ShipClassType, Ship>) map.entrySet().stream()
                 .filter(entry -> Objects.nonNull(entry.getValue()) && fleetManagementConfig.getShipGroupTemplates().containsKey(entry.getKey()))
                 .map(entry -> {
-                    var shipClassName = fleetManagementConfig.getShipGroupTemplates().get(entry.getKey()).getShipClassType();
+                    var shipGroupTemplate = fleetManagementConfig.getShipGroupTemplates().get(entry.getKey());
+                    var shipClassName = shipGroupTemplate.getShipClassType();
                     return Stream.generate(
                             () -> ShipFactory.getShip(shipClassName))
                             .limit(entry.getValue())
                             .flatMap(Optional::stream)
+                            .map(ship -> ship.withHull(shipGroupTemplate.getHull()))
                             .collect(MultimapCollector.toMultimap(s -> shipClassName, s -> s.withFleetGroupTemplateName(entry.getKey())));
                 }).reduce((map1, map2) -> {
                     map1.putAll(map2);
