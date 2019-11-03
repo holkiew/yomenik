@@ -1,6 +1,7 @@
 html * {
     font-family: Verdana, sans-serif;
     color: whitesmoke;
+    max-width: 100vw;
 }
 
 .card-body * {

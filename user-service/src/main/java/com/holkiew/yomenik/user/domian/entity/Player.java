@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
 @Document
 public class Player extends User {
