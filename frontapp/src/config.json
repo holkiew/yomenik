@@ -3,6 +3,7 @@
     "baseUrl": "http://localhost:8080",
     "services": {
       "battlesim": "/battlesim",
+      "planet": "/planet",
       "authentication": "/auth"
     }
   },
@@ -11,5 +12,9 @@
       "authorization": "yomenik.authorization",
       "token": "yomenik.token"
     }
+  },
+  "debug": {
+    "value": true,
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjpbIlJPTEVfVVNFUiJdLCJpZCI6IjEiLCJzdWIiOiJ1c2VyMSIsImlhdCI6MTU3MzM5MTUwOSwiZXhwIjoxNTczMzk3Mjc4LCJqdGkiOiI4NGYwMWE2ZS01ZmU4LTQ0MjgtYWU3Mi1hODk4Y2YzNzhjYWEifQ.MUOy-J64Ynzk2II-B9XHBBF8MG7esi0FRB5uoRDipLE"
   }
 }

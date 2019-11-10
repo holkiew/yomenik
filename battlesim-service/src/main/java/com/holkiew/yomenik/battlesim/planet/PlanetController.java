@@ -1,6 +1,7 @@
 package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
+import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewResearchRequest;
@@ -12,9 +13,13 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
+
+@CrossOrigin
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/planet")
 public class PlanetController {
 
     private final PlanetService planetService;
@@ -36,6 +41,21 @@ public class PlanetController {
     @GetMapping("/resource")
     public Mono<ResponseEntity<Resources>> getPlanetResources(@RequestParam @NotBlank String planetId, Principal principal) {
         return planetService.getPlanetResources(planetId, principal)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("planet")
+    public Mono<ResponseEntity<Planet>> getPlanet(@RequestParam @NotBlank String planetId, @RequestParam(required = false) boolean asOwner, Principal principal) {
+        return planetService.getPlanet(planetId, asOwner, principal)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/planets")
+    public Mono<ResponseEntity<List<Planet>>> getPlanets(Principal principal) {
+        return planetService.getPlanets(principal)
+                .collectList()
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

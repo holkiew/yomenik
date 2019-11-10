@@ -16,6 +16,7 @@ import com.holkiew.yomenik.battlesim.planet.port.ResearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
@@ -31,10 +32,30 @@ public class PlanetService {
     private final PlanetRepository planetRepository;
     private final ResearchRepository researchRepository;
 
+    public Mono<Planet> getPlanet(String planetId, boolean asOwner, Principal principal) {
+        if (asOwner) {
+            return planetRepository.findByIdAndUserId(planetId, principal.getId())
+                    .transform(this::updatePlanetResourcesByIncomeAndSave);
+
+        } else {
+            return planetRepository.findById(planetId)
+                    .transform(this::updatePlanetResourcesByIncomeAndSave)
+                    .doOnEach(planet -> {
+                        planet.get().getOnRouteFleets().clear();
+                        planet.get().setUserId("");
+                    });
+        }
+    }
+
+    public Flux<Planet> getPlanets(Principal principal) {
+        return planetRepository.findAllByUserId(principal.getId())
+                .map(this::updatePlanetResourcesByIncome)
+                .flatMap(planetRepository::save);
+    }
+
     public Mono<Resources> getPlanetResources(String planetId, Principal principal) {
         return planetRepository.findByIdAndUserId(planetId, principal.getId())
-                .map(this::updatePlanetResourcesByIncome)
-                .flatMap(planetRepository::save)
+                .transform(this::updatePlanetResourcesByIncomeAndSave)
                 .map(Planet::getResources);
     }
 
@@ -156,5 +177,10 @@ public class PlanetService {
     private Optional<Building> getBuilding(Planet planet, int slot) {
         Map<Integer, Building> buildings = planet.getBuildings();
         return Optional.ofNullable(buildings.get(slot));
+    }
+
+    private Mono<Planet> updatePlanetResourcesByIncomeAndSave(Mono<Planet> stream) {
+        return stream.map(this::updatePlanetResourcesByIncome)
+                .flatMap(planetRepository::save);
     }
 }

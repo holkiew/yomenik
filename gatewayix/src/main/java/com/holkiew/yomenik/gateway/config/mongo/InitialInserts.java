@@ -31,8 +31,9 @@ public class InitialInserts {
     public void injectDefaultUsers() {
         User admin = new User("admin", passwordEncoder.encode("admin"), true, Arrays.asList((Role.ROLE_ADMIN)));
         User user = new User("user", passwordEncoder.encode("user"), true, Arrays.asList((Role.ROLE_USER)));
+        User user1 = new User("1", "user1", passwordEncoder.encode("user1"), true, Arrays.asList((Role.ROLE_USER)));
         AtomicInteger retryCounter = new AtomicInteger(1);
-        Flux.just(admin, user)
+        Flux.just(admin, user, user1)
                 .flatMap(usr -> Mono.just(Tuples.of(usr, userRepository.existsByUsername(usr.getUsername()))))
                 .filterWhen(tuple -> BooleanUtils.not(tuple.getT2()))
                 .flatMap(tuple -> userRepository.save(tuple.getT1()))

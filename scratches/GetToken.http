@@ -1,0 +1,12 @@
+POST http://{{host}}/auth/login
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "username": "user1",
+  "password": "user1"
+}
+
+###
+

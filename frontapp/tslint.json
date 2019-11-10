@@ -24,6 +24,8 @@
     "no-unused-variable": false,
     "jsx-no-lambda": false,
     "jsx-boolean-value": false,
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "no-empty": false,
+    "no-unused-expression": false
   }
 }

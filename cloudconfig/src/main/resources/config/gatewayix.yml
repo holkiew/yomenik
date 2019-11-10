@@ -9,7 +9,7 @@ eureka:
 
 app:
   jwtSecret: JWTSuperSecretKeyJWTSuperSecretKeyJWTSuperSecretKeyJWTSuperSecretKey
-  jwtExpirationInMs: 604800000
+  jwtExpirationInMs: 60480000000
 
 spring:
   data:

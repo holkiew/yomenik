@@ -1,18 +1,7 @@
 import * as React from 'react';
 import Routes from "./Routes";
-import {configureAxios} from "./configuration";
-import 'global.css'
+import {hot} from 'react-hot-loader';
 
-export default class App extends React.Component {
+const App = () => <Routes/>;
 
-    public componentWillMount() {
-        configureAxios();
-    }
-
-    public render() {
-        return (
-                <Routes/>
-        );
-    }
-
-}
+export default hot(module)(App);

@@ -29,7 +29,7 @@ public class UserService {
 
     public Mono<User> saveNewUser(NewUserRequest request) {
         User user = mapper.map(request, User.class);
-        user.setId(Objects.nonNull(user.getId()) ? user.getId() : User.createUniqueId());
+        user.setId(Objects.nonNull(request.getId()) ? request.getId() : User.createUniqueId());
         return userRepository.save(user);
     }
 }

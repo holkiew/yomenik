@@ -11,3 +11,7 @@ html * {
 .background-container {
     min-height: 100vh
 }
+
+.list-group-item {
+    background-color: rgba(0, 0, 0, 0.075)
+}
