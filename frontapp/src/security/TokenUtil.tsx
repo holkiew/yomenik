@@ -1,4 +1,4 @@
-import * as JWT from 'jwt-decode';
+import JWT from 'jwt-decode';
 import * as env from "../config.json";
 import ROLES from "./Roles";
 import {updateAxiosHeaderToken} from "configuration";

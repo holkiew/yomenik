@@ -1,5 +1,5 @@
+import React from "react";
 // import {InputType} from "reactstrap/lib/Input";
-// import * as React from "react";
 // import FormGroup from "reactstrap/lib/FormGroup";
 // import {FormFeedback, Input, Label} from "reactstrap";
 //

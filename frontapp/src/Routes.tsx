@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import Login from "components/login/Login";
 import HomePanel from "components/panel/HomePanel";
@@ -6,8 +6,8 @@ import FleetPanel from "components/fleet/FleetPanel";
 import SecureRoute from "security/SecureRoute";
 import {Col, Row} from 'reactstrap';
 import LeftMenu from "common/leftmenu/LeftMenu";
-import {isTokenStored} from "./security/TokenUtil";
-import PlanetView from "./common/rightplanetview/PlanetView";
+import {isTokenStored} from "security/TokenUtil";
+import PlanetView from "common/rightplanetview/PlanetView";
 
 const Routes = () =>
     <BrowserRouter>

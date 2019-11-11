@@ -1,24 +1,46 @@
-import * as React from 'react';
+import React from 'react';
 import {Col, Row} from 'reactstrap';
+import {Dispatch} from "redux";
+import {connect} from "react-redux";
+import {setFocusedPlanet} from "components/actions"
+import StoreModel from "StoreModel";
+import * as planetPNG from "static/planet.png";
 
-export const PlanetView = () => {
+const styles = require('./planetview.module.css');
+
+interface PlanetViewProps {
+    planetsData: [any],
+    focusedPlanet: any,
+    dispatch: Dispatch;
+}
+
+const PlanetView = (props: PlanetViewProps) => {
     return (
         <Row>
             <Col className="col-12 text-center">
-                <div onClick={() => {
-                }} className="">Planet1
-                </div>
-                <div onClick={() => {
-                }} className="">Planet2
-                </div>
-                <div onClick={() => {
-                }} className="">Planet3
-                </div>
+                {createPlanetList(props)}
             </Col>
         </Row>
     );
 };
 
-export default PlanetView;
+function createPlanetList(props: PlanetViewProps) {
+    const {planetsData, dispatch, focusedPlanet} = props;
+    return planetsData instanceof Array ? planetsData.map(planet =>
+        <Row key={planet.id} onClick={() => {
+            dispatch(setFocusedPlanet(planet.id))
+        }} className={`flex-column ${styles.planetRow}`}>
+            <div style={{backgroundImage: `url(${planetPNG})`}} className={styles["planet_image"]}/>
+            <p style={focusedPlanet.id === planet.id ? {"color": "#80bdff"} : undefined}>{`Planet ${planet.id}`}</p>
+        </Row>) : null;
+}
+
+const mapStateToProps = (store: StoreModel) => ({
+    planetsData: store.planets.data,
+    focusedPlanet: store.planets.focusedPlanet,
+});
+
+// @ts-ignore
+export default connect(mapStateToProps)(PlanetView)
 
 

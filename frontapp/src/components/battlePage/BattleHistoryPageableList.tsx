@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Axios from "axios-observable";
 import * as env from "../../config.json";
 import ReactPaginate from "react-paginate";

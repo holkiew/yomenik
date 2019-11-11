@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as env from "../../config.json";
 import {Alert, Button, ButtonGroup, Container, Form, FormFeedback, FormGroup, Input} from 'reactstrap';
 import {RouteComponentProps} from "react-router-dom";
@@ -6,6 +6,9 @@ import Axios from "axios-observable";
 import {isTokenStored, removeToken, setToken} from "security/TokenUtil";
 import logo from 'static/yomenik.png';
 import "./login.css";
+
+// import styles = require('./login.css');
+
 
 enum LOGIN_STATE {INITIAL, LOGIN_SUCCESSFUL, LOGIN_FAILED}
 
@@ -38,7 +41,7 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
 
     public render() {
         return (
-            <div className="black-canvas">
+            <div className="black-canvas" id="login-container">
                 <div className="flex-container">
                     <Container>
                         <Container className="col-xs-12 col-sm-12 col-lg-12">

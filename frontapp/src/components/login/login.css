@@ -1,41 +1,41 @@
-#login {
+#login-container > #login {
     background-color: #DDD;
 }
 
-#password {
+#login-container > #password {
     background-color: #DDD;
 }
 
-.black-canvas {
+#login-container > .black-canvas {
     background-color: black;
     /*height: 100%;*/
     min-height: 100vh;
 }
 
-.errorAlert {
+#login-container > .errorAlert {
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s 3s, opacity 3s linear;
 }
 
-.btn-primary:focus {
+#login-container > .btn-primary:focus {
     background: black !important;
     border: none !important;
     -webkit-box-shadow: none !important;;
     box-shadow: none !important;;
 }
 
-.btn-primary {
+#login-container > .btn-primary {
     background: black !important;
     border: none !important;
 }
 
-.btn-primary.active {
+#login-container > .btn-primary.active {
     background: #c3a50a !important;
     border: none !important;
 }
 
-.flex-container {
+#login-container > .flex-container {
     display: flex;
     height: 60vh;
     flex-direction: column;

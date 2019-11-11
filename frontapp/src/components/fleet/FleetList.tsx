@@ -1,20 +1,32 @@
-import * as React from 'react';
+import React from 'react';
 import {ListGroup, ListGroupItem, Row} from 'reactstrap';
 
-export default class FleetPanel extends React.Component {
+interface FleetListProps {
+    residingFleet: object
+}
+
+export default class FleetPanel extends React.Component<FleetListProps> {
     public render() {
+        const {residingFleet} = this.props;
         return (
             <Row>
                 <ListGroup>
-                    <ListGroupItem>Cras justo odio</ListGroupItem>
-                    <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-                    <ListGroupItem>Morbi leo risus</ListGroupItem>
-                    <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-                    <ListGroupItem>Vestibulum at eros</ListGroupItem>
+                    {this.generateList(residingFleet)}
                 </ListGroup>
             </Row>
         );
     }
 
+    private generateList = (residingFleet: object) => {
+        const elementList: any[] = [];
+        for (let key in residingFleet) {
+            elementList.push((
+                <ListGroupItem key={key}>
+                    {`${key}: ${residingFleet[key]}`}
+                </ListGroupItem>
+            ))
+        }
+        return elementList;
+    }
 
 }

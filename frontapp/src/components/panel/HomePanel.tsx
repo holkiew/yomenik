@@ -1,17 +1,30 @@
-import * as React from 'react';
+import React from 'react';
 import {Col, Row} from "reactstrap";
 import Axios from "axios-observable";
-import * as env from "../../config.json";
+import * as env from "config.json";
+import {setPlanetsData} from "components/actions";
+import {Dispatch} from 'redux';
+import {connect} from 'react-redux';
+import StoreModel from "StoreModel";
 
+interface HomePanelProps {
+    focusedPlanet?: any,
+    dispatch: Dispatch<any>;
+}
 
-export default class HomePanel extends React.Component<any, any> {
+class HomePanel extends React.Component<HomePanelProps> {
+
+    constructor(props: HomePanelProps) {
+        super(props);
+        this.getUserPlanets()
+    }
 
     public render() {
-        this.getUserPlanets()
+        const {focusedPlanet} = this.props;
         return (
             <Row>
                 <Col className="col-12 text-center">
-                    <div>planet1</div>
+                    <div>{`Planet ${focusedPlanet ? focusedPlanet.id : "loading"}`}</div>
                 </Col>
             </Row>
         );
@@ -19,9 +32,15 @@ export default class HomePanel extends React.Component<any, any> {
 
     private getUserPlanets = () => {
         Axios.get(`${env.backendServer.baseUrl}${env.backendServer.services.planet}/planets`)
-            .subscribe(value => {
-                console.info(value)
+            .subscribe(response => {
+                this.props.dispatch(setPlanetsData(response.data))
             });
     };
-
 }
+
+const mapStateToProps = (store: StoreModel) => ({
+    focusedPlanet: store.planets.focusedPlanet
+});
+
+export default connect(mapStateToProps)(HomePanel);
+

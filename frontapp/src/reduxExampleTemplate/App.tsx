@@ -1,6 +1,6 @@
+import React from 'react';
 // import { Dispatch } from 'redux';
 // import { connect } from 'react-redux';
-// import * as React from 'react';
 // import {addNumber} from "./actions";
 //
 // interface AppProps {

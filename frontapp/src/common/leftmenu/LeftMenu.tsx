@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {Col, Row} from 'reactstrap';
 import {useHistory} from "react-router-dom";
 import "./LeftMenu.css";

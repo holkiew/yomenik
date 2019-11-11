@@ -1,4 +1,4 @@
-// import * as React from "react";
+import React from "react";
 // import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 //
 // export interface ConfirmModalProps {

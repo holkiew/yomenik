@@ -1,19 +1,23 @@
-import * as React from 'react';
-import {Button, Col, ListGroup, ListGroupItem, Row} from 'reactstrap';
+import React from 'react';
+import {Button, Col, Row} from 'reactstrap';
+import {Dispatch} from "redux";
+import StoreModel from "StoreModel";
+import {connect} from "react-redux";
+import FleetList from "./FleetList";
 
-export default class FleetPanel extends React.Component {
+interface FleetPanelProps {
+    focusedPlanet?: any,
+    dispatch: Dispatch
+}
+
+class FleetPanel extends React.Component<FleetPanelProps> {
     public render() {
+        const {focusedPlanet} = this.props;
         return (
             <div>
                 <Row>
                     <Col className="col-xs-12 col-sm-8 col-md-4 col-lg-3">
-                        <ListGroup>
-                            <ListGroupItem>Cras justo odio</ListGroupItem>
-                            <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-                            <ListGroupItem>Morbi leo risus</ListGroupItem>
-                            <ListGroupItem>Porta ac consectetur ac</ListGroupItem>
-                            <ListGroupItem>Vestibulum at eros</ListGroupItem>
-                        </ListGroup>
+                        <FleetList residingFleet={focusedPlanet ? focusedPlanet.residingFleet : {}}/>
                     </Col>
                     <Col className="col-xs-12 col-sm-4 col-md-8 col-lg-9">
                         <Button color="primary">New Template</Button>
@@ -24,3 +28,10 @@ export default class FleetPanel extends React.Component {
         );
     }
 }
+
+const mapStateToProps = (store: StoreModel) => ({
+    focusedPlanet: store.planets.focusedPlanet
+});
+
+export default connect(mapStateToProps)(FleetPanel)
+

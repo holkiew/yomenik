@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {FormFeedback, Input, InputGroup, Label} from 'reactstrap';
 
 

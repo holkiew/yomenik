@@ -1,0 +1,17 @@
+.planet_image {
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: 8vh;
+    height: 8vh;
+    display: inline-block;
+    margin: auto;
+}
+
+.planetRow > p {
+    line-height: 20px;
+}
+
+.planetRow:hover > p {
+    font-size: larger;
+}
+
