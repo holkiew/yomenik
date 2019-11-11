@@ -19,6 +19,7 @@ export default class FleetPanel extends React.Component<FleetListProps> {
 
     private generateList = (residingFleet: object) => {
         const elementList: any[] = [];
+
         for (let key in residingFleet) {
             elementList.push((
                 <ListGroupItem key={key}>
