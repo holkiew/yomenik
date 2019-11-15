@@ -1,4 +1,4 @@
-import ComponentsState from "components/ComponentsState";
+import {ComponentsState} from "components/ComponentsState";
 
 export default interface StoreModel {
     planets: ComponentsState

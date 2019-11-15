@@ -12,12 +12,12 @@ interface FleetPanelProps {
 
 class FleetPanel extends React.Component<FleetPanelProps> {
     public render() {
-        const {focusedPlanet} = this.props;
+        const {focusedPlanet: {residingFleet = {}}} = this.props;
         return (
             <div>
                 <Row>
                     <Col className="col-xs-12 col-sm-8 col-md-4 col-lg-3">
-                        <FleetList residingFleet={focusedPlanet ? focusedPlanet.residingFleet : {}}/>
+                        <FleetList residingFleet={new Map(Object.entries(residingFleet))}/>
                     </Col>
                     <Col className="col-xs-12 col-sm-4 col-md-8 col-lg-9">
                         <Button color="primary">New Template</Button>

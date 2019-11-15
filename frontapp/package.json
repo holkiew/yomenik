@@ -27,7 +27,9 @@
     "reactstrap": "^8.0.1",
     "redux": "^4.0.4",
     "redux-actions": "^2.6.5",
+    "redux-observable": "^1.2.0",
     "rxjs": "^6.5.2",
+    "typesafe-actions": "^5.1.0",
     "yarn-deduplicate": "^1.1.1"
   },
   "scripts": {

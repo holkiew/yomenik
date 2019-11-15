@@ -1,4 +1,10 @@
-export default interface ComponentsState {
+export interface ComponentsState {
     data: object[],
-    focusedPlanet?: object
+    focusedPlanet?: object,
+    dataState: DataState
+}
+
+export enum DataState {
+    TO_UPDATE,
+    UP_TO_DATE
 }

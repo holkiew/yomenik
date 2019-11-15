@@ -93,6 +93,7 @@ export default class Login extends React.Component<RouteComponentProps, LoginSta
         switch (this.state.loginState) {
             case LOGIN_STATE.LOGIN_SUCCESSFUL:
                 setTimeout(() => this.props.history.push("/panel"), 1500);
+                // !!! dispatch(markDataToUpdate()) !!!
                 return <Alert color="success"
                               style={{marginTop: "1rem"}}>{this.state.radioSelected === "login" ? "Login" : "Registration"} successful</Alert>;
             case LOGIN_STATE.LOGIN_FAILED:

@@ -10,8 +10,8 @@ const styles = require('./planetview.module.css');
 
 interface PlanetViewProps {
     planetsData: [any],
-    focusedPlanet: any,
-    dispatch: Dispatch;
+    focusedPlanet?: any,
+    dispatch: Dispatch<any>;
 }
 
 const PlanetView = (props: PlanetViewProps) => {
@@ -26,7 +26,7 @@ const PlanetView = (props: PlanetViewProps) => {
 
 function createPlanetList(props: PlanetViewProps) {
     const {planetsData, dispatch, focusedPlanet} = props;
-    return planetsData instanceof Array ? planetsData.map(planet =>
+    return planetsData.length > 0 ? planetsData.map(planet =>
         <Row key={planet.id} onClick={() => {
             dispatch(setFocusedPlanet(planet.id))
         }} className={`flex-column ${styles.planetRow}`}>

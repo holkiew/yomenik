@@ -1,8 +1,5 @@
 import React from 'react';
 import {Col, Row} from "reactstrap";
-import Axios from "axios-observable";
-import * as env from "config.json";
-import {setPlanetsData} from "components/actions";
 import {Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import StoreModel from "StoreModel";
@@ -16,7 +13,6 @@ class HomePanel extends React.Component<HomePanelProps> {
 
     constructor(props: HomePanelProps) {
         super(props);
-        this.getUserPlanets()
     }
 
     public render() {
@@ -29,13 +25,6 @@ class HomePanel extends React.Component<HomePanelProps> {
             </Row>
         );
     }
-
-    private getUserPlanets = () => {
-        Axios.get(`${env.backendServer.baseUrl}${env.backendServer.services.planet}/planets`)
-            .subscribe(response => {
-                this.props.dispatch(setPlanetsData(response.data))
-            });
-    };
 }
 
 const mapStateToProps = (store: StoreModel) => ({

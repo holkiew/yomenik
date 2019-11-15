@@ -2,7 +2,7 @@ import React from 'react';
 import {ListGroup, ListGroupItem, Row} from 'reactstrap';
 
 interface FleetListProps {
-    residingFleet: object
+    residingFleet: Map<string, number>
 }
 
 export default class FleetPanel extends React.Component<FleetListProps> {
@@ -17,15 +17,15 @@ export default class FleetPanel extends React.Component<FleetListProps> {
         );
     }
 
-    private generateList = (residingFleet: object) => {
+    private generateList = (residingFleet: Map<string, number>) => {
         const elementList: any[] = [];
-        for (let key in residingFleet) {
+        residingFleet.forEach((value, key) => {
             elementList.push((
                 <ListGroupItem key={key}>
-                    {`${key}: ${residingFleet[key]}`}
+                    {`${key}: ${value}`}
                 </ListGroupItem>
             ))
-        }
+        });
         return elementList;
     }
 
