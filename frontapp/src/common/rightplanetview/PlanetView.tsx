@@ -9,9 +9,9 @@ import * as planetPNG from "static/planet.png";
 const styles = require('./planetview.module.css');
 
 interface PlanetViewProps {
-    planetsData: [any],
+    planetsData: any[],
     focusedPlanet?: any,
-    dispatch: Dispatch<any>;
+    dispatch: Dispatch;
 }
 
 const PlanetView = (props: PlanetViewProps) => {
@@ -35,12 +35,11 @@ function createPlanetList(props: PlanetViewProps) {
         </Row>) : null;
 }
 
-const mapStateToProps = (store: StoreModel) => ({
-    planetsData: store.planets.data,
-    focusedPlanet: store.planets.focusedPlanet,
+const mapStateToProps = (state: StoreModel) => ({
+    planetsData: state.planets.data,
+    focusedPlanet: state.planets.focusedPlanet,
 });
 
-// @ts-ignore
 export default connect(mapStateToProps)(PlanetView)
 
 

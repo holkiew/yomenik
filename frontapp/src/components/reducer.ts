@@ -1,26 +1,28 @@
 import {Action, handleActions} from 'redux-actions';
 import {SET_FOCUSED_PLANET, SET_PLANETS_DATA} from "./actions";
-import {ComponentsState, DataState} from "components/ComponentsState";
+import PlanetsDataState from "components/PlanetsDataState";
 
-const initialState: ComponentsState = {
+const initialState: PlanetsDataState = {
     focusedPlanet: undefined,
-    data: [],
-    dataState: DataState.TO_UPDATE
+    fleetConfig: undefined,
+    data: []
 };
 
-export default handleActions<ComponentsState, any>({
-    [SET_PLANETS_DATA]: (state: ComponentsState, action: Action<any>): ComponentsState => {
-        const newState = {...state, data: action.payload.planets.slice(0)};
+export default handleActions<PlanetsDataState, any>({
+    [SET_PLANETS_DATA]: (state: PlanetsDataState, action: Action<any>): PlanetsDataState => {
+        console.info(action)
+        const newState = {
+            ...state,
+            data: action.payload.planets.sort((p1: any, p2: any) => Math.max(p1.id, p2.id)),
+            fleetConfig: action.payload.fleetConfig
+        };
+        console.info(newState)
         if (!state.focusedPlanet && newState.data.length > 0) {
             newState.focusedPlanet = newState.data[0]
         }
         return newState;
     },
-    [SET_FOCUSED_PLANET]: (state: ComponentsState, action: Action<string>): ComponentsState => {
+    [SET_FOCUSED_PLANET]: (state: PlanetsDataState, action: Action<string>): PlanetsDataState => {
         return {...state, focusedPlanet: state.data.find((planet: any) => planet.id === action.payload)};
     }
-    // [MARK_DATA_TO_UPDATE]: (state: ComponentsState, action: Action<DataState>): ComponentsState => {
-    //     return {...state, dataState: action.payload};
-    // }
-
 }, initialState);

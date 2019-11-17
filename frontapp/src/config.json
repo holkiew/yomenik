@@ -4,6 +4,7 @@
     "services": {
       "battlesim": "/battlesim",
       "planet": "/planet",
+      "fleetTravel": "/travel",
       "fleetConfig": "/fleet_management",
       "authentication": "/auth"
     }

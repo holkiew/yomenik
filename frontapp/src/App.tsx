@@ -3,13 +3,11 @@ import Routes from "./Routes";
 import {Dispatch} from "redux";
 import StoreModel from "./StoreModel";
 import {connect} from "react-redux";
-import {DataState} from "components/ComponentsState";
 import {updatePlanetsData} from "components/actions"
 import {isTokenStored} from "./security/TokenUtil";
 
 
 interface AppInterface {
-    dataState: DataState,
     dispatch: Dispatch
 }
 
@@ -18,7 +16,7 @@ class App extends React.Component<AppInterface> {
     readonly state = {};
 
     public static getDerivedStateFromProps(props: AppInterface) {
-        if (props.dataState === DataState.TO_UPDATE && isTokenStored()) {
+        if (isTokenStored()) {
             props.dispatch(updatePlanetsData())
         }
         return null;
@@ -33,7 +31,6 @@ class App extends React.Component<AppInterface> {
 }
 
 const mapStateToProps = (store: StoreModel) => ({
-    dataState: store.planets.dataState
 });
 
 export default connect(mapStateToProps)(App)

@@ -27,8 +27,8 @@ class HomePanel extends React.Component<HomePanelProps> {
     }
 }
 
-const mapStateToProps = (store: StoreModel) => ({
-    focusedPlanet: store.planets.focusedPlanet
+const mapStateToProps = (state: StoreModel) => ({
+    focusedPlanet: state.planets.focusedPlanet
 });
 
 export default connect(mapStateToProps)(HomePanel);

@@ -15,7 +15,10 @@ const updatePlanetsEpic: Epic<any, any, StoreModel> = (actionsObservable, store)
                 Axios.get<any>(`${env.backendServer.baseUrl}${env.backendServer.services.fleetConfig}`))
                 .pipe(
                     map(response => {
-                        action.payload = {planets: response[0].data} as StoreModel;
+                        action.payload = {
+                            planets: response[0].data,
+                            fleets: response[1].data
+                        } as StoreModel;
                         action.type = SET_PLANETS_DATA;
                         return action;
                     })

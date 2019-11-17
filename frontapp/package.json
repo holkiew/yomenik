@@ -13,6 +13,7 @@
     "axios-observable": "^1.1.2",
     "bootstrap": "^4.3.1",
     "event-source-polyfill": "^1.0.8",
+    "immutability-helper": "^3.0.1",
     "jwt-decode": "^2.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

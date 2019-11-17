@@ -15,5 +15,5 @@ public class ExecuteTravelMissionRequest {
     @NotNull
     private Map<String, Long> fleet;
     @NotNull
-    private TravelMissonType missonType;
+    private TravelMissonType missionType;
 }

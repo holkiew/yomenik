@@ -11,7 +11,7 @@ PRINCIPAL-ID: 1
     "SHIP_LEVEL1_template": 50,
     "SHIP_LEVEL3_template": 2
   },
-  "missonType": "attack"
+  "missionType": "attack"
 }
 
 ###
