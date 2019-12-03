@@ -4,6 +4,7 @@ import {MissionType} from "./MissionType";
 import {Dispatch} from "redux";
 import {connect} from "react-redux";
 import {sendFleetOnMission, setMissionPlanetTo, setMissionType} from "./actions";
+import styles from "./missionview.module.css"
 
 interface MissionViewProps {
     dispatch: Dispatch
@@ -40,7 +41,7 @@ const MissionView = (props: MissionViewProps) => {
                 <Col className="col-3">
                     <FormGroup>
                         <Label for="exampleSelect">Mission type</Label>
-                        <Input type="select" name="select" id="exampleSelect"
+                        <Input type="select" name="select" className={styles.missionOptionsInput}
                                onChange={e => dispatch(setMissionType(e.target.value as MissionType))}>
                             <option selected disabled hidden>Choose mission</option>
                             <option value={MissionType.MOVE}>Move</option>
