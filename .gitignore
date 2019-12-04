@@ -9,7 +9,8 @@ build/frontend/node_modules
 *.iws
 *.iml
 *.ipr
-.idea/
+.idea/*
+!.idea/runConfigurations
 
 ### NetBeans ###
 /nbproject/private/
