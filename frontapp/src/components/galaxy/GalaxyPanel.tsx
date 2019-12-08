@@ -22,7 +22,9 @@ const GalaxyPanel = (props: GalaxyPanelProps) => {
             <Row>
                 <Col className="col-xs-12 col-sm-8 col-md-4 col-lg-3 offset-lg-3">
                     <table>
+                        <tbody>
                         {generateGalaxyTableView(props, history)}
+                        </tbody>
                     </table>
                 </Col>
             </Row>
@@ -40,7 +42,7 @@ function generateGalaxyTableView(props: GalaxyPanelProps, history: History): any
         for (let col = 0; col <= gridSize; col++) {
             const planetCoords = occupiedPlanetsCoordinates.find(coords => coords.x === row && coords.y === col);
             tds.push(
-                <td className={styles.table_cell}>
+                <td key={`${row}${col}`} className={styles.table_cell}>
                     {row === 0 ? col : (col === 0 && row)}
                     {planetCoords && (
                         <div style={{backgroundImage: `url(${planetPNG})`}} className={styles.planet_image}>
@@ -63,7 +65,7 @@ function generateGalaxyTableView(props: GalaxyPanelProps, history: History): any
 
     for (let row = 0; row <= gridSize; row++) {
         table.push(
-            <tr>
+            <tr key={row}>
                 {createRow(row)}
             </tr>)
     }
@@ -77,7 +79,7 @@ function getVisibleOccupiedPlanetsCoordinates(visiblePlanets: any[]): Array<{ x:
 function dispatchToNewMission(dispatch: Dispatch, missionType: MissionType, planetCoords: { x: number, y: number }, history: History) {
     dispatch(setMissionType(missionType));
     dispatch(setMissionPlanetTo(planetCoords.y.toString()));
-    dispatch(setMissionPlanetCoords({x: planetCoords.x.toString(), y: planetCoords.y.toString()}));
+    dispatch(setMissionPlanetCoords(planetCoords.x.toString(), planetCoords.y.toString()));
     history.push("/fleet");
 }
 

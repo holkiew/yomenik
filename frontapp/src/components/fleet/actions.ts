@@ -14,6 +14,6 @@ export const setMissionType = (missionType: MissionType) => action(SET_MISSION_T
 
 export const setMissionPlanetTo = (planetIdTo: string) => action(SET_MISSION_PLANET_TO, planetIdTo);
 
-export const setMissionPlanetCoords = (coords: { x: string, y: string }) => action(SET_MISSION_PLANET_COORDS, coords);
+export const setMissionPlanetCoords = (x: string, y: string) => action(SET_MISSION_PLANET_COORDS, {x, y});
 
 export const sendFleetOnMission = () => action(SEND_FLEET_ON_MISSION);
