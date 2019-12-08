@@ -1,6 +1,6 @@
 import React from 'react';
-import {Col, Row} from 'reactstrap';
 import {useHistory} from "react-router-dom";
+import {Col, Row} from 'reactstrap';
 import "./LeftMenu.css";
 
 export const LeftMenu = () => {
@@ -21,6 +21,9 @@ export const LeftMenu = () => {
                 </Col>
                 <Col className="col-12 text-center">
                     <div onClick={() => history.push("/fleet")} className="leftMenuButton">Fleet</div>
+                </Col>
+                <Col className="col-12 text-center">
+                    <div onClick={() => history.push("/galaxy")} className="leftMenuButton">Galaxy view</div>
                 </Col>
             </Row>
         );

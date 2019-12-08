@@ -1,12 +1,13 @@
 import {Action, handleActions} from 'redux-actions';
-import {SET_MISSION_PLANET_TO, SET_MISSION_TYPE, SET_SELECTED_FLEET} from "./actions";
+import {SET_MISSION_PLANET_COORDS, SET_MISSION_PLANET_TO, SET_MISSION_TYPE, SET_SELECTED_FLEET} from "./actions";
 import FleetState from "./FleetState";
 import {MissionType} from "./MissionType";
 
 const initialState: FleetState = {
     selectedFleet: {},
     missionType: MissionType.NONE,
-    planetIdTo: ''
+    planetIdTo: '',
+    planetCoordinates: {x: "", y: ""}
 };
 
 export default handleActions<FleetState, any>({
@@ -25,5 +26,8 @@ export default handleActions<FleetState, any>({
     },
     [SET_MISSION_PLANET_TO]: (state: FleetState, action: Action<string>): FleetState => {
         return {...state, planetIdTo: action.payload};
-    }
+    },
+    [SET_MISSION_PLANET_COORDS]: (state: FleetState, action: Action<{ x: string, y: string }>): FleetState => {
+        return {...state, planetCoordinates: action.payload};
+    },
 }, initialState);

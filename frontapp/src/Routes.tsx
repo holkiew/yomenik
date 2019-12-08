@@ -1,15 +1,16 @@
-import React from 'react';
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import LeftMenu from "common/leftmenu/LeftMenu";
+import PlanetView from "common/rightplanetview/PlanetView";
+import FleetPanel from "components/fleet/FleetPanel";
 import Login from "components/login/Login";
 import HomePanel from "components/panel/HomePanel";
-import FleetPanel from "components/fleet/FleetPanel";
-import SecureRoute from "security/SecureRoute";
+import React from 'react';
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {Col, Row} from 'reactstrap';
-import LeftMenu from "common/leftmenu/LeftMenu";
+import SecureRoute from "security/SecureRoute";
 import {isTokenStored} from "security/TokenUtil";
-import PlanetView from "common/rightplanetview/PlanetView";
+import GalaxyPanel from "./components/galaxy/GalaxyPanel";
 
-const Routes = () =>
+const Router = () =>
     <BrowserRouter>
         <div className="background-container">
             <Row>
@@ -22,6 +23,7 @@ const Routes = () =>
                         <Route path="/login" component={Login}/>
                         <SecureRoute path="/panel" component={HomePanel}/>
                         <SecureRoute path="/fleet" component={FleetPanel}/>
+                        <SecureRoute path="/galaxy" component={GalaxyPanel}/>
                     </Switch>
                 </Col>
                 {isTokenStored() && <Col className="col-xs-3 col-sm-2 col-md-1 col-lg-1">
@@ -32,4 +34,4 @@ const Routes = () =>
     </BrowserRouter>;
 
 
-export default Routes;
+export default Router;

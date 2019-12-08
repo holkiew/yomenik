@@ -1,4 +1,7 @@
 {
+  "plugins": [
+    "react-hooks"
+  ],
   "extends": [
     "tslint:recommended",
     "tslint-react",
@@ -26,6 +29,10 @@
     "jsx-boolean-value": false,
     "no-shadowed-variable": false,
     "no-empty": false,
-    "no-unused-expression": false
+    "no-unused-expression": false,
+    "member-ordering": false,
+    "member-access": false,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

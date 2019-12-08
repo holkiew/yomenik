@@ -1,10 +1,10 @@
-import React from 'react';
-import Routes from "./Routes";
-import {Dispatch} from "redux";
-import StoreModel from "./StoreModel";
-import {connect} from "react-redux";
 import {updatePlanetsData} from "components/actions"
-import {isTokenStored} from "./security/TokenUtil";
+import React from 'react';
+import {connect} from "react-redux";
+import {Dispatch} from "redux";
+import Routes from "Routes";
+import {isTokenStored} from "security/TokenUtil";
+import StoreModel from "./StoreModel";
 
 
 interface AppInterface {
@@ -15,7 +15,7 @@ interface AppInterface {
 class App extends React.Component<AppInterface> {
     readonly state = {};
 
-    public static getDerivedStateFromProps(props: AppInterface) {
+    static getDerivedStateFromProps(props: AppInterface) {
         if (isTokenStored()) {
             props.dispatch(updatePlanetsData())
         }

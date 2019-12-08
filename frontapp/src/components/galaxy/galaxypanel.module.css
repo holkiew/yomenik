@@ -1,0 +1,46 @@
+.table_cell {
+    width: 50px;
+    min-height: 50px;
+    height: 50px;
+    min-width: 50px;
+    border: solid white 1px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.planet_image {
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: inherit;
+    height: inherit;
+}
+
+.functions_popup {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.planet_image:hover .functions_popup {
+    visibility: visible;
+}
+
+.functions_popup_missions {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: white;
+}
+
+.functions_popup_missions:hover {
+    cursor: pointer;
+    color: #6E64FF;
+    text-decoration-color: #6E64FF;
+}
