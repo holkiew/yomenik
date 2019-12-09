@@ -9,6 +9,7 @@ import {Col, Row} from 'reactstrap';
 import SecureRoute from "security/SecureRoute";
 import {isTokenStored} from "security/TokenUtil";
 import GalaxyPanel from "./components/galaxy/GalaxyPanel";
+import ResourceBar from "./common/topview/ResourceBar";
 
 const Router = () =>
     <BrowserRouter>
@@ -18,6 +19,7 @@ const Router = () =>
                     <LeftMenu/>
                 </Col>}
                 <Col className="col-xs-6 col-sm-8 col-md-10 col-lg-10">
+                    <ResourceBar/>
                     <Switch>
                         <Route exact path="/" component={Login}/>
                         <Route path="/login" component={Login}/>
