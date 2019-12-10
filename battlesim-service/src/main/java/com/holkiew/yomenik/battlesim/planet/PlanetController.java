@@ -53,8 +53,8 @@ public class PlanetController {
     }
 
     @GetMapping("/planets")
-    public Mono<ResponseEntity<List<Planet>>> getPlanets(Principal principal) {
-        return planetService.getPlanets(principal)
+    public Mono<ResponseEntity<List<Planet>>> getPlanetsData(Principal principal) {
+        return planetService.getPlanetsData(principal)
                 .collectList()
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

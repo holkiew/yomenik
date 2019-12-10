@@ -1,8 +1,8 @@
 package com.holkiew.yomenik.battlesim.planet.model.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Transient;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -11,8 +11,11 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 public abstract class Resource {
     private long amount;
-    @JsonIgnore
+
     private LocalDateTime lastIncomeAddition;
+
+    @Transient
+    private long incomeRatePerHour;
 
     public Resource(long amount) {
         this.amount = amount;
@@ -30,6 +33,7 @@ public abstract class Resource {
         float income = ((float) between / 3600_000) * incomePerHour;
         this.lastIncomeAddition = now;
         this.amount += income;
+        this.incomeRatePerHour = incomePerHour;
     }
 
     public void add(Resource resource) {

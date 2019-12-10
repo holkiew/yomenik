@@ -1,28 +1,29 @@
+import ResourceCell from "common/topview/ResourceCell";
 import React from 'react';
+import {connect} from "react-redux";
 import {Dispatch} from 'redux';
 import StoreModel from "StoreModel";
-import {connect} from "react-redux";
 import styles from "./resourcebar.module.css"
-import * as SteelBarsPNG from "static/steel_bars.jpeg";
 
 
 interface ResourceBarProps {
     dispatch: Dispatch
-    resources?: { [resourceType: string]: { amount: number } }
+    resources?: { [resourceType: string]: any }
 }
 
 const ResourceBar = (props: ResourceBarProps) => {
     const {resources} = props;
     return (
         <div>
+            {resources &&
             <table className={styles.resource_table}>
                 <tr>
                     <td>
-                        Iron {resources && resources.iron.amount}
-                        <div style={{backgroundImage: `url(${SteelBarsPNG})`}} className={styles.planet_image}/>
+                        <ResourceCell {...resources.iron}/>
                     </td>
                 </tr>
-            </table>
+            </table>}
+
         </div>);
 };
 

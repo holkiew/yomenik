@@ -47,7 +47,7 @@ public class PlanetService {
         }
     }
 
-    public Flux<Planet> getPlanets(Principal principal) {
+    public Flux<Planet> getPlanetsData(Principal principal) {
         return planetRepository.findAllByUserId(principal.getId())
                 .map(this::updatePlanetResourcesByIncome)
                 .flatMap(planetRepository::save);
@@ -102,13 +102,14 @@ public class PlanetService {
     }
 
     private Planet updatePlanetResourcesByIncome(Planet planet) {
-        IronMineProperties properties = (IronMineProperties) BuildingType.IRON_MINE.getProperties();
+        var properties = (IronMineProperties) BuildingType.IRON_MINE.getProperties();
         int incomePerHour = properties.baseIncome;
         incomePerHour += planet.getBuildings().values().stream()
                 .filter(building -> building.getBuildingType().equals(BuildingType.IRON_MINE))
                 .mapToLong(building -> (long) (Math.pow(properties.baseCostIncreasePerLevel, building.getLevel()) * properties.baseIncome))
                 .sum();
-        planet.getResources().getIron().updateAmountByIncome(incomePerHour);
+        var planetIron = planet.getResources().getIron();
+        planetIron.updateAmountByIncome(incomePerHour);
         return planet;
     }
 

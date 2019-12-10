@@ -1,9 +1,9 @@
 import React from 'react';
+import {connect} from "react-redux";
 import {Button, Col, Row} from 'reactstrap';
 import {Dispatch} from "redux";
-import FleetList from "./FleetList";
-import {connect} from "react-redux";
 import StoreModel from "StoreModel";
+import FleetList from "./FleetList";
 import MissionView from "./MissionView";
 
 interface FleetPanelProps {
