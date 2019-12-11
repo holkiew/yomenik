@@ -27,3 +27,5 @@ D --> E((Remaining services))
  - - cd frontapp
  - - yarn build
  - - serve -s build
+ 
+ https://github.com/typescript-cheatsheets/react-typescript-cheatsheet#reacttypescript-cheatsheets

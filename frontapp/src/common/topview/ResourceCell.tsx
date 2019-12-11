@@ -9,45 +9,34 @@ interface ResourceCellProps {
 }
 
 interface ResourceCellState {
-    updatedAmount: number,
-    lastIncomeAddition: string | null,
-    incomeRatePerHour: number
+    updatedAmount: number
 }
 
 export default class ResourceCell extends React.Component<ResourceCellProps, ResourceCellState> {
     readonly state = {
         updatedAmount: 0,
-        lastIncomeAddition: new Date().toDateString(),
-        incomeRatePerHour: 0
     };
 
     public componentDidMount(): void {
         this.setResourceAutoupdater();
     }
 
-    public static getDerivedStateFromProps({lastIncomeAddition, amount, incomeRatePerHour}: ResourceCellProps, state: ResourceCellState) {
-        return {updatedAmount: amount, lastIncomeAddition, incomeRatePerHour}
-    }
-
-
     public render() {
-        const {updatedAmount} = this.state;
+        const availableAmount = this.props.amount + this.state.updatedAmount;
         return (
             <div>
-                Iron {updatedAmount && updatedAmount.toFixed(0)}
+                Iron {availableAmount.toFixed(0)}
                 <div style={{backgroundImage: `url(${SteelBarsPNG})`}} className={styles.planet_image}/>
             </div>
         );
     }
 
-    private setResourceAutoupdater() {
-        const {lastIncomeAddition, incomeRatePerHour} = this.state;
-        const {amount} = this.props;
+    private setResourceAutoupdater = () => {
+        const {lastIncomeAddition, incomeRatePerHour} = this.props;
         const startTimeMilis = Date.parse(lastIncomeAddition);
+        const updateAmount = ((Date.now() - startTimeMilis) / 360000) * incomeRatePerHour;
         setInterval(() => {
-            const updateAmount = ((Date.now() - startTimeMilis) / 3600000) * incomeRatePerHour;
-            this.setState({updatedAmount: amount + updateAmount});
-            console.info(amount + updateAmount)
+            this.setState({updatedAmount: this.state.updatedAmount + updateAmount});
         }, 1000)
     }
 }
