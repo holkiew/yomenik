@@ -1,0 +1,26 @@
+.icon {
+    margin-top: 10px;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    fill: #636363;
+}
+
+.icon_active {
+    -webkit-animation: icon_active_blinking_color 3s infinite;
+    fill: red;
+}
+
+@keyframes icon_active_blinking_color {
+    0% {
+        fill: red;
+    }
+    50% {
+        fill: #8c0000;
+    }
+}
+
+.popover_header {
+    color: black;
+}
+

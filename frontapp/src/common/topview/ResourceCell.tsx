@@ -1,4 +1,4 @@
-import styles from "common/topview/resourcebar.module.css";
+import styles from "common/topview/resourcecell.module.css";
 import React from 'react';
 import * as SteelBarsPNG from "static/steel_bars.jpeg";
 
@@ -24,7 +24,7 @@ export default class ResourceCell extends React.Component<ResourceCellProps, Res
     public render() {
         const availableAmount = this.props.amount + this.state.updatedAmount;
         return (
-            <div>
+            <div className={styles.cell}>
                 Iron {availableAmount.toFixed(0)}
                 <div style={{backgroundImage: `url(${SteelBarsPNG})`}} className={styles.planet_image}/>
             </div>
