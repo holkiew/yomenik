@@ -2,7 +2,7 @@ package com.holkiew.yomenik.battlesim.ship.travel.entity;
 
 import com.google.common.collect.Lists;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
-import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
+import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissionType;
 import io.github.classgraph.json.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class Fleet {
     private String planetIdTo;
     private LocalDateTime departureTime;
     private LocalDateTime arrivalTime;
-    private TravelMissonType missionType;
+    private TravelMissionType missionType;
     private Boolean missionCompleted;
     private List<String> relatedMissions;
     private String relatedBattleHistoryId;
@@ -43,35 +43,35 @@ public class Fleet {
         this.relatedBattleHistoryId = relatedBattleHistoryId;
     }
 
-    public void setRoute(String planetIdTo, String planetIdFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType) {
+    public void setRoute(String planetIdTo, String planetIdFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType) {
         this.planetIdFrom = planetIdFrom;
         this.planetIdTo = planetIdTo;
         this.departureTime = LocalDateTime.now();
         this.arrivalTime = arrivalTime;
-        this.missionType = travelMissonType;
+        this.missionType = travelMissionType;
         this.missionCompleted = false;
     }
 
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType, String... relatedMissionsIds) {
-        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissonType);
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, String... relatedMissionsIds) {
+        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType);
         this.relatedMissions = Lists.newArrayList(relatedMissionsIds);
     }
 
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType, List<String> relatedMissionsIds) {
-        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissonType);
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, List<String> relatedMissionsIds) {
+        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType);
         this.relatedMissions = relatedMissionsIds;
     }
 
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissonType travelMissonType) {
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType) {
         this.planetIdTo = planetTo.getId();
         this.planetIdFrom = planetFrom.getId();
         this.departureTime = LocalDateTime.now();
         this.arrivalTime = arrivalTime;
-        this.missionType = travelMissonType;
+        this.missionType = travelMissionType;
         this.missionCompleted = false;
 
-        planetTo.getOnRouteFleets().put(travelMissonType, id);
-        planetFrom.getOnRouteFleets().put(travelMissonType, id);
+        planetTo.getOnRouteFleets().put(travelMissionType, id);
+        planetFrom.getOnRouteFleets().put(travelMissionType, id);
     }
 
     @Transient

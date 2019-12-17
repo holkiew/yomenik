@@ -1,6 +1,6 @@
 package com.holkiew.yomenik.battlesim.ship.travel.dto;
 
-import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissonType;
+import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissionType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -15,5 +15,5 @@ public class ExecuteTravelMissionRequest {
     @NotNull
     private Map<String, Long> fleet;
     @NotNull
-    private TravelMissonType missionType;
+    private TravelMissionType missionType;
 }

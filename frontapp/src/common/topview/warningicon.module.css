@@ -4,6 +4,7 @@
     height: 50px;
     position: absolute;
     fill: #636363;
+    z-index: 10;
 }
 
 .icon_active {
@@ -22,5 +23,9 @@
 
 .popover_header {
     color: black;
+}
+
+.popover_body {
+    white-space: pre-wrap;
 }
 

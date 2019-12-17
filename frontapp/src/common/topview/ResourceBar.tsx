@@ -1,5 +1,5 @@
 import ResourceCell from "common/topview/ResourceCell";
-import WarningCell from "common/topview/WarningCell";
+import WarningIcon from "common/topview/WarningIcon";
 import React from 'react';
 import {connect} from "react-redux";
 import {Col, Row} from 'reactstrap';
@@ -29,7 +29,7 @@ const ResourceBar = (props: ResourceBarProps) => {
                 </table>
             </Col>
             <Col className="offset-1 col-1">
-                <WarningCell {...props}/>
+                <WarningIcon {...props}/>
             </Col>
         </Row>);
 };

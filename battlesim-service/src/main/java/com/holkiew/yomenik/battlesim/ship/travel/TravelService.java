@@ -30,6 +30,8 @@ public class TravelService {
     private final PlanetPort planetService;
     private final FleetRepository fleetRepository;
 
+    private final int travelTimeMultiplier = 999;
+
     public Mono<LocalDateTime> executeTravelMission(ExecuteTravelMissionRequest request, Principal principal) {
         return planetService.findByIdAndUserId(request.getPlanetIdFrom(), principal.getId())
                 .filter(planetHasRequestedShips(request))
@@ -90,10 +92,10 @@ public class TravelService {
 
     private LocalDateTime getArrivalTime(Planet planetFrom, Planet planetTo) {
         if (planetFrom.getSolarSystemId().equals(planetTo.getSolarSystemId())) {
-            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * 5;
+            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * travelTimeMultiplier;
             return LocalDateTime.now().plusSeconds((int) distance);
         } else {
-            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * 15;
+            double distance = Math.sqrt(Math.pow(planetTo.getCoordinates().x - planetFrom.getCoordinates().x, 2) + Math.pow(planetTo.getCoordinates().y - planetFrom.getCoordinates().y, 2)) * travelTimeMultiplier * 3;
             return LocalDateTime.now().plusSeconds((int) distance);
         }
     }
