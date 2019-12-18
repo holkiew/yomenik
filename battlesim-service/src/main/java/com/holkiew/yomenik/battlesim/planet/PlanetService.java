@@ -11,8 +11,12 @@ import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingReque
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewResearchRequest;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
+import com.holkiew.yomenik.battlesim.planet.model.response.dto.PlanetDTO;
+import com.holkiew.yomenik.battlesim.planet.model.response.dto.PlanetMapper;
+import com.holkiew.yomenik.battlesim.planet.port.FleetPort;
 import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
 import com.holkiew.yomenik.battlesim.planet.port.ResearchRepository;
+import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -20,9 +24,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,8 @@ public class PlanetService {
 
     private final PlanetRepository planetRepository;
     private final ResearchRepository researchRepository;
+    private final FleetPort fleetPort;
+    private final PlanetMapper planetMapper;
 
     public Mono<Planet> getPlanet(String planetId, boolean asOwner, Principal principal) {
         if (asOwner) {
@@ -83,6 +89,19 @@ public class PlanetService {
                 .flatMap(upgradeResearch(request))
                 .flatMap(tuple -> planetRepository.save(tuple.getT1()).zipWith(researchRepository.save(tuple.getT2())));
 
+    }
+
+
+    public Mono<List<PlanetDTO>> toPlanetDTO(Mono<List<Planet>> planetsMono) {
+        return planetsMono.flatMap(planetCollection -> {
+            var fleetIdsSet = planetCollection.stream().flatMap(planet -> planet.getOnRouteFleets().values().stream()).collect(Collectors.toSet());
+            return Mono.just(planetCollection).zipWith(fleetPort.findByIds(fleetIdsSet).collect(Collectors.toSet()));
+        })
+                .map(planetsAndFleets -> {
+                    Collection<Planet> planets = planetsAndFleets.getT1();
+                    Set<Fleet> fleets = planetsAndFleets.getT2();
+                    return planetMapper.mapToDTOList(planets, fleets);
+                });
     }
 
     private Function<Tuple2<Planet, Research>, Mono<Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {
@@ -184,4 +203,5 @@ public class PlanetService {
         return stream.map(this::updatePlanetResourcesByIncome)
                 .flatMap(planetRepository::save);
     }
+
 }

@@ -6,6 +6,7 @@ import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingReque
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewResearchRequest;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
+import com.holkiew.yomenik.battlesim.planet.model.response.dto.PlanetDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,9 +54,10 @@ public class PlanetController {
     }
 
     @GetMapping("/planets")
-    public Mono<ResponseEntity<List<Planet>>> getPlanetsData(Principal principal) {
+    public Mono<ResponseEntity<List<PlanetDTO>>> getPlanetsData(Principal principal) {
         return planetService.getPlanetsData(principal)
                 .collectList()
+                .transform(planetService::toPlanetDTO)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
