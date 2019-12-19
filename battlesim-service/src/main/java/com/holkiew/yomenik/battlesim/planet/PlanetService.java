@@ -91,17 +91,15 @@ public class PlanetService {
 
     }
 
-
     public Mono<List<PlanetDTO>> toPlanetDTO(Mono<List<Planet>> planetsMono) {
         return planetsMono.flatMap(planetCollection -> {
             var fleetIdsSet = planetCollection.stream().flatMap(planet -> planet.getOnRouteFleets().values().stream()).collect(Collectors.toSet());
             return Mono.just(planetCollection).zipWith(fleetPort.findByIds(fleetIdsSet).collect(Collectors.toSet()));
-        })
-                .map(planetsAndFleets -> {
-                    Collection<Planet> planets = planetsAndFleets.getT1();
-                    Set<Fleet> fleets = planetsAndFleets.getT2();
-                    return planetMapper.mapToDTOList(planets, fleets);
-                });
+        }).map(planetsAndFleets -> {
+            Collection<Planet> planets = planetsAndFleets.getT1();
+            Set<Fleet> fleets = planetsAndFleets.getT2();
+            return planetMapper.mapToDTOList(planets, fleets);
+        });
     }
 
     private Function<Tuple2<Planet, Research>, Mono<Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {

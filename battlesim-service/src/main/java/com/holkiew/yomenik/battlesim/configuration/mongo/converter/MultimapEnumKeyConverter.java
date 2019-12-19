@@ -14,7 +14,7 @@ public class MultimapEnumKeyConverter implements Converter<ListMultimap<? extend
     @Override
     public Map<String, List<?>> convert(ListMultimap<? extends Enum, ?> source) {
         Map<String, List<?>> classicMap = new HashMap<>();
-        Multimaps.asMap(source).forEach((key, value) -> classicMap.put(key.toString().toLowerCase(), value));
+        Multimaps.asMap(source).forEach((key, value) -> classicMap.put(key.toString(), value));
         return classicMap;
     }
 }

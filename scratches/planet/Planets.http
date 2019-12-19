@@ -1,0 +1,8 @@
+GET http://{{host}}/planet/planets
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+###
+

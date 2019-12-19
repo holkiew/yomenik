@@ -1,6 +1,6 @@
 export enum MissionType {
-    ATTACK = "attack",
-    MOVE = "move",
-    TRANSFER = "transfer",
+    ATTACK = "ATTACK",
+    MOVE = "MOVE",
+    TRANSFER = "TRANSFER",
     NONE = ""
 }

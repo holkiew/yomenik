@@ -11,7 +11,7 @@ public enum TravelMissionType {
     private static final Map<String, TravelMissionType> ENUM_MAP;
 
     static {
-        ENUM_MAP = EnumUtils.createEnumMap(TravelMissionType.class, keyMapper -> keyMapper.name().toLowerCase());
+        ENUM_MAP = EnumUtils.createEnumMap(TravelMissionType.class, Enum::name);
     }
 
     @JsonCreator
