@@ -7,18 +7,23 @@
     z-index: 10;
 }
 
-.icon_active {
-    -webkit-animation: icon_active_blinking_color 3s infinite;
+.icon_warning {
+    -webkit-animation: icon_warning_blinking_color 3s infinite;
     fill: red;
 }
 
-@keyframes icon_active_blinking_color {
+@keyframes icon_warning_blinking_color {
     0% {
         fill: red;
     }
     50% {
         fill: #8c0000;
     }
+}
+
+
+.icon_info {
+    fill: #94d286;
 }
 
 .popover_header {

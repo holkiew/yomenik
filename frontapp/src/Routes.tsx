@@ -1,6 +1,9 @@
 import LeftMenu from "common/leftmenu/LeftMenu";
 import PlanetView from "common/rightplanetview/PlanetView";
+import ResourceBar from "common/topview/ResourceBar";
+import BuildingPanel from "components/building/BuildingPanel";
 import FleetPanel from "components/fleet/FleetPanel";
+import GalaxyPanel from "components/galaxy/GalaxyPanel";
 import Login from "components/login/Login";
 import HomePanel from "components/panel/HomePanel";
 import React from 'react';
@@ -8,8 +11,6 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {Col, Row} from 'reactstrap';
 import SecureRoute from "security/SecureRoute";
 import {isTokenStored} from "security/TokenUtil";
-import GalaxyPanel from "./components/galaxy/GalaxyPanel";
-import ResourceBar from "./common/topview/ResourceBar";
 
 const Router = () =>
     <BrowserRouter>
@@ -26,6 +27,7 @@ const Router = () =>
                         <SecureRoute path="/panel" component={HomePanel}/>
                         <SecureRoute path="/fleet" component={FleetPanel}/>
                         <SecureRoute path="/galaxy" component={GalaxyPanel}/>
+                        <SecureRoute path="/building" component={BuildingPanel}/>
                     </Switch>
                 </Col>
                 {isTokenStored() && <Col className="col-xs-3 col-sm-2 col-md-1 col-lg-1">

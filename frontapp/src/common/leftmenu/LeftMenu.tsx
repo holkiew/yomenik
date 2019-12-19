@@ -11,7 +11,7 @@ export const LeftMenu = () => {
                     <div onClick={() => history.push("/")} className="leftMenuButton">Panel</div>
                 </Col>
                 <Col className="col-12 text-center">
-                    <div onClick={() => history.push("/")} className="leftMenuButton">Buildings</div>
+                    <div onClick={() => history.push("/building")} className="leftMenuButton">Buildings</div>
                 </Col>
                 <Col className="col-12 text-center">
                     <div onClick={() => history.push("/")} className="leftMenuButton">Docks</div>

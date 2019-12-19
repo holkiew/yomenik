@@ -1,30 +1,30 @@
+import {MissionType} from "components/fleet/MissionType";
 import React, {useEffect, useState} from 'react';
 import {IoIosWarning} from 'react-icons/io';
 import {Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import styles from "./warningicon.module.css"
-import {MissionType} from "components/fleet/MissionType";
 
 interface WarningCellProps {
     planetsData: [{
-        onRouteFleets: { [missionType: string]: any },
+        onRouteFleets: { [missionType: string]: any[] },
         coordinates: { x: string, y: string },
         userId: string
     }]
 }
 
-enum WarningIconState {
+enum WarningIconStateEnum {
     WARNING,
     INFO,
     NONE
 }
 
 interface WarningCellState {
-    warningIconState: WarningIconState,
+    warningIconState: WarningIconStateEnum,
     popupVisible: boolean
 }
 
 const WarningIcon = (props: WarningCellProps) => {
-    const initialState = {warningIconState: WarningIconState.NONE, popupVisible: false};
+    const initialState = {warningIconState: WarningIconStateEnum.NONE, popupVisible: false};
     const [state, setState] = useState<WarningCellState>(initialState);
 
     useEffect(() => componentDidUpdate(props, state, setState));
@@ -42,12 +42,23 @@ const WarningIcon = (props: WarningCellProps) => {
 
 function fillPopupBody(props: WarningCellProps) {
     let counter = 0;
-    return props.planetsData.map(planetData => {
-        return Object.entries(planetData.onRouteFleets).map(([missionType, id]) => {
-            counter++;
-            return `${counter}. ${missionType}: ${id} \n`;
-        });
-    })
+    const filledIds = new Set();
+    return props.planetsData.map(planetData => Object.entries(planetData.onRouteFleets)
+        .map(([missionType, fleetList]) => fleetList
+            .map(fleet => {
+                const {id, ships, arrivalTime, planetIdFrom, planetIdTo} = fleet;
+                if (!filledIds.has(id)) {
+                    const arrivalTimeDate = new Date(arrivalTime);
+                    const shipsSum = Object.values(ships).reduce((a, b) => Number(a) + Number(b), 0);
+
+                    filledIds.add(id);
+                    counter++;
+                    return `${counter}. ${missionType}(${shipsSum}): From ${planetIdFrom} To ${planetIdTo} => ${arrivalTimeDate.toLocaleString()}\n`;
+                }
+                return;
+            })
+        )
+    )
 }
 
 function componentDidUpdate(props: WarningCellProps, state: WarningCellState, setState: any) {
@@ -57,14 +68,14 @@ function componentDidUpdate(props: WarningCellProps, state: WarningCellState, se
     }
 }
 
-function getWarningIconState({planetsData}: WarningCellProps): WarningIconState {
-    let warningIconState = WarningIconState.NONE;
+function getWarningIconState({planetsData}: WarningCellProps): WarningIconStateEnum {
+    let warningIconState = WarningIconStateEnum.NONE;
     for (const planet of planetsData) {
         const onRouteFleetEntries = Object.entries(planet.onRouteFleets);
         if (onRouteFleetEntries.length !== 0) {
-            warningIconState = WarningIconState.INFO;
+            warningIconState = WarningIconStateEnum.INFO;
             if (onRouteFleetEntries.find(([missionType]) => missionType === MissionType.ATTACK)) {
-                warningIconState = WarningIconState.WARNING;
+                warningIconState = WarningIconStateEnum.WARNING;
                 break;
             }
         }
@@ -74,11 +85,11 @@ function getWarningIconState({planetsData}: WarningCellProps): WarningIconState 
 
 function getStyleForIconState({warningIconState}: WarningCellState): string {
     switch (warningIconState) {
-        case WarningIconState.WARNING:
-            return styles.icon_active;
-        case WarningIconState.INFO:
-            return "";
-        case WarningIconState.NONE:
+        case WarningIconStateEnum.WARNING:
+            return styles.icon_warning;
+        case WarningIconStateEnum.INFO:
+            return styles.icon_info;
+        case WarningIconStateEnum.NONE:
             return "";
     }
 }
