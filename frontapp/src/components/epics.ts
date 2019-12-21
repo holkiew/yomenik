@@ -1,10 +1,10 @@
-import {Epic, ofType} from "redux-observable";
-import {map, mergeMap} from 'rxjs/operators';
-import {SET_PLANETS_DATA, UPDATE_PLANETS_DATA} from "./actions";
-import StoreModel from "StoreModel";
 import Axios from "axios-observable";
-import * as env from "../config.json";
+import {Epic, ofType} from "redux-observable";
 import {zip} from "rxjs";
+import {map, mergeMap} from 'rxjs/operators';
+import StoreModel from "StoreModel";
+import * as env from "../config.json";
+import {SET_PLANETS_DATA, UPDATE_PLANETS_DATA} from "./actions";
 
 const updatePlanetsEpic: Epic<any, any, StoreModel> = (actionsObservable, store) =>
     actionsObservable.pipe(

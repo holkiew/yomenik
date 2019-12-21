@@ -1,4 +1,5 @@
 import BuildingGrid from "components/building/BuildingGrid";
+import PlanetBuildingGrid from "components/building/PlanetBuildingGrid";
 import React from 'react';
 import {connect} from "react-redux";
 import {Col, Row} from "reactstrap";
@@ -15,7 +16,9 @@ const BuildingPanel = (props: BuildingPanelProps) => {
             <Col className="col-6">
                 <BuildingGrid/>
             </Col>
-            <Col className="col-6"> grid</Col>
+            <Col className="col-6">
+                <PlanetBuildingGrid/>
+            </Col>
         </Row>)
 };
 

@@ -1,0 +1,28 @@
+.table_cell {
+    width: 8vw;
+    min-height: 8vh;
+    height: 8vw;
+    min-width: 8vh;
+    border: solid #8b8b8b 1px;
+    vertical-align: top;
+    text-align: center;
+    cursor: pointer;
+    border-spacing: 1px;
+}
+
+.building_image {
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    width: inherit;
+    height: 80%
+}
+
+.table_cell:hover {
+    outline: solid white 2px;
+}
+
+.table_cell_selected {
+    outline: solid #c3a50a 2px;
+    color: #c3a50a;
+}

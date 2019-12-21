@@ -2,12 +2,10 @@ import styles from "components/building/buildinggrid.module.css";
 import React, {useState} from 'react';
 import {connect} from "react-redux";
 import {Dispatch} from 'redux';
-import StoreModel from "StoreModel";
 
 interface BuildingGridProps {
     dispatch: Dispatch
 }
-
 
 const BuildingGrid = (props: BuildingGridProps) => {
     const [state, setState] = useState("selectedCell");
@@ -23,15 +21,16 @@ const BuildingGrid = (props: BuildingGridProps) => {
 
 
 function generateBuildingsGrid(setState: any): any[] {
-    const cols = 5;
-    const rows = 2;
+    const availableBuildingsLength = Object.keys(availableBuildings).length;
+    const maxCols = 5;
+    const maxRows = Math.floor(availableBuildingsLength / maxCols + 1);
     const table = [];
-    // TODO:: temporary solution
-    const {type, label, imageURL} = availableBuildings.iron_mine;
 
     const createRow = (row: number): any[] => {
         const tds = [];
-        for (let col = 0; col < cols; col++) {
+        const colsInRow = row + 1 >= maxRows ? availableBuildingsLength % maxCols : maxCols;
+        for (let col = 0; col < colsInRow; col++) {
+            const {type, label, imageURL} = availableBuildings[(row * maxRows) + col + 1];
             tds.push(
                 <td key={`${row}${col}`} className={styles.table_cell} onClick={() => setState(type)}>
                     <div style={{backgroundImage: `url(${imageURL})`}} className={styles.building_image}/>
@@ -41,7 +40,7 @@ function generateBuildingsGrid(setState: any): any[] {
         return tds;
     };
 
-    for (let row = 0; row < rows; row++) {
+    for (let row = 0; row < maxRows; row++) {
         table.push(
             <tr key={row}>
                 {createRow(row)}
@@ -51,14 +50,22 @@ function generateBuildingsGrid(setState: any): any[] {
 }
 
 const availableBuildings = {
-    "iron_mine": {
+    1: {
         imageURL: require("static/iron_mine.jpg"),
         label: "Iron mine",
         type: "iron_mine"
+    },
+    2: {
+        imageURL: require("static/concrete_factory.jpg"),
+        label: "Concrete factory",
+        type: "concrete_factory"
+    },
+    3: {
+        imageURL: require("static/crystal_mines.png"),
+        label: "Crystal mine",
+        type: "crystal_mine"
     }
 };
 
-const mapStateToProps = (state: StoreModel) => ({});
-
-export default connect(mapStateToProps)(BuildingGrid)
+export default connect()(BuildingGrid)
 
