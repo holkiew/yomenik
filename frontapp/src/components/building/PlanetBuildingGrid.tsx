@@ -29,13 +29,14 @@ function generateBuildingsGrid(props: PlanetBuildingGridProps, selected: any, se
     const createRow = (row: number): any[] => {
         const tds = [];
         for (let col = 0; col < cols; col++) {
-            const {occupied, imageURL, label} = planetBuildings[(row * cols) + col + 1];
+            const chosenBuilding = planetBuildings[(row * cols) + col + 1];
+            const {occupied, imageURL, label} = chosenBuilding;
             const slot = col + 1;
 
             tds.push(
                 <td key={`${row}${col}`} className={`${styles.table_cell} ${selected === slot && styles.table_cell_selected}`} onClick={() => {
                     setState(slot);
-                    dispatch(setSelectedPlanetSlot(slot, {}))
+                    dispatch(setSelectedPlanetSlot(slot, chosenBuilding))
                 }}>
                     {occupied === true ?
                         <div>
@@ -60,7 +61,8 @@ function generateBuildingsGrid(props: PlanetBuildingGridProps, selected: any, se
 
 const planetBuildings = {
     1: {
-        occupied: false
+        occupied: false,
+        excluded: ["iron_mine"]
     },
     2: {
         occupied: true,

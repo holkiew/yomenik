@@ -16,5 +16,5 @@ export const rootReducer = combineReducers({
     exemplaryReducer,
     planets: PlanetsDataReducer,
     fleets: FleetReducer,
-    building: BuildingReducer
+    buildings: BuildingReducer
 });

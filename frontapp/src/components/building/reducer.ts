@@ -5,14 +5,17 @@ import {SET_SELECTED_PLANET_SLOT} from "./actions";
 const initialState: BuildingState = {
     selectedSlot: {
         slotKey: 0,
-        rules: {}
+        rules: {
+            excluded: []
+        }
     }
 
 };
 
 export default handleActions<BuildingState, any>({
-    [SET_SELECTED_PLANET_SLOT]: (state: BuildingState, action: Action<{ slotKey: number, rules: {} }>): BuildingState => {
-        const {slotKey, rules} = action.payload;
-        return {...state, selectedSlot: {slotKey, rules}};
+    [SET_SELECTED_PLANET_SLOT]: (state: BuildingState, action: Action<{ slotKey: number, chosenBuilding: any }>): BuildingState => {
+        const {slotKey, chosenBuilding} = action.payload;
+        const newState = {...state, selectedSlot: {slotKey, rules: {excluded: chosenBuilding?.excluded ?? []}}};
+        return newState;
     }
 }, initialState);
