@@ -5,7 +5,6 @@ import FleetReducer from "components/fleet/reducer";
 import PlanetsDataReducer from "components/reducer";
 import {combineReducers} from 'redux';
 import {combineEpics} from "redux-observable";
-import exemplaryReducer from "reduxExampleTemplate/reducer";
 
 export const rootEpic = combineEpics(
     PlanetEpics[0],
@@ -13,7 +12,6 @@ export const rootEpic = combineEpics(
 );
 
 export const rootReducer = combineReducers({
-    exemplaryReducer,
     planets: PlanetsDataReducer,
     fleets: FleetReducer,
     buildings: BuildingReducer

@@ -15,6 +15,11 @@
     color: #c3a50a;
 }
 
+.table_cell_selected {
+    outline: solid #c3a50a 2px;
+    color: #c3a50a;
+}
+
 .disabled_table_cell {
     width: 8vw;
     min-height: 8vh;
@@ -23,8 +28,8 @@
     border: solid gray 1px;
     vertical-align: top;
     text-align: center;
-    cursor: pointer;
     border-spacing: 1px;
+    opacity: 0.5;
 }
 
 .building_image {

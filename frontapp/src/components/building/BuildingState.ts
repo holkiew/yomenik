@@ -1,8 +1,10 @@
 export default interface BuildingState {
-    selectedSlot: {
-        slotKey: number,
+    selectedBuildingSlot: {
+        slotKey: string,
         rules: {
-            excluded: []
+            excluded: string[],
+            included: string[]
         }
     }
+    selectedBuildingOption: string
 }

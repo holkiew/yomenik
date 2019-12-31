@@ -1,27 +1,31 @@
 import styles from "components/building/planetbuildinggrid.module.css";
-import React, {useState} from 'react';
+import React from 'react';
 import {connect} from "react-redux";
 import {Dispatch} from 'redux';
-import {setSelectedPlanetSlot} from "./actions"
+import StoreModel from "StoreModel";
+import {clearSelectedOptionSlot, setSelectedPlanetSlot} from "./actions"
 
 interface PlanetBuildingGridProps {
-    dispatch: Dispatch
+    dispatch: Dispatch,
+    selectedBuildingSlot: {
+        slotKey: string
+    }
 }
 
 const PlanetBuildingGrid = (props: PlanetBuildingGridProps) => {
-    const [state, setState] = useState("selectedCell");
+    console.info(props)
     return (
         <div>
             <table>
                 <tbody>
-                {generateBuildingsGrid(props, state, setState)}
+                {generateBuildingsGrid(props)}
                 </tbody>
             </table>
         </div>)
 };
 
-function generateBuildingsGrid(props: PlanetBuildingGridProps, selected: any, setState: any): any[] {
-    const {dispatch} = props;
+function generateBuildingsGrid(props: PlanetBuildingGridProps): any[] {
+    const {dispatch, selectedBuildingSlot: {slotKey}} = props;
     const cols = 3;
     const rows = 1;
     const table = [];
@@ -31,13 +35,9 @@ function generateBuildingsGrid(props: PlanetBuildingGridProps, selected: any, se
         for (let col = 0; col < cols; col++) {
             const chosenBuilding = planetBuildings[(row * cols) + col + 1];
             const {occupied, imageURL, label} = chosenBuilding;
-            const slot = col + 1;
-
+            const colRow = `${row}${col}`;
             tds.push(
-                <td key={`${row}${col}`} className={`${styles.table_cell} ${selected === slot && styles.table_cell_selected}`} onClick={() => {
-                    setState(slot);
-                    dispatch(setSelectedPlanetSlot(slot, chosenBuilding))
-                }}>
+                <td key={colRow} className={`${styles.table_cell} ${slotKey === colRow && styles.table_cell_selected}`} onClick={() => onCellClick(colRow, chosenBuilding, dispatch)}>
                     {occupied === true ?
                         <div>
                             <div style={{backgroundImage: `url(${imageURL})`}} className={styles.building_image}/>
@@ -59,24 +59,37 @@ function generateBuildingsGrid(props: PlanetBuildingGridProps, selected: any, se
     return table;
 }
 
+function onCellClick(slot: string, chosenBuilding: any, dispatch: Dispatch) {
+    dispatch(setSelectedPlanetSlot(slot, chosenBuilding));
+    dispatch(clearSelectedOptionSlot());
+}
+
 const planetBuildings = {
     1: {
         occupied: false,
-        excluded: ["iron_mine"]
+        excluded: ["iron_mine"],
+        included: []
     },
     2: {
         occupied: true,
         label: "Iron mine",
         type: "iron_mine",
         imageURL: require("static/iron_mine.jpg"),
+        excluded: ["ALL"],
+        included: ["iron_mine"]
     },
     3: {
         occupied: true,
         label: "Iron mine",
         type: "iron_mine",
         imageURL: require("static/iron_mine.jpg"),
+        excluded: ["ALL"],
+        included: ["iron_mine"]
     }
 };
 
-export default connect()(PlanetBuildingGrid);
+const mapStateToProps = (state: StoreModel) =>
+    ({selectedBuildingSlot: state.buildings.selectedBuildingSlot});
+
+export default connect(mapStateToProps)(PlanetBuildingGrid);
 
