@@ -2,10 +2,10 @@ package com.holkiew.yomenik.battlesim.planet.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.MultimapBuilder;
 import com.holkiew.yomenik.battlesim.configuration.jackson.serializer.OnRouteFleetsSerializer;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
+import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissionType;
@@ -15,9 +15,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import reactor.util.function.Tuple2;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -36,23 +38,12 @@ public class Planet {
     @Builder.Default
     private Resources resources = new Resources(new Iron(0));
     @Builder.Default
-    private Map<Integer, Building> buildings = Maps.newHashMap();
+    private Map<Integer, Building> buildings = new HashMap<>();
     @Builder.Default
-    private Map<String, Long> residingFleet = Maps.newHashMap();
+    private Set<BuildingType> availableBuildings = new HashSet<>();
+    @Builder.Default
+    private Map<String, Long> residingFleet = new HashMap<>();
     @Builder.Default
     @JsonSerialize(using = OnRouteFleetsSerializer.class)
     private ListMultimap<TravelMissionType, String> onRouteFleets = MultimapBuilder.enumKeys(TravelMissionType.class).arrayListValues().build();
-
-    public Planet(String id, String userId, int galaxyId, Tuple2<Integer, Integer> coordinates, String solarSystemId) {
-        this.id = id;
-        this.solarSystemId = solarSystemId;
-        this.userId = userId;
-        this.galaxyId = galaxyId;
-        this.coordinates = new Coordinates(coordinates.getT1(), coordinates.getT2());
-        this.resources = new Resources(new Iron(0));
-        this.buildings = Maps.newHashMap();
-        this.residingFleet = Maps.newHashMap();
-        this.onRouteFleets = MultimapBuilder.enumKeys(TravelMissionType.class).arrayListValues().build();
-        this.isDuringBattle = false;
-    }
 }

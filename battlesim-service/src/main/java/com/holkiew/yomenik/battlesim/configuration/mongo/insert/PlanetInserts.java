@@ -2,13 +2,16 @@ package com.holkiew.yomenik.battlesim.configuration.mongo.insert;
 
 import com.holkiew.yomenik.battlesim.common.MongoInsertsLoader;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
+import com.holkiew.yomenik.battlesim.planet.entity.Building;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import reactor.util.function.Tuples;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static com.holkiew.yomenik.battlesim.planet.model.building.BuildingType.*;
 
 @Component
 public class PlanetInserts extends MongoInsertsLoader<Planet, PlanetRepository> {
@@ -20,15 +23,18 @@ public class PlanetInserts extends MongoInsertsLoader<Planet, PlanetRepository> 
     }
 
     private void setData() {
-        var planet1ResidingFleet = new HashMap<String, Long>();
-        planet1ResidingFleet.put("SHIP_LEVEL1_template", 100L);
-        planet1ResidingFleet.put("SHIP_LEVEL3_template", 10L);
-        Planet planet1 = Planet.builder()
-                .id("1").userId("1").galaxyId(1).coordinates(new Coordinates(1, 1))
-                .solarSystemId("1")
-                .residingFleet(planet1ResidingFleet)
+        var planet1 = Planet.builder()
+                .id("1").userId("1").galaxyId(1).coordinates(new Coordinates(1, 1)).solarSystemId("1")
+                .residingFleet(Map.of(
+                        "SHIP_LEVEL1_template", 100L,
+                        "SHIP_LEVEL3_template", 10L))
+                .availableBuildings(Set.of(IRON_MINE, CONCRETE_FACTORY, CRYSTAL_MINE))
+                .buildings(Map.of(1, Building.builder().id(1).level(1).slot(1).buildingType(IRON_MINE).build()))
                 .build();
-        Planet planet2 = new Planet("2", "1", 1, Tuples.of(1, 2), "1");
+        var planet2 = Planet.builder()
+                .id("2").userId("1").galaxyId(1).coordinates(new Coordinates(1, 2)).solarSystemId("1")
+                .availableBuildings(Set.of(IRON_MINE))
+                .build();
         setData(planet1, planet2);
     }
 }

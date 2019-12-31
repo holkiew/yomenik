@@ -9,17 +9,19 @@ import lombok.Data;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 public class PlanetDTO {
-    private String id;
-    private String userId;
-    private int galaxyId;
-    private String solarSystemId;
-    private Coordinates coordinates;
-    private boolean isDuringBattle;
-    private Resources resources;
-    private Map<Integer, Building> buildings;
-    private Map<String, Long> residingFleet;
-    private Map<TravelMissionType, Collection<Fleet>> onRouteFleets;
+    String id;
+    String userId;
+    int galaxyId;
+    String solarSystemId;
+    Coordinates coordinates;
+    boolean isDuringBattle;
+    Resources resources;
+    Map<Integer, Building> buildings;
+    Set<AvailableBuildingType> availableBuildings;
+    Map<String, Long> residingFleet;
+    Map<TravelMissionType, Collection<Fleet>> onRouteFleets;
 }

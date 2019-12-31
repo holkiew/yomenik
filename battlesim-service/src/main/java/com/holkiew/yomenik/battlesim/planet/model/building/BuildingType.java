@@ -15,11 +15,16 @@ import java.util.EnumSet;
 import java.util.Map;
 
 public enum BuildingType {
-    IRON_MINE("IronMine", null, IronMineProperties.class),
-    CITY("City", null, CityProperties.class);
+    IRON_MINE("iron_mine", "Iron mine", null, IronMineProperties.class),
+    CRYSTAL_MINE("crystal_mine", "Crystal mine", null, IronMineProperties.class),
+    CONCRETE_FACTORY("concrete_factory", "Concrete factory", null, IronMineProperties.class),
+    CITY("city", "Iron mine", null, CityProperties.class);
 
     private static final Map<String, BuildingType> ENUM_MAP;
+    @Getter(AccessLevel.PUBLIC)
     private String name;
+    @Getter(AccessLevel.PUBLIC)
+    private String label;
     @Getter(AccessLevel.PUBLIC)
     private BuildingProperties properties;
     private Class<? extends Properties> propertiesClass;
@@ -28,8 +33,9 @@ public enum BuildingType {
         ENUM_MAP = EnumUtils.createEnumMap(BuildingType.class, keyMapper -> keyMapper.name);
     }
 
-    BuildingType(String name, BuildingProperties properties, Class<? extends Properties> propertiesClass) {
+    BuildingType(String name, String label, BuildingProperties properties, Class<? extends Properties> propertiesClass) {
         this.name = name;
+        this.label = label;
         this.properties = properties;
         this.propertiesClass = propertiesClass;
     }

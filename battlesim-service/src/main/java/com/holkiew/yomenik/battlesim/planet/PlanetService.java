@@ -1,6 +1,7 @@
 package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
+import com.holkiew.yomenik.battlesim.planet.engine.BuildingRulesEngine;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.entity.Research;
@@ -37,6 +38,7 @@ public class PlanetService {
     private final ResearchRepository researchRepository;
     private final FleetPort fleetPort;
     private final PlanetMapper planetMapper;
+    private final BuildingRulesEngine buildingRulesEngine;
 
     public Mono<Planet> getPlanet(String planetId, boolean asOwner, Principal principal) {
         if (asOwner) {
@@ -98,6 +100,8 @@ public class PlanetService {
         }).map(planetsAndFleets -> {
             Collection<Planet> planets = planetsAndFleets.getT1();
             Set<Fleet> fleets = planetsAndFleets.getT2();
+            planets.stream().flatMap(planet -> planet.getBuildings().values().stream())
+                    .forEach(buildingRulesEngine::fillBuildingRules);
             return planetMapper.mapToDTOList(planets, fleets);
         });
     }

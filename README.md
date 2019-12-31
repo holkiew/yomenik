@@ -15,17 +15,21 @@ Exemplary tests:
  - - mvn clean install
  - - ./runScript
 
-Services run order:
- ```mermaid
-graph LR
-A[Config] --> B[Discovery]
-B --> C[User-Service]
-C --> D[Gatewayix]
-D --> E((Remaining services))
-```
+ - - Services run order:
+ graph LR 
+ A[Config] --> B[Discovery]
+ B --> C[User-Service]
+ C --> D[Gatewayix]
+ D --> E((Remaining services))
+
  - **Frontend**
  - - cd frontapp
  - - yarn build
  - - serve -s build
  
  https://github.com/typescript-cheatsheets/react-typescript-cheatsheet#reacttypescript-cheatsheets
+
+# Running tips and caveats
+- Each time *MapStruct* DTOs are being changed, do **mvn clean**
+- Use profile **local** to run services without cloud support
+- To create user database profiles, run whole cloud env. *Gateway* will ultimately create these
