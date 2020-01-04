@@ -1,4 +1,4 @@
-import OptionBuildingGrid from "components/building/OptionBuildingGrid";
+import AvailableBuildingGrid from "components/building/AvailableBuildingGrid";
 import PlanetBuildingGrid from "components/building/PlanetBuildingGrid";
 import React from 'react';
 import {connect} from "react-redux";
@@ -17,7 +17,7 @@ const BuildingPanel = (props: BuildingPanelProps) => {
                 <PlanetBuildingGrid/>
             </Col>
             <Col className="col-6">
-                <OptionBuildingGrid/>
+                <AvailableBuildingGrid/>
             </Col>
         </Row>)
 };

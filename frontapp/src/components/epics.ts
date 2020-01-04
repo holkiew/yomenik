@@ -4,11 +4,11 @@ import {zip} from "rxjs";
 import {map, mergeMap} from 'rxjs/operators';
 import StoreModel from "StoreModel";
 import * as env from "../config.json";
-import {SET_PLANETS_DATA, UPDATE_PLANETS_DATA} from "./actions";
+import {GET_PLANETS_DATA_REQUEST, SET_PLANETS_DATA} from "./actions";
 
-const updatePlanetsEpic: Epic<any, any, StoreModel> = (actionsObservable, store) =>
+const updatePlanets: Epic<any, any, StoreModel> = (actionsObservable, store) =>
     actionsObservable.pipe(
-        ofType(UPDATE_PLANETS_DATA),
+        ofType(GET_PLANETS_DATA_REQUEST),
         mergeMap(action =>
             zip(
                 Axios.get<any>(`${env.backendServer.baseUrl}${env.backendServer.services.planet}/planets`),
@@ -27,5 +27,5 @@ const updatePlanetsEpic: Epic<any, any, StoreModel> = (actionsObservable, store)
     );
 
 export default [
-    updatePlanetsEpic
+    updatePlanets
 ];

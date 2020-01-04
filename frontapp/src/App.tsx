@@ -1,4 +1,4 @@
-import {updatePlanetsData} from "components/actions"
+import {updatePlanetsDataRequest} from "components/actions"
 import React from 'react';
 import {connect} from "react-redux";
 import {Dispatch} from "redux";
@@ -17,7 +17,7 @@ class App extends React.Component<AppInterface> {
 
     static getDerivedStateFromProps(props: AppInterface) {
         if (isTokenStored()) {
-            props.dispatch(updatePlanetsData())
+            props.dispatch(updatePlanetsDataRequest())
         }
         return null;
     }

@@ -1,16 +1,17 @@
+import 'bootstrap/dist/css/bootstrap.css';
+import * as env from 'config.json';
+import 'global.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {applyMiddleware, compose, createStore, Store} from 'redux';
-import {rootEpic, rootReducer} from "RootReducer";
-import registerServiceWorker from './registerServiceWorker';
-import 'bootstrap/dist/css/bootstrap.css';
+import {createEpicMiddleware} from "redux-observable"
+import rootEpic from "RootEpic";
+import rootReducer from "RootReducer";
+import StoreModel from "StoreModel";
 import App from "./App";
 import {configureAxios, initProdDebugUtils} from "./configuration";
-import * as env from 'config.json';
-import 'global.css'
-import StoreModel from "StoreModel";
-import {createEpicMiddleware} from "redux-observable"
+import registerServiceWorker from './registerServiceWorker';
 
 const initialState = {};
 

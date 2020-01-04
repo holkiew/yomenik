@@ -4,11 +4,11 @@ import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
 import lombok.Data;
 
 @Data
-public class AvailableBuildingType {
-    String type;
-    String label;
+public class AvailableBuildingTypeDTO {
+    private String type;
+    private String label;
 
-    AvailableBuildingType(BuildingType buildingType) {
+    AvailableBuildingTypeDTO(BuildingType buildingType) {
         this.type = buildingType.getName();
         this.label = buildingType.getLabel();
     }

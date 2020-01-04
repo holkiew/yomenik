@@ -30,10 +30,12 @@ public class PlanetInserts extends MongoInsertsLoader<Planet, PlanetRepository> 
                         "SHIP_LEVEL3_template", 10L))
                 .availableBuildings(Set.of(IRON_MINE, CONCRETE_FACTORY, CRYSTAL_MINE))
                 .buildings(Map.of(1, Building.builder().id(1).level(1).slot(1).buildingType(IRON_MINE).build()))
+                .buildingSlots(3)
                 .build();
         var planet2 = Planet.builder()
                 .id("2").userId("1").galaxyId(1).coordinates(new Coordinates(1, 2)).solarSystemId("1")
                 .availableBuildings(Set.of(IRON_MINE))
+                .buildingSlots(6)
                 .build();
         setData(planet1, planet2);
     }

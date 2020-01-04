@@ -49,7 +49,7 @@ function generateList(residingFleet: Map<string, number>, dispatch: Dispatch, us
 
 const mapStateToProps = (state: StoreModel) => {
     const {focusedPlanet} = state.planets;
-    return {residingFleet: new Map<string, number>(Object.entries(focusedPlanet ? focusedPlanet.residingFleet : {}))};
+    return {residingFleet: new Map<string, number>(Object.entries(focusedPlanet?.residingFleet ?? {}))};
 };
 
 export default connect(mapStateToProps)(FleetPanel)

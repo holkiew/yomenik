@@ -34,6 +34,8 @@ public class Planet {
     private String solarSystemId;
     private Coordinates coordinates;
     @Builder.Default
+    private int buildingSlots = 0;
+    @Builder.Default
     private boolean isDuringBattle = false;
     @Builder.Default
     private Resources resources = new Resources(new Iron(0));
