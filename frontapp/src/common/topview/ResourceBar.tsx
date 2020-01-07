@@ -16,6 +16,7 @@ interface ResourceBarProps {
 
 const ResourceBar = (props: ResourceBarProps) => {
     const {resources} = props;
+    const intervalInMs = 1000;
     return (
         <Row>
             <Col className="offset-3 col-6">
@@ -23,7 +24,7 @@ const ResourceBar = (props: ResourceBarProps) => {
                     <tr>
                         {resources &&
                         <td className={styles.td_marker}>
-                            <ResourceCell {...resources?.iron}/>
+                            <ResourceCell {...resources.iron} intervalInMs={intervalInMs}/>
                         </td>}
                     </tr>
                 </table>

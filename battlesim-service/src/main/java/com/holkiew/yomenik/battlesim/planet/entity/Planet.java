@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +34,8 @@ public class Planet {
     private int galaxyId;
     private String solarSystemId;
     private Coordinates coordinates;
+    @Builder.Default
+    private LocalDateTime creationDate = LocalDateTime.now();
     @Builder.Default
     private int buildingSlots = 0;
     @Builder.Default

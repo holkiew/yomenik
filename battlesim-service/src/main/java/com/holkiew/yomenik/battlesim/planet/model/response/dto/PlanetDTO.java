@@ -6,6 +6,7 @@ import com.holkiew.yomenik.battlesim.ship.travel.entity.Fleet;
 import com.holkiew.yomenik.battlesim.ship.travel.model.exception.TravelMissionType;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +18,7 @@ public class PlanetDTO {
     private int galaxyId;
     private String solarSystemId;
     private Coordinates coordinates;
+    private LocalDateTime creationDate;
     private int buildingSlots;
     private boolean isDuringBattle;
     private Resources resources;
