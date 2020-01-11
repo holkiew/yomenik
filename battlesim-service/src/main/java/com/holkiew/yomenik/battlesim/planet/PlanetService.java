@@ -3,6 +3,7 @@ package com.holkiew.yomenik.battlesim.planet;
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.planet.engine.BuildingRulesEngine;
 import com.holkiew.yomenik.battlesim.planet.entity.Building;
+import com.holkiew.yomenik.battlesim.planet.entity.BuildingConfiguration;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.entity.Research;
 import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
@@ -14,6 +15,7 @@ import com.holkiew.yomenik.battlesim.planet.model.request.NewResearchRequest;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Resources;
 import com.holkiew.yomenik.battlesim.planet.model.response.dto.PlanetDTO;
 import com.holkiew.yomenik.battlesim.planet.model.response.dto.PlanetMapper;
+import com.holkiew.yomenik.battlesim.planet.port.BuildingConfigurationRepository;
 import com.holkiew.yomenik.battlesim.planet.port.FleetPort;
 import com.holkiew.yomenik.battlesim.planet.port.PlanetRepository;
 import com.holkiew.yomenik.battlesim.planet.port.ResearchRepository;
@@ -39,6 +41,7 @@ public class PlanetService {
     private final FleetPort fleetPort;
     private final PlanetMapper planetMapper;
     private final BuildingRulesEngine buildingRulesEngine;
+    private final BuildingConfigurationRepository buildingConfigurationRepository;
 
     public Mono<Planet> getPlanet(String planetId, boolean asOwner, Principal principal) {
         if (asOwner) {
@@ -104,6 +107,10 @@ public class PlanetService {
                     .forEach(buildingRulesEngine::fillBuildingRules);
             return planetMapper.mapToDTOList(planets, fleets);
         });
+    }
+
+    public Mono<BuildingConfiguration> getBuildingConfiguration() {
+        return buildingConfigurationRepository.findFirstByOrderByCreationDate();
     }
 
     private Function<Tuple2<Planet, Research>, Mono<Tuple2<Planet, Research>>> upgradeResearch(NewResearchRequest request) {

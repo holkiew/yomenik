@@ -1,10 +1,11 @@
 import PlanetsDataState from "components/PlanetsDataState";
 import {Action, handleActions} from 'redux-actions';
-import {SET_FOCUSED_PLANET, SET_PLANETS_DATA} from "./actions";
+import {SET_AUXILIARY_DATA, SET_FOCUSED_PLANET, SET_PLANETS_DATA} from "./actions";
 
 const initialState: PlanetsDataState = {
     focusedPlanet: undefined,
     fleetConfig: undefined,
+    dataConfiguration: undefined,
     data: []
 };
 
@@ -25,5 +26,10 @@ export default handleActions<PlanetsDataState, any>({
     },
     [SET_FOCUSED_PLANET]: (state: PlanetsDataState, action: Action<string>): PlanetsDataState => {
         return {...state, focusedPlanet: state.data.find((planet: any) => planet.id === action.payload)};
+    },
+    [SET_AUXILIARY_DATA]: (state: PlanetsDataState, action: Action<any>): PlanetsDataState => {
+        const {dataConfiguration} = action.payload;
+        return {...state, dataConfiguration}
+
     }
 }, initialState);

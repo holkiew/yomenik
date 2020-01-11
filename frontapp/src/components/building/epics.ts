@@ -13,7 +13,6 @@ const newBuildingRequest: Epic<any, any, StoreModel> = (actionsObservable, state
                 const {selectedBuildingSlot: {slotKey}} = state.value.buildings;
                 const planetId = state.value.planets.focusedPlanet.id;
                 const {type} = state.value.buildings.selectedBuildingOption;
-                console.info({planetId, slot: slotKey, buildingType: type})
                 return Axios.put(
                     `${env.backendServer.baseUrl}${env.backendServer.services.planet}/building`,
                     {planetId, slot: slotKey, buildingType: type}

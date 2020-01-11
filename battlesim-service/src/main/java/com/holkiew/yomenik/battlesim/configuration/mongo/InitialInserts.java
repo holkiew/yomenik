@@ -22,6 +22,7 @@ public class InitialInserts {
     private final ResearchInserts researchInserts;
     private final SolarSystemInserts solarSystemInserts;
     private final FleetManagementConfigInserts fleetManagementConfigInserts;
+    private final BuildingConfigurationInserts buildingConfigurationInserts;
 
     @PostConstruct
     public void initialInserts() {
@@ -35,6 +36,7 @@ public class InitialInserts {
                 .doOnComplete(solarSystemInserts::insertData)
                 .doOnComplete(researchInserts::insertData)
                 .doOnComplete(fleetManagementConfigInserts::insertData)
+                .doOnComplete(buildingConfigurationInserts::insertData)
                 .subscribe();
     }
 

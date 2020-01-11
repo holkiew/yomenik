@@ -1,6 +1,7 @@
 package com.holkiew.yomenik.battlesim.planet;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
+import com.holkiew.yomenik.battlesim.planet.entity.BuildingConfiguration;
 import com.holkiew.yomenik.battlesim.planet.entity.Planet;
 import com.holkiew.yomenik.battlesim.planet.model.request.DowngradeBuildingRequest;
 import com.holkiew.yomenik.battlesim.planet.model.request.NewBuildingRequest;
@@ -66,6 +67,13 @@ public class PlanetController {
     public Mono<ResponseEntity<Object>> newResearch(@RequestBody @Valid NewResearchRequest request, Principal principal) {
         return planetService.newResearch(request, principal)
                 .map(tuple -> ResponseEntity.ok().build())
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/configuration")
+    public Mono<ResponseEntity<BuildingConfiguration>> getBuildingsConfiguration() {
+        return planetService.getBuildingConfiguration()
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

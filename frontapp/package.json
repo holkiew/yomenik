@@ -30,6 +30,7 @@
     "redux-actions": "^2.6.5",
     "redux-observable": "^1.2.0",
     "rxjs": "^6.5.2",
+    "tslib": "^1.10.0",
     "typesafe-actions": "^5.1.0",
     "yarn-deduplicate": "^1.1.1"
   },

@@ -29,4 +29,10 @@ public abstract class BuildingProperties implements Properties {
         return new Resources(iron);
     }
 
+    public Resources getLevelOutput(long level) {
+        Iron iron = new Iron((long) Math.sqrt((Math.pow(baseCostIncreasePerLevel, level) * baseIncome / 10)), null);
+        return new Resources(iron);
+
+    }
+
 }

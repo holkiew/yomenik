@@ -9,6 +9,7 @@ import com.holkiew.yomenik.battlesim.planet.model.building.properties.CityProper
 import com.holkiew.yomenik.battlesim.planet.model.building.properties.IronMineProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumSet;
@@ -47,7 +48,7 @@ public enum BuildingType {
 
     @Component
     public static class BuildingTypePropertiesInjector extends PropertiesInjector {
-        public BuildingTypePropertiesInjector(Map<String, ? extends Properties> allProperties) {
+        public BuildingTypePropertiesInjector(Map<String, ? extends Properties> allProperties, ApplicationContext appCtx) {
             super(allProperties);
         }
 
