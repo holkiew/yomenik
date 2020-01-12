@@ -34,7 +34,7 @@ const getBuildingsConfiguration: Epic<any, any, StoreModel> = (actionsObservable
                 .pipe(
                     map(response => {
                         action.payload = {
-                            dataConfiguration: response.data,
+                            configurationData: response.data,
                         };
                         action.type = SET_AUXILIARY_DATA;
                         return action;

@@ -40,13 +40,13 @@ function generateBuildingsGrid(props: PlanetBuildingGridProps): any[] {
         for (let col = 0; col < colsInRow; col++) {
             const slot = (row * cols) + col + 1;
             const chosenBuilding = buildings[slot] ?? {...buildingInitialState.selectedBuildingSlot.specification, slot};
-            const {type, label} = chosenBuilding;
+            const {type, label, level} = chosenBuilding;
             tds.push(
                 <td key={slot} className={`${styles.table_cell} ${slotKey === slot && styles.table_cell_selected}`} onClick={() => onCellClick(slot, chosenBuilding, dispatch)}>
                     {chosenBuilding.type !== "unoccupied" ?
                         <div>
                             <div style={{backgroundImage: `url(${require(`static/${type}.jpg`)})`}} className={styles.building_image}/>
-                            {label}
+                            {`${label} (${level})`}
                         </div> :
                         <div>Unoccupied slot</div>
                     }

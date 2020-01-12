@@ -5,10 +5,10 @@ import {SET_AUXILIARY_DATA, SET_FOCUSED_PLANET, SET_PLANETS_DATA} from "./action
 const initialState: PlanetsDataState = {
     focusedPlanet: undefined,
     fleetConfig: undefined,
-    dataConfiguration: undefined,
+    configurationData: undefined,
     data: []
 };
-
+// TODO:: needs to be sliced to corresponding reducers
 export default handleActions<PlanetsDataState, any>({
     [SET_PLANETS_DATA]: (state: PlanetsDataState, action: Action<any>): PlanetsDataState => {
         const newState = {
@@ -28,8 +28,8 @@ export default handleActions<PlanetsDataState, any>({
         return {...state, focusedPlanet: state.data.find((planet: any) => planet.id === action.payload)};
     },
     [SET_AUXILIARY_DATA]: (state: PlanetsDataState, action: Action<any>): PlanetsDataState => {
-        const {dataConfiguration} = action.payload;
-        return {...state, dataConfiguration}
+        const {configurationData} = action.payload;
+        return {...state, configurationData}
 
     }
 }, initialState);
