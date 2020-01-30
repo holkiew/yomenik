@@ -5,12 +5,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-public class Concrete extends Resource {
-    public Concrete(long amount) {
+public class Crystal extends Resource {
+    public Crystal(long amount) {
         super(amount);
     }
 
-    public Concrete(long amount, LocalDateTime lastIncomeAddition) {
+    public Crystal(long amount, LocalDateTime lastIncomeAddition) {
         super(amount, lastIncomeAddition);
     }
 }
