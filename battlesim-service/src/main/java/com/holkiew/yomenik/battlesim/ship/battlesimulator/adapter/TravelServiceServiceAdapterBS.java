@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class TravelServiceServiceAdapter implements TravelServicePort {
+public class TravelServiceServiceAdapterBS implements TravelServicePort {
     TravelFacade travelFacade;
 
     public Mono<Boolean> battleEndDateChangeEvent(BattleHistory battleHistory) {

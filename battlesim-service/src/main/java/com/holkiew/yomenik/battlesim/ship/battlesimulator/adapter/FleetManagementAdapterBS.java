@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class FleetManagementAdapter implements FleetManagementServicePort {
+public class FleetManagementAdapterBS implements FleetManagementServicePort {
     private final FleetManagementFacade facade;
 
     public Mono<FleetManagementConfig> findById(String userId) {

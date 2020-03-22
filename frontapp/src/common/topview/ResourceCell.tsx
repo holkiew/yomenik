@@ -50,6 +50,7 @@ export default class ResourceCell extends React.Component<ResourceCellProps, Res
         const {lastIncomeAddition, incomeRatePerHour, intervalInMs} = this.props;
         const startTimeMilis = Date.parse(lastIncomeAddition);
         const updateAmountTillNow = ((Date.now() - startTimeMilis) / 360000) * incomeRatePerHour;
+        console.info(lastIncomeAddition)
         this.setState({
             updatedAmount: this.state.updatedAmount + updateAmountTillNow,
             incomeRatePerHour,

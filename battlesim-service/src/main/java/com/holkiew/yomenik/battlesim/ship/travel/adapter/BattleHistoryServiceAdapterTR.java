@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class BattleHistoryServiceAdapter implements BattleHistoryPort {
+public class BattleHistoryServiceAdapterTR implements BattleHistoryPort {
 
     private final BattleFacade battleFacade;
 

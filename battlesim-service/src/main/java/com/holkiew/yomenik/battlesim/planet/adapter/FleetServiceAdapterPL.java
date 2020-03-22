@@ -9,7 +9,7 @@ import reactor.core.publisher.Flux;
 
 @Repository
 @RequiredArgsConstructor
-public class FleetServiceAdapter implements FleetPort {
+public class FleetServiceAdapterPL implements FleetPort {
 
     private final TravelFacade travelFacade;
 

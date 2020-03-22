@@ -18,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Document
+@Document("fleetMission")
 public class Fleet {
     @Id
     private String id;

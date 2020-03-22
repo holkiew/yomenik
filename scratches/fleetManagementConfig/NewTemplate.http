@@ -1,0 +1,18 @@
+POST http://{{host}}/fleet_management/ship_template
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+{
+  "templateName": "testTemplate",
+  "shipClassType": "shipsLevel1",
+  "hullType": "ShipLevel1",
+  "weaponSlots": {
+    "1": "LASER1"
+  },
+  "fireMode": "SCATTER"
+}
+
+###
+

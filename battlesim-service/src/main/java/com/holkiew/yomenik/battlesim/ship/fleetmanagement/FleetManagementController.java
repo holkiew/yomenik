@@ -2,16 +2,16 @@ package com.holkiew.yomenik.battlesim.ship.fleetmanagement;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.DeleteShipGroupTemplateRequest;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.ModifyShipGroupTemplateRequest;
+import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.NewShipGroupTemplateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@CrossOrigin
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/fleet_management")
@@ -21,25 +21,32 @@ public class FleetManagementController {
 
     private final FleetManagementService fleetService;
 
-//    @PostMapping("/fleetmanagement")
-//    public Mono<ResponseEntity<FleetManagementConfig>> newConfig(@RequestBody @Valid NewFleetManagementRequest request) {
-//        return fleetService.newConfig(request)
-//                .map(ResponseEntity::ok)
-//                .defaultIfEmpty(ResponseEntity.notFound().build());
-//    }
-//
-//    @PutMapping("/fleetmanagement")
-//    public Mono<ResponseEntity<FleetManagementConfig>> modifyConfig(@RequestBody @Valid ModifyFleetManagementRequest request) {
-//        return fleetService.modifyConfig(request)
-//                .map(ResponseEntity::ok)
-//                .defaultIfEmpty(ResponseEntity.notFound().build());
-//    }
-
     @GetMapping
     public Mono<ResponseEntity<FleetManagementConfig>> getConfig(Principal principal) {
         return fleetService.getManagementConfig(principal)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/ship_template")
+    public Mono<ResponseEntity<FleetManagementConfig>> newTemplate(Principal principal, @RequestBody @Valid NewShipGroupTemplateRequest request) {
+        return fleetService.newShipGroupTemplate(principal, request)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
+    }
+
+    @PutMapping("/ship_template")
+    public Mono<ResponseEntity<FleetManagementConfig>> modifyTemplate(Principal principal, @RequestBody @Valid ModifyShipGroupTemplateRequest request) {
+        return fleetService.modifyShipGroupTemplate(principal, request)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
+    }
+
+    @DeleteMapping("/ship_template")
+    public Mono<ResponseEntity<FleetManagementConfig>> deleteTemplate(Principal principal, @RequestBody @Valid DeleteShipGroupTemplateRequest request) {
+        return fleetService.deleteShipGroupTemplate(principal, request)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
     }
 }
 

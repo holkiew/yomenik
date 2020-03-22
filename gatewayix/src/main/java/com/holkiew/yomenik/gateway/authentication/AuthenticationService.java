@@ -27,7 +27,7 @@ public class AuthenticationService {
         return userRepository.findByUsername(request.getUsername())
                 .filter(user -> passwordEncoder.encode(request.getPassword()).equals(user.getPassword()))
                 .map(jwtUtils::generateToken)
-                .switchIfEmpty(Mono.error(new RuntimeException("Wrong username or password")));
+                .switchIfEmpty(Mono.error(new Exception("Wrong username or password")));
     }
 
     public Mono<String> registerNewUser(RegisterRequest request) {
@@ -39,7 +39,7 @@ public class AuthenticationService {
                         .enabled(true)
                         .build())
                 .map(jwtUtils::generateToken)
-                .switchIfEmpty(Mono.error(new RuntimeException("User already exists")));
+                .switchIfEmpty(Mono.error(new Exception("User already exists")));
 
 
     }

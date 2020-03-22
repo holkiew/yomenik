@@ -3,7 +3,7 @@ package com.holkiew.yomenik.battlesim.planet.entity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import com.holkiew.yomenik.battlesim.configuration.jackson.serializer.OnRouteFleetsSerializer;
+import com.holkiew.yomenik.battlesim.configuration.jackson.serializer.distinct.OnRouteFleetsSerializer;
 import com.holkiew.yomenik.battlesim.galaxy.model.Coordinates;
 import com.holkiew.yomenik.battlesim.planet.model.building.BuildingType;
 import com.holkiew.yomenik.battlesim.planet.model.resource.Iron;

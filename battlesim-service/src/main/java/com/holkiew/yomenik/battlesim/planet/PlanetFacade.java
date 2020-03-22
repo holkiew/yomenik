@@ -24,4 +24,7 @@ public class PlanetFacade {
         return planetRepository.saveAll(planets);
     }
 
+    public Flux<Planet> findAllByUserId(String userId) {
+        return planetRepository.findAllByUserId(userId);
+    }
 }

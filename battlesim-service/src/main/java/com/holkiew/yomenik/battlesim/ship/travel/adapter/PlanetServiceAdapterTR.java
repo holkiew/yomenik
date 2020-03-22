@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 @RequiredArgsConstructor
-public class PlanetServiceAdapter implements PlanetPort {
+public class PlanetServiceAdapterTR implements PlanetPort {
 
     private final PlanetFacade planetFacade;
 

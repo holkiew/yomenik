@@ -1,4 +1,4 @@
-package com.holkiew.yomenik.battlesim.configuration.jackson.serializer;
+package com.holkiew.yomenik.battlesim.configuration.jackson.serializer.distinct;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
