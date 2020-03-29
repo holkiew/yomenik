@@ -10,4 +10,5 @@ export default interface FleetState {
     // new template part
     newTemplateModalVisible: boolean
     templateOptions: { [key: string]: { weapons: [] } }
+    availableTemplates: { [key: string]: {} }
 }

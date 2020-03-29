@@ -6,7 +6,7 @@ import {Epic, ofType} from "redux-observable";
 import {map, mergeMap} from 'rxjs/operators';
 import StoreModel from "StoreModel";
 import {SET_PLANETS_DATA_RESPONSE} from "../actions";
-import {ADD_CREATED_TEMPLATE_RESPONSE, GET_TEMPLATE_OPTIONS_REQUEST, SAVE_NEW_TEMPLATE_REQUEST, SEND_FLEET_ON_MISSION_REQUEST, SET_TEMPLATE_OPTIONS_RESPONSE} from "./actions";
+import {GET_TEMPLATE_OPTIONS_REQUEST, SAVE_NEW_TEMPLATE_REQUEST, SEND_FLEET_ON_MISSION_REQUEST, SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE, SET_TEMPLATE_OPTIONS_RESPONSE} from "./actions";
 
 const updateFleetEpics: Epic<Action<StoreModel>, Action<StoreModel>, StoreModel> = (actionsObservable, state) =>
     actionsObservable.pipe(
@@ -49,19 +49,20 @@ const getTemplateOptions: Epic<Action<FleetState>, Action<FleetState>, StoreMode
         )
     );
 
-const newTemplateRequest: Epic<any, Action<FleetState>, StoreModel> = (actionsObservable, state) =>
+const newTemplateRequest: Epic<any, any, StoreModel> = (actionsObservable, state) =>
     actionsObservable.pipe(
         ofType(SAVE_NEW_TEMPLATE_REQUEST),
         mergeMap(action => {
-                return Axios.post(
-                    `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}/ship_template`,
-                    action.payload
-                ).pipe(
-                    map((response) => {
-                        action.type = ADD_CREATED_TEMPLATE_RESPONSE;
-                        action.payload = {
-                            templateOptions: response.data.shipGroupTemplates
-                        } as FleetState;
+            console.info(action.payload)
+            return Axios.post(
+                `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}/ship_template`,
+                action.payload
+            ).pipe(
+                map((response) => {
+                    action.type = SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE;
+                    action.payload = {
+                        availableTemplates: response.data.shipGroupTemplates
+                    } as FleetState;
                         return action;
                     })
                 )

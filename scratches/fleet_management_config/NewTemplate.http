@@ -5,9 +5,8 @@ Cache-Control: no-cache
 PRINCIPAL-ID: 1
 
 {
-  "templateName": "testTemplate",
-  "shipClassType": "shipsLevel1",
-  "hullType": "ShipLevel1",
+  "templateName": "testTemplate2",
+  "hullType": "SHIP_LEVEL1",
   "weaponSlots": {
     "1": "LASER1"
   },

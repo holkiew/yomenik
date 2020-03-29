@@ -95,7 +95,7 @@ public class FleetManagementService {
         return fleetManagementConfig -> {
             var newShipGroupTemplate = ShipGroupTemplate.builder()
                     .name(request.getTemplateName())
-                    .shipClassType(request.getShipClassType())
+                    .shipClassType(request.getHullType().getShipClassType())
                     .fireMode(request.getFireMode())
                     .hull(new Hull(request.getHullType(), request.getWeaponSlots()))
                     .build();

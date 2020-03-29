@@ -81,7 +81,7 @@ const TemplateModal = (props: TemplateModalProps) => {
                     </Col>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="Success" onClick={() => dispatch(saveNewTemplateRequest(getNewTemplateRequest("SCATTER", selectedHull, selectedHull, templateName, selectedWeapons)))}>Save</Button>{' '}
+                    <Button color="Success" onClick={() => dispatch(saveNewTemplateRequest(getNewTemplateRequest("SCATTER", selectedHull, templateName, selectedWeapons)))}>Save</Button>{' '}
                     <Button color="secondary" onClick={() => dispatch(toggleNewTemplateModal())}>Cancel</Button>
                 </ModalFooter>
             </Modal>
@@ -111,12 +111,11 @@ function getHullOptions(props: TemplateModalProps): any[] {
     return Object.keys(props.templateOptions).map(key => <option key={key} value={key}>{key}</option>)
 }
 
-function getNewTemplateRequest(fireMode: string, hullType: string, shipClassType: string, templateName: string, selectedWeapons: Array<{ weaponName: string, key: string }>): NewTemplateRequest {
+function getNewTemplateRequest(fireMode: string, hullType: string, templateName: string, selectedWeapons: Array<{ weaponName: string, key: string }>): NewTemplateRequest {
     const weaponSlots = selectedWeapons
-        .map((weaponObject, index) => ({key: index + 1, value: weaponObject.weaponName}))
+        .map((weaponObject, index) => ({[(index + 1)]: weaponObject.weaponName}))
         .reduce((obj, item) => ({...obj, ...item}), {});
-
-    return {fireMode, hullType, shipClassType, templateName, weaponSlots};
+    return {fireMode, hullType, templateName, weaponSlots};
 }
 
 function componentWillUnmount(props: TemplateModalProps, isWeaponDropdownVisible: any) {
