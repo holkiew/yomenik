@@ -1,3 +1,5 @@
+import {toggleNewTemplateModal} from "components/fleet/actions";
+import TemplateModal from "components/fleet/TemplateModal";
 import React from 'react';
 import {connect} from "react-redux";
 import {Button, Col, Row} from 'reactstrap';
@@ -12,6 +14,7 @@ interface FleetPanelProps {
 }
 
 const FleetPanel = (props: FleetPanelProps) => {
+    const {dispatch} = props;
     return (
         <div>
             <Row>
@@ -20,8 +23,9 @@ const FleetPanel = (props: FleetPanelProps) => {
                 </Col>
                 <Col className="col-xs-12 col-sm-4 col-md-8 col-lg-9">
                     <MissionView/>
-                    <Button color="primary">New Template</Button>
+                    <Button color="primary" onClick={() => dispatch(toggleNewTemplateModal())}>New Template</Button>
                     <Button color="primary">New Mission</Button>
+                    <TemplateModal/>
                 </Col>
             </Row>
         </div>

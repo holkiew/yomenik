@@ -1,32 +1,16 @@
-import React from 'react';
-import {RouteComponentProps} from 'react-router-dom'
-import * as env from "../../config.json";
-import {fromEvent, Observable} from 'rxjs';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    CardText,
-    Col,
-    Container,
-    Fade,
-    FormFeedback,
-    Input,
-    InputGroup,
-    Label,
-    ListGroup,
-    Row,
-    Tooltip
-} from 'reactstrap';
 import Axios from "axios-observable";
 // @ts-ignore
 import {EventSourcePolyfill} from 'event-source-polyfill';
+import React from 'react';
+import {RouteComponentProps} from 'react-router-dom'
+import {Button, Card, CardBody, CardHeader, CardText, Col, Container, Fade, FormFeedback, Input, InputGroup, Label, ListGroup, Row, Tooltip} from 'reactstrap';
+import {fromEvent, Observable} from 'rxjs';
 import {getRequestHeaderToken} from "security/TokenUtil";
-import ShipForm from "./ShipForm";
-import "./homepagepanel.css"
-import CloseableListGroupItem from "./CloseableListGroupItem";
+import * as env from "../../config.json";
 import BattleHistoryPageableList from "./BattleHistoryPageableList"
+import CloseableListGroupItem from "./CloseableListGroupItem";
+import "./homepagepanel.css"
+import ShipForm from "./ShipForm";
 
 interface BattleHistoryDTO {
     battleRecapMap: {
@@ -59,14 +43,14 @@ export default class HomepagePanel extends React.Component<RouteComponentProps, 
         this.stageIssueTimeRef.current.value = this.state.stageIssueTime;
         this.getCurrentBattleRequest()
             .subscribe(value => {
-                const dto: BattleHistoryDTO = JSON.parse(value.data);
-                const reacapStringList: BattleHistoryRecapString[] = this.battleHistoryToString(dto);
-                this.setState({
-                    battleText: reacapStringList,
-                    currentBattleVisible: reacapStringList.length !== 0
-                })
+                    const dto: BattleHistoryDTO = JSON.parse(value.data);
+                    const reacapStringList: BattleHistoryRecapString[] = this.battleHistoryToString(dto);
+                    this.setState({
+                        battleText: reacapStringList,
+                        currentBattleVisible: reacapStringList.length !== 0
+                    })
                 }, error => {
-                console.info(JSON.stringify(error))
+                    console.info(JSON.stringify(error))
                 }
             );
     }

@@ -22,7 +22,7 @@ public class FleetManagementController {
     private final FleetManagementService fleetService;
 
     @GetMapping
-    public Mono<ResponseEntity<FleetManagementConfig>> getConfig(Principal principal) {
+    public Mono<ResponseEntity<FleetManagementConfig>> getFleetManagementConfig(Principal principal) {
         return fleetService.getManagementConfig(principal)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

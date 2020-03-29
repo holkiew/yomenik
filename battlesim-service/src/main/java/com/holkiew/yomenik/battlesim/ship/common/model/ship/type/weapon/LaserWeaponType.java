@@ -7,7 +7,8 @@ import lombok.Getter;
 import java.util.Map;
 
 public enum LaserWeaponType implements LaserWeapon {
-    LASER1("Laser1", 25);
+    LASER1("Laser1", 25),
+    LASER2("Laser2", 75);
 
     private static final Map<String, LaserWeaponType> ENUM_MAP;
 

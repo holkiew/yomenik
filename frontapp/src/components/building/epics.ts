@@ -1,5 +1,5 @@
 import Axios from "axios-observable";
-import {GET_PLANETS_DATA_REQUEST} from "components/actions";
+import {SET_PLANETS_DATA_RESPONSE} from "components/actions";
 import {BUILD_NEW_BUILDING_REQUEST} from "components/building/actions";
 import * as env from "config.json";
 import {Epic, ofType} from "redux-observable";
@@ -18,7 +18,7 @@ const newBuildingRequest: Epic<any, any, StoreModel> = (actionsObservable, state
                     {planetId, slot: slotKey, buildingType: type}
                 ).pipe(
                     map((response) => {
-                        action.type = GET_PLANETS_DATA_REQUEST;
+                        action.type = SET_PLANETS_DATA_RESPONSE;
                         return action;
                     })
                 )

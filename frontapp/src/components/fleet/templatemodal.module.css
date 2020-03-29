@@ -1,0 +1,27 @@
+.dropdown_title > h5 {
+    color: black;
+}
+
+.weapon_list_items > li {
+    color: black;
+    padding: 0.5rem 0.5rem;
+    text-align: center;
+}
+
+
+.possible_weapons_dropdown_disabled {
+    opacity: 50%;
+}
+
+.hullOptionsInput > option {
+    color: inherit;
+}
+
+.list_close_icon {
+    fill: red;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    cursor: pointer;
+}
+

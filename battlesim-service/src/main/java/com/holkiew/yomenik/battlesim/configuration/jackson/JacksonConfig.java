@@ -25,9 +25,8 @@ public class JacksonConfig {
     }
 
     private SimpleModule deserializersModule() {
-        var module = new SimpleModule();
-        module.addDeserializer(Weapon.class, new WeaponDeserializer());
-        return module;
+        return new SimpleModule()
+                .addDeserializer(Weapon.class, new WeaponDeserializer());
     }
 
 }

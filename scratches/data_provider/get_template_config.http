@@ -1,0 +1,7 @@
+GET http://{{host}}/data_provider/template_options
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+PRINCIPAL-ID: 1
+
+###

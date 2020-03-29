@@ -1,9 +1,9 @@
-import React from 'react';
 import Axios from "axios-observable";
-import * as env from "../../config.json";
+import React from 'react';
 import ReactPaginate from "react-paginate";
-import "./battlehistorypageablelist.css";
 import {ListGroup} from "reactstrap";
+import * as env from "../../config.json";
+import "./battlehistorypageablelist.css";
 import CloseableListGroupItem from "./CloseableListGroupItem";
 
 interface BattleHistoryDTO {

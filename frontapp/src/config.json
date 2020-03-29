@@ -5,7 +5,8 @@
       "battlesim": "/battlesim",
       "planet": "/planet",
       "fleetTravel": "/travel",
-      "fleetConfig": "/fleet_management",
+      "fleetManagement": "/fleet_management",
+      "dataProvider": "/data_provider",
       "authentication": "/auth"
     }
   },
