@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class TravelFacade {
@@ -20,6 +22,10 @@ public class TravelFacade {
 
     public Flux<Fleet> findByIds(Iterable<String> ids) {
         return fleetRepository.findAllById(ids);
+    }
+
+    public Flux<Fleet> findAllUnfinishedMissions() {
+        return fleetRepository.findAllByArrivalTimeBeforeAndMissionCompletedFalse(LocalDateTime.now());
     }
 
 }

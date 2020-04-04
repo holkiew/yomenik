@@ -2,7 +2,7 @@ import {getTemplateOptionsRequest, saveNewTemplateRequest, setNewTemplateModal, 
 import styles from "components/fleet/templatemodal.module.css";
 import NewTemplateRequest from "model/components/fleet/request/NewTemplateRequest";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {IoIosClose} from 'react-icons/io';
 import {connect} from "react-redux";
 import {Button, Col, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, FormFeedback, Input, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, ModalHeader, Row} from "reactstrap";
@@ -10,7 +10,7 @@ import {Dispatch} from "redux";
 import StoreModel from "StoreModel";
 
 
-interface TemplateModalProps {
+interface ListTemplatesModal {
     isModalVisible: boolean
     templateOptions: {
         [key: string]: {
@@ -20,7 +20,7 @@ interface TemplateModalProps {
     dispatch: Dispatch
 }
 
-const TemplateModal = (props: TemplateModalProps) => {
+const ListTemplatesModal = (props: ListTemplatesModal) => {
     const {isModalVisible, dispatch} = props;
     const [isWeaponDropdownVisible, setWeaponDropdownVisible] = useState(false);
     const [templateName, setTemplateName] = useState("New template");
@@ -73,15 +73,17 @@ const TemplateModal = (props: TemplateModalProps) => {
                             </Col>
                             <Col size={6}>
                                 <p style={{color: "black"}} className="text-center">Selected weapons</p>
-                                <ListGroup horizontal={true} className={`${styles.weapon_list_items}`}>
-                                    {getSelectedWeaponList([selectedWeapons, setSelectedWeapons])}
-                                </ListGroup>
+                                <div style={{overflowY: "auto", maxHeight: "10vh"}}>
+                                    <ListGroup horizontal={true} className={`${styles.weapon_list_items}`}>
+                                        {getSelectedWeaponList([selectedWeapons, setSelectedWeapons])}
+                                    </ListGroup>
+                                </div>
                             </Col>
                         </Row>
                     </Col>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="Success" onClick={() => dispatch(saveNewTemplateRequest(getNewTemplateRequest("SCATTER", selectedHull, templateName, selectedWeapons)))}>Save</Button>{' '}
+                    <Button color="success" onClick={() => dispatch(saveNewTemplateRequest(getNewTemplateRequest("SCATTER", selectedHull, templateName, selectedWeapons)))}>Save</Button>{' '}
                     <Button color="secondary" onClick={() => dispatch(toggleNewTemplateModal())}>Cancel</Button>
                 </ModalFooter>
             </Modal>
@@ -90,7 +92,7 @@ const TemplateModal = (props: TemplateModalProps) => {
 };
 
 
-function getAvailableWeaponsForSelectedHull(props: TemplateModalProps, [includedWeapons, setIncludedWeapons]: [Array<{ weaponName: string, key: string }>, any], selectedHull: string): any[] {
+function getAvailableWeaponsForSelectedHull(props: ListTemplatesModal, [includedWeapons, setIncludedWeapons]: [Array<{ weaponName: string, key: string }>, any], selectedHull: string): any[] {
     return props.templateOptions[selectedHull]?.weapons.map(weaponName => (<DropdownItem key={weaponName} onClick={() => {
         const key: string = weaponName + includedWeapons.length.toString();
         setIncludedWeapons([...includedWeapons, {weaponName, key}])
@@ -98,7 +100,7 @@ function getAvailableWeaponsForSelectedHull(props: TemplateModalProps, [included
     }>{weaponName}</DropdownItem>));
 }
 
-function getSelectedWeaponList([includedWeapons, setIncludedWeapons]: [Array<{ weaponName: string, key: string }>, any]): any[] {
+function getSelectedWeaponList([includedWeapons, setIncludedWeapons]: [Array<{ weaponName: string, key: string }>, any]): ReactNode {
     return includedWeapons.map((weaponObject) => (<ListGroupItem key={weaponObject.key}>
         <IoIosClose className={styles.list_close_icon} onClick={() => {
             setIncludedWeapons(includedWeapons.filter(includedWeaponObject => includedWeaponObject.key !== weaponObject.key))
@@ -107,7 +109,7 @@ function getSelectedWeaponList([includedWeapons, setIncludedWeapons]: [Array<{ w
     </ListGroupItem>));
 }
 
-function getHullOptions(props: TemplateModalProps): any[] {
+function getHullOptions(props: ListTemplatesModal): ReactNode {
     return Object.keys(props.templateOptions).map(key => <option key={key} value={key}>{key}</option>)
 }
 
@@ -118,13 +120,13 @@ function getNewTemplateRequest(fireMode: string, hullType: string, templateName:
     return {fireMode, hullType, templateName, weaponSlots};
 }
 
-function componentWillUnmount(props: TemplateModalProps, isWeaponDropdownVisible: any) {
+function componentWillUnmount(props: ListTemplatesModal, isWeaponDropdownVisible: any) {
     const {dispatch} = props;
     dispatch(setNewTemplateModal(false));
     isWeaponDropdownVisible(false);
 }
 
-function componentDidMount(props: TemplateModalProps) {
+function componentDidMount(props: ListTemplatesModal) {
     const {dispatch} = props;
     dispatch(getTemplateOptionsRequest());
 }
@@ -137,4 +139,4 @@ const mapStateToProps = (state: StoreModel) => {
     };
 };
 
-export default connect(mapStateToProps)(TemplateModal)
+export default connect(mapStateToProps)(ListTemplatesModal)

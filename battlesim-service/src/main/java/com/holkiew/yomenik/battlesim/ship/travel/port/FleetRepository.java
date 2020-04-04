@@ -13,5 +13,7 @@ public interface FleetRepository extends ReactiveMongoRepository<Fleet, String> 
     Flux<Fleet> findAllByArrivalTimeBeforeAndMissionCompletedFalse(LocalDateTime timeBefore);
 
     Mono<Fleet> findByRelatedBattleHistoryId(String id);
+
+    Flux<Fleet> findAllByArrivalTimeBeforeAndMissionCompletedFalseAnd(LocalDateTime timeBefore);
 }
 

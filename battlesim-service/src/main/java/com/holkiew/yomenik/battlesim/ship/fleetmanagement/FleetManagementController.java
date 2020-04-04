@@ -2,7 +2,6 @@ package com.holkiew.yomenik.battlesim.ship.fleetmanagement;
 
 import com.holkiew.yomenik.battlesim.configuration.webflux.model.Principal;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.entity.FleetManagementConfig;
-import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.DeleteShipGroupTemplateRequest;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.ModifyShipGroupTemplateRequest;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.NewShipGroupTemplateRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/fleet_management")
@@ -43,8 +43,8 @@ public class FleetManagementController {
     }
 
     @DeleteMapping("/ship_template")
-    public Mono<ResponseEntity<FleetManagementConfig>> deleteTemplate(Principal principal, @RequestBody @Valid DeleteShipGroupTemplateRequest request) {
-        return fleetService.deleteShipGroupTemplate(principal, request)
+    public Mono<ResponseEntity<FleetManagementConfig>> deleteTemplate(Principal principal, @RequestParam @Size(min = 3) String templateName) {
+        return fleetService.deleteShipGroupTemplate(principal, templateName)
                 .map(ResponseEntity::ok)
                 .onErrorReturn(ResponseEntity.badRequest().build());
     }

@@ -22,6 +22,7 @@ import java.util.UUID;
 public class Fleet {
     @Id
     private String id;
+    private String principalId;
     private Map<String, Long> ships;
     private String planetIdFrom;
     private String planetIdTo;

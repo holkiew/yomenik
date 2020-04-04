@@ -8,7 +8,6 @@ import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.ShipGroupTemplat
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.exception.ShipGroupTemplateAlreadyExistsException;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.exception.ShipGroupTemplateIsInUse;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.exception.ShipGroupTemplateNotExists;
-import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.DeleteShipGroupTemplateRequest;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.ModifyShipGroupTemplateRequest;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.model.request.NewShipGroupTemplateRequest;
 import com.holkiew.yomenik.battlesim.ship.fleetmanagement.port.FleetManagementConfigRepository;
@@ -59,11 +58,11 @@ public class FleetManagementService {
                 .flatMap(managementRepository::save);
     }
 
-    public Mono<FleetManagementConfig> deleteShipGroupTemplate(Principal principal, DeleteShipGroupTemplateRequest request) {
-        return getFleetManagementConfigById(principal, checkIfTemplateExists(request.getTemplateName()))
+    public Mono<FleetManagementConfig> deleteShipGroupTemplate(Principal principal, String templateName) {
+        return getFleetManagementConfigById(principal, checkIfTemplateExists(templateName))
                 .zipWith(planetPort.findAllByUserId(principal.getId()).collectList())
-                .flatMap(isShipGroupTemplateDeletable(request))
-                .flatMap(deleteTemplateAndSave(request));
+                .flatMap(isShipGroupTemplateDeletable(principal, templateName))
+                .flatMap(deleteTemplateAndSave(templateName));
     }
 
     public Mono<FleetManagementConfig> modifyShipGroupTemplate(Principal principal, ModifyShipGroupTemplateRequest request) {
@@ -104,22 +103,22 @@ public class FleetManagementService {
         };
     }
 
-    private Function<Tuple2<FleetManagementConfig, List<Planet>>, Mono<? extends Tuple2<FleetManagementConfig, Boolean>>> isShipGroupTemplateDeletable(DeleteShipGroupTemplateRequest request) {
+    private Function<Tuple2<FleetManagementConfig, List<Planet>>, Mono<? extends Tuple2<FleetManagementConfig, Boolean>>> isShipGroupTemplateDeletable(Principal principal, String templateName) {
         return tuple -> {
-            var amountToMissionIds = countFleetsOnPlanetsAndFindMissions(tuple.getT2(), request);
+            var amountToMissionIds = countFleetsOnPlanetsAndFindMissions(tuple.getT2(), templateName);
             if (amountToMissionIds.getT1() != 0) {
                 return Mono.just(Tuples.of(tuple.getT1(), false));
             } else {
-                return anyMissionContainsRequestedShipGroupTemplate(request, tuple, amountToMissionIds.getT2());
+                return anyMissionContainsRequestedShipGroupTemplate(principal, templateName, tuple, amountToMissionIds.getT2());
             }
         };
     }
 
-    private Tuple2<Long, HashSet<String>> countFleetsOnPlanetsAndFindMissions(List<Planet> planets, DeleteShipGroupTemplateRequest request) {
+    private Tuple2<Long, HashSet<String>> countFleetsOnPlanetsAndFindMissions(List<Planet> planets, String templateName) {
         var residingFleetOfTemplateAmount = 0L;
         var ongoingMissionIds = new HashSet<String>();
         for (Planet planet : planets) {
-            residingFleetOfTemplateAmount += planet.getResidingFleet().getOrDefault(request.getTemplateName(), 0L);
+            residingFleetOfTemplateAmount += planet.getResidingFleet().getOrDefault(templateName, 0L);
             if (residingFleetOfTemplateAmount != 0) {
                 break;
             }
@@ -128,17 +127,17 @@ public class FleetManagementService {
         return Tuples.of(residingFleetOfTemplateAmount, ongoingMissionIds);
     }
 
-    private Mono<Tuple2<FleetManagementConfig, Boolean>> anyMissionContainsRequestedShipGroupTemplate(DeleteShipGroupTemplateRequest request, Tuple2<FleetManagementConfig, List<Planet>> tuple, HashSet<String> ongoingMissionIds) {
-        return fleetPort.findByIds(ongoingMissionIds).collectList().map(fleets -> fleets.stream()
-                .anyMatch(fleet -> fleet.getShips().containsKey(request.getTemplateName())))
+    private Mono<Tuple2<FleetManagementConfig, Boolean>> anyMissionContainsRequestedShipGroupTemplate(Principal principal, String templateName, Tuple2<FleetManagementConfig, List<Planet>> tuple, HashSet<String> ongoingMissionIds) {
+        return fleetPort.findAllUnfinishedMissions(principal).collectList().map(fleets -> fleets.stream()
+                .anyMatch(fleet -> fleet.getShips().containsKey(templateName)))
                 .map(isAnyOfRequestedTemplateFound -> Tuples.of(tuple.getT1(), isAnyOfRequestedTemplateFound));
     }
 
-    private Function<Tuple2<FleetManagementConfig, Boolean>, Mono<? extends FleetManagementConfig>> deleteTemplateAndSave(DeleteShipGroupTemplateRequest request) {
-        return tuple -> {
-            if (!tuple.getT2()) {
-                var managmentConfig = tuple.getT1();
-                managmentConfig.getShipGroupTemplates().remove(request.getTemplateName());
+    private Function<Tuple2<FleetManagementConfig, Boolean>, Mono<? extends FleetManagementConfig>> deleteTemplateAndSave(String templateName) {
+        return configToIsTemplateDeletable -> {
+            if (configToIsTemplateDeletable.getT2()) {
+                var managmentConfig = configToIsTemplateDeletable.getT1();
+                managmentConfig.getShipGroupTemplates().remove(templateName);
                 return managementRepository.save(managmentConfig);
             } else {
                 return Mono.error(new ShipGroupTemplateIsInUse());

@@ -6,7 +6,7 @@ import {Epic, ofType} from "redux-observable";
 import {map, mergeMap} from 'rxjs/operators';
 import StoreModel from "StoreModel";
 import {SET_PLANETS_DATA_RESPONSE} from "../actions";
-import {GET_TEMPLATE_OPTIONS_REQUEST, SAVE_NEW_TEMPLATE_REQUEST, SEND_FLEET_ON_MISSION_REQUEST, SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE, SET_TEMPLATE_OPTIONS_RESPONSE} from "./actions";
+import {DELETE_TEMPLATE_REQUEST, GET_AVAILABLE_TEMPLATES_REQUEST, GET_TEMPLATE_OPTIONS_REQUEST, SAVE_NEW_TEMPLATE_REQUEST, SEND_FLEET_ON_MISSION_REQUEST, SET_AVAILABLE_TEMPLATES_RESPONSE, SET_TEMPLATE_OPTIONS_RESPONSE} from "./actions";
 
 const updateFleetEpics: Epic<Action<StoreModel>, Action<StoreModel>, StoreModel> = (actionsObservable, state) =>
     actionsObservable.pipe(
@@ -49,20 +49,61 @@ const getTemplateOptions: Epic<Action<FleetState>, Action<FleetState>, StoreMode
         )
     );
 
+const getAvailableTemplates: Epic<Action<FleetState>, Action<FleetState>, StoreModel> = (actionsObservable, state) =>
+    actionsObservable.pipe(
+        ofType(GET_AVAILABLE_TEMPLATES_REQUEST),
+        mergeMap(action => {
+                return Axios.get(
+                    `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}`
+                ).pipe(
+                    map((response) => {
+                        action.type = SET_AVAILABLE_TEMPLATES_RESPONSE;
+                        action.payload = {
+                            availableTemplates: response.data.shipGroupTemplates
+                        } as FleetState;
+                        return action;
+                    })
+                )
+            }
+        )
+    );
+
 const newTemplateRequest: Epic<any, any, StoreModel> = (actionsObservable, state) =>
     actionsObservable.pipe(
         ofType(SAVE_NEW_TEMPLATE_REQUEST),
         mergeMap(action => {
-            console.info(action.payload)
-            return Axios.post(
-                `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}/ship_template`,
-                action.payload
-            ).pipe(
-                map((response) => {
-                    action.type = SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE;
-                    action.payload = {
-                        availableTemplates: response.data.shipGroupTemplates
-                    } as FleetState;
+                console.info(action.payload)
+                return Axios.post(
+                    `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}/ship_template`,
+                    action.payload
+                ).pipe(
+                    map((response) => {
+                        action.type = SET_AVAILABLE_TEMPLATES_RESPONSE;
+                        action.payload = {
+                            availableTemplates: response.data.shipGroupTemplates
+                        } as FleetState;
+                        return action;
+                    })
+                )
+            }
+        )
+    );
+
+const deleteTemplateRequest: Epic<any, any, StoreModel> = (actionsObservable, state) =>
+    actionsObservable.pipe(
+        ofType(DELETE_TEMPLATE_REQUEST),
+        mergeMap(action => {
+                return Axios.delete(
+                    `${env.backendServer.baseUrl}${env.backendServer.services.fleetManagement}/ship_template`,
+                    {
+                        params: {templateName: action.payload}
+                    }
+                ).pipe(
+                    map((response) => {
+                        action.type = SET_AVAILABLE_TEMPLATES_RESPONSE;
+                        action.payload = {
+                            availableTemplates: response.data.shipGroupTemplates
+                        } as FleetState;
                         return action;
                     })
                 )
@@ -73,5 +114,7 @@ const newTemplateRequest: Epic<any, any, StoreModel> = (actionsObservable, state
 export default [
     updateFleetEpics,
     getTemplateOptions,
-    newTemplateRequest
+    newTemplateRequest,
+    deleteTemplateRequest,
+    getAvailableTemplates
 ];

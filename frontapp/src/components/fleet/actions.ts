@@ -12,7 +12,12 @@ export const SET_NEW_TEMPLATE_MODAL = 'SET_NEW_TEMPLATE_MODAL';
 export const GET_TEMPLATE_OPTIONS_REQUEST = 'GET_TEMPLATE_OPTIONS_REQUEST';
 export const SET_TEMPLATE_OPTIONS_RESPONSE = 'SET_TEMPLATE_OPTIONS_RESPONSE';
 export const SAVE_NEW_TEMPLATE_REQUEST = 'SAVE_NEW_TEMPLATE_REQUEST';
-export const SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE = 'SET_FLEET_MANAGEMENT_CONFIGURATION_RESPONSE';
+export const SET_AVAILABLE_TEMPLATES_RESPONSE = 'SET_AVAILABLE_TEMPLATES_RESPONSE';
+export const GET_AVAILABLE_TEMPLATES_REQUEST = 'GET_AVAILABLE_TEMPLATES_REQUEST';
+export const TOGGLE_LIST_TEMPLATES_MODAL = 'TOGGLE_LIST_TEMPLATES_MODAL';
+export const SET_LIST_TEMPLATES_MODAL = 'SET_LIST_TEMPLATES_MODAL';
+export const DELETE_TEMPLATE_REQUEST = 'DELETE_TEMPLATE_REQUEST';
+
 
 export const setSelectedFleet = (templateName: string, amount: number) =>
     action(SET_SELECTED_FLEET, {templateName, amount});
@@ -32,3 +37,11 @@ export const setNewTemplateModal = (state: boolean) => action(SET_NEW_TEMPLATE_M
 export const getTemplateOptionsRequest = () => action(GET_TEMPLATE_OPTIONS_REQUEST);
 
 export const saveNewTemplateRequest = (request: NewTemplateRequest) => action(SAVE_NEW_TEMPLATE_REQUEST, request);
+
+export const toggleListTemplatesModal = () => action(TOGGLE_LIST_TEMPLATES_MODAL);
+
+export const setListTemplatesModal = (state: boolean) => action(SET_LIST_TEMPLATES_MODAL, state);
+
+export const deleteTemplateRequest = (templateName: string) => action(DELETE_TEMPLATE_REQUEST, templateName);
+
+export const getAvailableTemplatesRequest = () => action(GET_AVAILABLE_TEMPLATES_REQUEST);
