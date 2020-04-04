@@ -24,8 +24,8 @@ public class TravelFacade {
         return fleetRepository.findAllById(ids);
     }
 
-    public Flux<Fleet> findAllUnfinishedMissions() {
-        return fleetRepository.findAllByArrivalTimeBeforeAndMissionCompletedFalse(LocalDateTime.now());
+    public Flux<Fleet> findAllUnfinishedMissionsByUserId(String id) {
+        return fleetRepository.findAllByArrivalTimeBeforeAndMissionCompletedFalseAndUserId(LocalDateTime.now(), id);
     }
 
 }

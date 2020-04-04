@@ -19,10 +19,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 @Document("fleetMission")
+// Distinguish Fleet as FleetMissionEntity and Fleet as Battle used object
 public class Fleet {
     @Id
     private String id;
-    private String principalId;
+    private String userId;
     private Map<String, Long> ships;
     private String planetIdFrom;
     private String planetIdTo;
@@ -44,31 +45,23 @@ public class Fleet {
         this.relatedBattleHistoryId = relatedBattleHistoryId;
     }
 
-    public void setRoute(String planetIdTo, String planetIdFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType) {
-        this.planetIdFrom = planetIdFrom;
-        this.planetIdTo = planetIdTo;
-        this.departureTime = LocalDateTime.now();
-        this.arrivalTime = arrivalTime;
-        this.missionType = travelMissionType;
-        this.missionCompleted = false;
-    }
-
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, String... relatedMissionsIds) {
-        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType);
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, String userId, String... relatedMissionsIds) {
+        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType, userId);
         this.relatedMissions = Lists.newArrayList(relatedMissionsIds);
     }
 
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, List<String> relatedMissionsIds) {
-        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType);
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, String userId, List<String> relatedMissionsIds) {
+        this.setRouteOnPlanets(planetTo, planetFrom, arrivalTime, travelMissionType, userId);
         this.relatedMissions = relatedMissionsIds;
     }
 
-    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType) {
+    public void setRouteOnPlanets(Planet planetTo, Planet planetFrom, LocalDateTime arrivalTime, TravelMissionType travelMissionType, String userId) {
         this.planetIdTo = planetTo.getId();
         this.planetIdFrom = planetFrom.getId();
         this.departureTime = LocalDateTime.now();
         this.arrivalTime = arrivalTime;
         this.missionType = travelMissionType;
+        this.userId = userId;
         this.missionCompleted = false;
 
         planetTo.getOnRouteFleets().put(travelMissionType, id);

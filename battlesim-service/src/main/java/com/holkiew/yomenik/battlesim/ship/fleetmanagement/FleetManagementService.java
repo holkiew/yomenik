@@ -128,7 +128,7 @@ public class FleetManagementService {
     }
 
     private Mono<Tuple2<FleetManagementConfig, Boolean>> anyMissionContainsRequestedShipGroupTemplate(Principal principal, String templateName, Tuple2<FleetManagementConfig, List<Planet>> tuple, HashSet<String> ongoingMissionIds) {
-        return fleetPort.findAllUnfinishedMissions(principal).collectList().map(fleets -> fleets.stream()
+        return fleetPort.findAllUnfinishedMissionsByUserId(principal.getId()).collectList().map(fleets -> fleets.stream()
                 .anyMatch(fleet -> fleet.getShips().containsKey(templateName)))
                 .map(isAnyOfRequestedTemplateFound -> Tuples.of(tuple.getT1(), isAnyOfRequestedTemplateFound));
     }

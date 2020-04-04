@@ -65,9 +65,7 @@ public class TravelService {
             Planet planetFrom = planetsTuple.getT1();
             Planet planetTo = planetsTuple.getT2();
             Fleet fleetOnRoute = subtractFleetFromFromPlanet(request, planetFrom).get();
-            planetFrom.getOnRouteFleets().put(request.getMissionType(), fleetOnRoute.getId());
-            planetTo.getOnRouteFleets().put(request.getMissionType(), fleetOnRoute.getId());
-            fleetOnRoute.setRoute(planetTo.getId(), planetFrom.getId(), getArrivalTime(planetFrom, planetTo), request.getMissionType());
+            fleetOnRoute.setRouteOnPlanets(planetTo, planetFrom, getArrivalTime(planetFrom, planetTo), request.getMissionType(), planetFrom.getUserId());
             return planetService.saveAll(Flux.just(planetFrom, planetTo))
                     .next()
                     .flatMap(planet -> fleetRepository.save(fleetOnRoute));

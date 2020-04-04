@@ -16,4 +16,9 @@ public class FleetServiceAdapterFM implements FleetPort {
     public Flux<Fleet> findByIds(Iterable<String> ids) {
         return travelFacade.findByIds(ids);
     }
+
+    @Override
+    public Flux<Fleet> findAllUnfinishedMissionsByUserId(String id) {
+        return travelFacade.findAllUnfinishedMissionsByUserId(id);
+    }
 }

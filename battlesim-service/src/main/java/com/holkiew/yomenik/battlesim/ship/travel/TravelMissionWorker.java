@@ -88,7 +88,7 @@ public class TravelMissionWorker implements ReactorWorker {
                 .map(battleHistory -> {
                     ftp.planetTo.setDuringBattle(true);
                     var fleetDuringBattle = new Fleet(ftp.fleet.getShips(), battleHistory.getId());
-                    fleetDuringBattle.setRouteOnPlanets(ftp.planetTo, ftp.planetFrom, battleHistory.getEndDate(), TravelMissionType.ATTACK_BATTLE, ftp.fleet.getId());
+                    fleetDuringBattle.setRouteOnPlanets(ftp.planetTo, ftp.planetFrom, battleHistory.getEndDate(), TravelMissionType.ATTACK_BATTLE, ftp.planetFrom.getUserId(), ftp.fleet.getId());
                     return fleetDuringBattle;
                 });
     }
@@ -114,7 +114,7 @@ public class TravelMissionWorker implements ReactorWorker {
         Duration flightDuration = Duration.between(ftp.fleet.getDepartureTime(), ftp.fleet.getArrivalTime());
         var relatedIds = Lists.newArrayList(ftp.fleet.getRelatedBattleHistoryId());
         relatedIds.add(ftp.fleet.getId());
-        transferBackFleet.setRouteOnPlanets(ftp.planetFrom, ftp.planetTo, ftp.fleet.getArrivalTime().plusSeconds(flightDuration.toSeconds()), TravelMissionType.TRANSFER_BACK, relatedIds);
+        transferBackFleet.setRouteOnPlanets(ftp.planetFrom, ftp.planetTo, ftp.fleet.getArrivalTime().plusSeconds(flightDuration.toSeconds()), TravelMissionType.TRANSFER_BACK, ftp.planetTo.getUserId(), relatedIds);
         return transferBackFleet;
     }
 
