@@ -12,14 +12,6 @@ public class FleetManagementFacade {
     private final FleetManagementService service;
     private final FleetManagementConfigRepository repository;
 
-//    public Mono<FleetManagementConfig> modifyOrSaveConfig(ModifyFleetManagementRequest request) {
-//        return service.modifyConfig(request);
-//    }
-//
-//    public Mono<FleetManagementConfig> newConfig(NewFleetManagementRequest request) {
-//        return service.newConfig(request);
-//    }
-
     public Mono<FleetManagementConfig> findById(String userId) {
         return repository.findById(userId);
     }
